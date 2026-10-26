@@ -53,7 +53,8 @@ PY
   cp "$YUE_GATEWAY_BIN" "$artifacts/bin/v-yue2-gateway"
  fi
  npm --prefix app ci --no-audit --no-fund
- VITE_VOS=true npm --prefix app run build
+ # The upstream npm prebuild reads Git history; build hosts receive archives.
+ (cd app; VITE_VOS=true npm exec -- vite build)
  rsync -a --delete app/dist/ "$artifacts/web/"
  fi
  cp THIRD_PARTY_NOTICES.md "$artifacts/web/"
