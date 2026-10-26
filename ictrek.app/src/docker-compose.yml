@@ -61,7 +61,7 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
       ],
       "runtime": "nvidia"
@@ -125,7 +125,7 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
       ]
     },
@@ -190,7 +190,7 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
       ],
       "runtime": "nvidia"
@@ -254,7 +254,7 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
       ]
     },
@@ -319,7 +319,7 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
       ],
       "runtime": "nvidia"
@@ -385,7 +385,7 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
       ],
       "runtime": "nvidia"
