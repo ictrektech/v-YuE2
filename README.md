@@ -1,12 +1,12 @@
 # v-YuE2 for VOS
 
-Free, local song creation with lyrics, editable ABC scores, covers, replay and a private song library, adapted from [YuE2 Studio](https://github.com/timoncool/YuE2-Studio).
+Free, local song creation with lyrics, editable ABC scores, covers and a private song library, adapted from [YuE2 Studio](https://github.com/timoncool/YuE2-Studio).
 
 - Open from VOS: `/app/com.ictrek.v-yue2/`. VOS OAuth2 PKCE authenticates each account; songs and settings are isolated per account. The app has one flat VOS navigation entry; its displayed version comes from the installed package runtime.
 - No model weights in the app package or service image. Confirm the model licenses, choose a model set, and request a download. Model administrators download selected files through V-Scheduler from [`vivibit/YuE2-Studio-GGUF`](https://modelscope.cn/models/vivibit/YuE2-Studio-GGUF).
 - V-Scheduler owns shared downloads and snapshots; v-YuE2 mounts its model directory read-only, verifies the pinned SHA-256 and links the chosen files into the account workspace. Remove shared files through V-Scheduler. Models, songs and settings remain in persistent storage after restart.
 - Chinese and English follow VOS language changes without reopening the app. Program updates use VOS App Store, not the upstream desktop updater. Upstream telemetry/news are disabled.
-- Core creation, score editing, replay, library and browser MIDI editing are supported. Desktop executable/folder pickers, network sharing, CLI agents, VST hosts and LoRA training are not exposed as VOS browser operations. Optional upstream tools must not be presented as commercially licensed models.
+- Calibrated song generation, the library and browser score/MIDI editing are available. Local score-to-audio, replay variants and transcription need separate resource calibration before execution. Desktop executable/folder pickers, network sharing, CLI agents, VST hosts and LoRA training are not exposed as VOS browser operations. Optional upstream tools must not be presented as commercially licensed models.
 
 ## Providers and local compute
 
