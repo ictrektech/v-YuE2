@@ -30,7 +30,7 @@ PROFILES = {
     "VYUE2_THOR_IMAGE": ["thor_spark"],
 }
 DEPENDENCIES = {
-    "com.ictrek.v-scheduler": ("ictrektech/V-Scheduler", "0.0.24"),
+    "com.ictrek.v-scheduler": ("ictrektech/V-Scheduler", "0.0.76"),
 }
 
 
