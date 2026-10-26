@@ -1,4 +1,5 @@
 import { isVos } from '../services/vos';
+import { VosProviderSettings } from './VosProviderSettings';
 import { VosAbout } from './VosAbout';
 import { StudioFamily } from './StudioFamily';
 import React, { useEffect, useRef, useState } from 'react';
@@ -81,7 +82,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, initialSec
     { id: 'account', label: t('account'), hint: t('accountSectionHint'), icon: <UserIcon size={16} /> },
     { id: 'models', label: t('modelsSection'), hint: t('modelsSectionHint'), icon: <Boxes size={16} /> },
     { id: 'engine', label: t('localEngine'), hint: t('engineSectionHint'), icon: <Cpu size={16} /> },
-    { id: 'cloud', label: t('providers'), hint: t('cloudSectionHint'), icon: <Cloud size={16} /> },
+    { id: 'cloud', label: t('providers'), hint: isVos ? (language === 'zh' ? 'V-Scheduler 模型与能力选择' : 'V-Scheduler models and capabilities') : t('cloudSectionHint'), icon: <Cloud size={16} /> },
     { id: 'agent', label: t('agentSection'), hint: t('agentSectionHint'), icon: <Plug size={16} /> },
     { id: 'covers', label: t('coversSection'), hint: t('coversSectionHint'), icon: <ImageIcon size={16} /> },
     { id: 'interface', label: t('appearance'), hint: t('interfaceSectionHint'), icon: <Monitor size={16} /> },
@@ -161,7 +162,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, initialSec
             {section === 'covers' && <CoverTemplateSettings />}
             {section === 'models' && <div className="-m-6"><SetupGate mode="settings" focus={focus} /></div>}
             {section === 'engine' && <EngineSettings />}
-            {section === 'cloud' && <ProviderSettings />}
+            {section === 'cloud' && (isVos ? <VosProviderSettings /> : <ProviderSettings />)}
             {section === 'agent' && <AgentPanel />}
             {section === 'privacy' && <div className="space-y-8"><HubSettings /><FileTagSettings /></div>}
 

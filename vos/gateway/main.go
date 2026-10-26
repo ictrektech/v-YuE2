@@ -53,6 +53,7 @@ type server struct {
 	compute             sync.Mutex
 	users               map[string]*worker
 	sessions            map[string]session
+	broker              *broker
 }
 
 func env(key, fallback string) string {
@@ -146,7 +147,7 @@ func (s *server) studio(key string) (*worker, error) {
 		return nil, e
 	}
 	cmd := exec.Command(env("YUE_STUDIO_BIN", "/opt/v-yue2/music-server"))
-	cmd.Env = append(os.Environ(), "YUE_VOS=1", "YUE_STUDIO_DATA_ROOT="+root, "YUE_STUDIO_PORT="+fmt.Sprint(port), "YUE_ENGINE_PORT="+fmt.Sprint(engine), "YUE_ENGINE_BASE_URL=http://127.0.0.1:"+fmt.Sprint(engine), "YUE_MODELS_ROOT="+filepath.Join(root, "models"), "STUDIO_TELEMETRY=0", "DO_NOT_TRACK=1")
+	cmd.Env = append(os.Environ(), "YUE_VOS=1", "YUE_STUDIO_DATA_ROOT="+root, "YUE_STUDIO_PORT="+fmt.Sprint(port), "YUE_ENGINE_PORT="+fmt.Sprint(engine), "YUE_ENGINE_BASE_URL=http://127.0.0.1:"+fmt.Sprint(engine), "YUE_MODELS_ROOT="+filepath.Join(root, "models"), "STUDIO_TELEMETRY=0", "DO_NOT_TRACK=1", "YUE_CPU_THREADS=8", fmt.Sprintf("YUE_COMPUTE_ADMITTED=%d", s.computeAdmitted(key)))
 	cmd.Stdout = f
 	cmd.Stderr = f
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
@@ -188,7 +189,7 @@ func (s *server) accepted(key string) bool {
 func restricted(path string) bool {
 	// Desktop command execution, arbitrary server paths, network exposure and
 	// software installation are not browser capabilities in the VOS product.
-	for _, p := range []string{"/engine/pick-executable", "/engine/options", "/v1/network", "/v1/files/", "/v1/open-data-directory", "/v1/processing/vst", "/v1/assistant/cli-agents", "/setup/adopt", "/v1/adapters/import-folder", "/v1/training/"} {
+	for _, p := range []string{"/engine/pick-executable", "/engine/options", "/v1/network", "/v1/files/", "/v1/open-data-directory", "/v1/processing/vst", "/v1/assistant/cli-agents", "/setup/adopt", "/v1/adapters/import-folder", "/v1/training/", "/v1/assistant/runtime", "/v1/assistant/status", "/v1/assistant/local-key", "/v1/separation/", "/v1/midi/"} {
 		if strings.HasPrefix(path, p) {
 			return true
 		}
@@ -198,7 +199,7 @@ func restricted(path string) bool {
 func terminal(status string) bool {
 	return status == "completed" || status == "failed" || status == "cancelled"
 }
-func (s *server) followCompute(v *worker, path, id string, release func()) {
+func (s *server) followCompute(v *worker, key, path, id string, release func()) {
 	defer release()
 	timer := time.NewTicker(time.Second)
 	defer timer.Stop()
@@ -214,9 +215,11 @@ func (s *server) followCompute(v *worker, path, id string, release func()) {
 			var job struct {
 				Status string `json:"status"`
 			}
-			err = json.NewDecoder(io.LimitReader(res.Body, 1<<20)).Decode(&job)
+			body, readErr := io.ReadAll(io.LimitReader(res.Body, 1<<20))
 			res.Body.Close()
-			if err == nil && terminal(job.Status) {
+			err = json.Unmarshal(body, &job)
+			if readErr == nil && err == nil && terminal(job.Status) {
+				_ = privateJSON(s.terminalPath(key, path, id), json.RawMessage(body))
 				return
 			}
 		}
@@ -235,6 +238,9 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	r.URL.RawPath = ""
 	if path == "/health" && !appRequest && r.Method == "GET" {
 		reply(w, 200, map[string]string{"status": "ok", "app": "v-YuE2", "version": env("APP_VERSION", "development")})
+		return
+	}
+	if s.broker != nil && s.broker.handle(w, r, path) {
 		return
 	}
 	api := path == "/health" || strings.HasPrefix(path, "/v1/") || strings.HasPrefix(path, "/vos/") || strings.HasPrefix(path, "/setup/") || strings.HasPrefix(path, "/engine/") || strings.HasPrefix(path, "/mcp")
@@ -261,6 +267,18 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if e != nil {
 		fail(w, 401, "VOS sign-in required / 请从 VOS 登录")
 		return
+	}
+	if strings.HasPrefix(path, "/v1/openrouter/") {
+		fail(w, 410, "Providers are managed by V-Scheduler")
+		return
+	}
+	if strings.HasPrefix(path, "/v1/provider/") {
+		if path == "/v1/provider/settings" && r.Method != "GET" {
+			fail(w, 403, "Configure providers in V-Scheduler")
+			return
+		}
+		path = strings.Replace(path, "/v1/provider/", "/v1/openrouter/", 1)
+		r.URL.Path = path
 	}
 	key := userKey(id.Sub)
 	if path == "/vos/session" && r.Method == "POST" {
@@ -330,8 +348,16 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		fail(w, 403, "请使用准备模型功能；此附加模型尚未列入 VOS 目录 / Use Prepare models; this additional model is not in the VOS catalog")
 		return
 	}
+	if r.Method == "POST" && strings.HasPrefix(path, "/v1/library/songs/") && (strings.HasSuffix(path, "/stems") || strings.HasSuffix(path, "/midi")) {
+		fail(w, 503, "This local model operation has no V-Scheduler calibration")
+		return
+	}
 	if strings.HasPrefix(path, "/mcp") {
 		fail(w, 403, "Desktop automation is unavailable in VOS")
+		return
+	}
+	if strings.HasPrefix(path, "/v1/internal/") || (r.Method != "GET" && (strings.HasPrefix(path, "/v1/assistant/config") || strings.HasPrefix(path, "/v1/karaoke/config"))) {
+		fail(w, 403, "Configure capabilities in Providers")
 		return
 	}
 	if path == "/v1/hub/state" {
@@ -340,6 +366,9 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	if strings.HasPrefix(path, "/v1/hub/") {
 		reply(w, 200, map[string]bool{"ok": true})
+		return
+	}
+	if s.serveTerminal(w, r, key, path) {
 		return
 	}
 	v, e := s.studio(key)
@@ -362,10 +391,132 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		fail(w, 409, "本机正在处理其他创作任务，请稍后重试 / Another creation task is running; try again shortly")
 		return
 	}
+	var native *nativeLease
+	if computePath != "" {
+		if s.broker == nil {
+			s.compute.Unlock()
+			fail(w, 503, "V-Scheduler binding required")
+			return
+		}
+		var selected struct {
+			Files struct {
+				Backbone  string `json:"backbone"`
+				VAE       string `json:"vae"`
+				Companion string `json:"companion"`
+			} `json:"profile_files"`
+		}
+		status, err := s.client.Get(fmt.Sprintf("http://127.0.0.1:%d/setup/status", v.port))
+		if err != nil {
+			s.compute.Unlock()
+			fail(w, 503, "Local model selection unavailable")
+			return
+		}
+		err = json.NewDecoder(io.LimitReader(status.Body, 1<<20)).Decode(&selected)
+		status.Body.Close()
+		if err != nil || filepath.Base(selected.Files.Backbone) != "YuE2-3B-Q8_0.gguf" || filepath.Base(selected.Files.VAE) != "YuE2-Vae-F32.gguf" || filepath.Base(selected.Files.Companion) != "nar_lora_joint_v9.safetensors" {
+			s.compute.Unlock()
+			fail(w, 503, "Selected model combination has no calibrated V-Scheduler executor")
+			return
+		}
+		if r.Body == nil {
+			s.compute.Unlock()
+			fail(w, 400, "Music request required")
+			return
+		}
+		body, err := io.ReadAll(io.LimitReader(r.Body, 1<<20))
+		if err != nil {
+			s.compute.Unlock()
+			fail(w, 400, "Invalid music request")
+			return
+		}
+		r.Body = io.NopCloser(bytes.NewReader(body))
+		native, e = s.broker.acquire(r.Context(), key, path, body, r.Header.Get("X-VScheduler-Priority"))
+		if e != nil {
+			s.compute.Unlock()
+			fail(w, 503, e.Error())
+			return
+		}
+		// Idle account processes never load a compute backend. Replace the idle
+		// process only after admission, retaining the account's persisted data.
+		if !stopNative(v) {
+			s.broker.finish(native)
+			s.compute.Unlock()
+			fail(w, 503, "Native exit not confirmed")
+			return
+		}
+		s.broker.mu.Lock()
+		native.Started = true
+		native.Stopped = false
+		s.broker.mu.Unlock()
+		if err := s.broker.saveLease(native); err != nil {
+			s.broker.finish(native)
+			s.compute.Unlock()
+			fail(w, 503, "Cannot journal native start")
+			return
+		}
+		s.mu.Lock()
+		if s.users[key] == v {
+			delete(s.users, key)
+		}
+		s.mu.Unlock()
+		v, e = s.studio(key)
+		if e != nil {
+			s.broker.finish(native)
+			s.compute.Unlock()
+			fail(w, 503, e.Error())
+			return
+		}
+		s.broker.mu.Lock()
+		native.worker = v
+		native.PID = v.cmd.Process.Pid
+		s.broker.mu.Unlock()
+		if e = s.broker.saveLease(native); e != nil {
+			s.broker.finish(native)
+			s.compute.Unlock()
+			fail(w, 503, "Cannot journal execution")
+			return
+		}
+		s.broker.mu.Lock()
+		cfg := s.broker.config
+		s.broker.mu.Unlock()
+		go s.broker.watch(native, cfg)
+		ready := false
+		for i := 0; i < 120; i++ {
+			select {
+			case <-native.done:
+				break
+			default:
+			}
+			resp, err := s.client.Get(fmt.Sprintf("http://127.0.0.1:%d/setup/status", v.port))
+			if err == nil {
+				var state struct {
+					Ready bool `json:"engine_ready"`
+				}
+				_ = json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&state)
+				resp.Body.Close()
+				if state.Ready {
+					ready = true
+					break
+				}
+			}
+			time.Sleep(500 * time.Millisecond)
+		}
+		if !ready {
+			s.broker.finish(native)
+			s.compute.Unlock()
+			fail(w, 503, "Local engine did not start under its resource permit")
+			return
+		}
+	}
 	var released sync.Once
 	release := func() {
 		if computePath != "" {
-			released.Do(s.compute.Unlock)
+			released.Do(func() {
+				if native != nil {
+					s.broker.finish(native)
+				}
+				s.compute.Unlock()
+			})
 		}
 	}
 	if r.Body != nil {
@@ -378,6 +529,7 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		old(req)
 		req.Host = target.Host
 		req.Header.Del("Authorization")
+		req.Header.Set("X-VOS-Provider-Authorization", "Bearer "+token)
 		req.Header.Del("Cookie")
 		req.Header.Del("Origin")
 		req.Header.Del("Forwarded")
@@ -409,10 +561,20 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			if json.Unmarshal(body, &job) != nil || job.ID == "" {
 				return errors.New("unknown submission result")
 			}
+			if native != nil {
+				s.broker.mu.Lock()
+				native.JobID = job.ID
+				native.Job = append([]byte{}, body...)
+				s.broker.mu.Unlock()
+				if err := s.broker.saveLease(native); err != nil {
+					return err
+				}
+			}
 			if terminal(job.Status) {
+				_ = privateJSON(s.terminalPath(key, computePath, job.ID), json.RawMessage(body))
 				release()
 			} else {
-				go s.followCompute(v, computePath, job.ID, release)
+				go s.followCompute(v, key, computePath, job.ID, release)
 			}
 			return nil
 		}
@@ -455,6 +617,8 @@ func main() {
 			_ = syscall.Kill(-v.cmd.Process.Pid, syscall.SIGTERM)
 		}
 	}()
+	s.broker = newBroker(s)
+	go s.broker.maintain()
 	log.Print("v-YuE2 VOS service ready")
 	if e := h.ListenAndServe(); e != nil && !errors.Is(e, http.ErrServerClosed) {
 		log.Fatal(e)

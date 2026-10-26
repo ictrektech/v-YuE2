@@ -24,6 +24,7 @@ pub enum CredentialSource {
 }
 
 pub fn openrouter_api_key() -> Option<(String, CredentialSource)> {
+    if crate::providers::scheduler::enabled() { return crate::providers::scheduler::token().map(|t| (t, CredentialSource::Environment)); }
     if let Some(key) = env::var(OPENROUTER_ENV_VAR).ok().map(|key| key.trim().to_owned()).filter(|key| !key.is_empty()) {
         return Some((key, CredentialSource::Environment));
     }
@@ -38,6 +39,7 @@ pub fn openrouter_source() -> Option<CredentialSource> {
 /// Stores or clears the key. Refuses to shadow an environment credential so a
 /// user never believes they replaced a key that the process is not using.
 pub fn store_openrouter_api_key(api_key: Option<&str>) -> Result<Option<CredentialSource>> {
+    if crate::providers::scheduler::enabled() { bail!("Configure providers and credentials in V-Scheduler"); }
     if env::var(OPENROUTER_ENV_VAR).is_ok_and(|key| !key.trim().is_empty()) {
         bail!("{OPENROUTER_ENV_VAR} is set in this environment and takes priority; unset it before storing a key in Studio");
     }

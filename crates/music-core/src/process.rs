@@ -156,3 +156,54 @@ mod tests {
         child.wait().ok();
     }
 }
+
+/// Linux parent-death signals belong to the thread that forks. Tokio may retire
+/// a blocking worker while its child is still computing, so keep the spawning
+/// thread alive until native exit, without stealing the supervisor's wait status.
+pub fn spawn_owned(mut command: std::process::Command) -> std::io::Result<Child> {
+    #[cfg(target_os = "linux")]
+    {
+        let (send, receive) = std::sync::mpsc::sync_channel(1);
+        std::thread::Builder::new().name("native-parent".into()).spawn(move || {
+            match command.spawn() {
+                Ok(child) => {
+                    let pid = child.id() as libc::id_t;
+                    match send.send(Ok(child)) {
+                        Ok(()) => loop {
+                            let mut status: libc::siginfo_t = unsafe { std::mem::zeroed() };
+                            let result = unsafe { libc::waitid(libc::P_PID, pid, &mut status, libc::WEXITED | libc::WNOHANG | libc::WNOWAIT) };
+                            if result < 0 {
+                                if std::io::Error::last_os_error().kind()==std::io::ErrorKind::Interrupted {continue}
+                                break;
+                            }
+                            if unsafe { status.si_pid() } != 0 { break; }
+                            std::thread::sleep(std::time::Duration::from_millis(100));
+                        },
+                        Err(error) => if let Ok(mut child) = error.0 { let _ = child.kill(); let _ = child.wait(); },
+                    }
+                }
+                Err(error) => { let _ = send.send(Err(error)); }
+            }
+        })?;
+        receive.recv().map_err(|_| std::io::Error::other("native spawning thread stopped"))?
+    }
+    #[cfg(not(target_os = "linux"))]
+    { command.spawn() }
+}
+
+#[cfg(all(test, target_os = "linux"))]
+mod native_parent_tests {
+    #[test]
+    fn child_survives_the_calling_threads_exit() {
+        let mut child = std::thread::spawn(|| {
+            let mut command = std::process::Command::new("sleep");
+            command.arg("30");
+            super::ensure_dies_with_parent(&mut command);
+            super::spawn_owned(command).unwrap()
+        }).join().unwrap();
+        std::thread::sleep(std::time::Duration::from_millis(200));
+        assert!(child.try_wait().unwrap().is_none());
+        child.kill().unwrap();
+        child.wait().unwrap();
+    }
+}

@@ -54,7 +54,13 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const t = (key: TranslationKey): string => {
-    return translations[language][key] || key;
+    const value = translations[language][key] || key;
+    if (!isVos) return value;
+    const hints: Partial<Record<TranslationKey, string>> = {
+      assistantOpenRouterHint: language === 'zh' ? '使用 V-Scheduler 中配置的写作模型。' : 'Use a writing model configured in V-Scheduler.',
+      karaokeOpenRouterHint: language === 'zh' ? '使用 V-Scheduler 中支持转写及时间戳的模型。' : 'Use a V-Scheduler transcription model with timestamps.',
+    };
+    return hints[key] ?? value.replace(/OpenRouter/g, 'V-Scheduler');
   };
 
   const songCount = (count: number): string =>

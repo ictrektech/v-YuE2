@@ -376,7 +376,7 @@ pub fn stt_request_for(
     // has never heard of is allowed through, because OpenRouter publishes its
     // recognisers only behind a separate filter and a stale catalog should not
     // block a valid model. A wrong id is then rejected by OpenRouter itself.
-    if catalog.models.iter().any(|model| model.id == model_id) {
+    if crate::providers::scheduler::enabled() || catalog.models.iter().any(|model| model.id == model_id) {
         catalog.selected(Capability::SpeechToText, model_id)?;
     }
     if audio.data.trim().is_empty() || audio.format.trim().is_empty() {

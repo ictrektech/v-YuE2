@@ -1,3 +1,4 @@
+import { isVos } from '../services/vos';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertTriangle, Image as ImageIcon, Loader2, Palette, RefreshCw, Search, Sparkles, Upload, Video } from 'lucide-react';
 import type { Song } from '../types';
@@ -391,8 +392,8 @@ const AiDrawing: React.FC<{ song: Song; onChoice: (choice: PickedMedia) => void;
     // first of four hundred was how this window ended up using a different
     // model from the one the settings showed.
     Promise.all([
-      readJson<{ configured?: boolean }>('/v1/openrouter/settings'),
-      readJson<{ models: CatalogModel[] | null; suggested: { cover_art?: string | null } | null }>('/v1/openrouter/catalog'),
+      readJson<{ configured?: boolean }>((isVos ? '/v1/provider/settings' : '/v1/openrouter/settings')),
+      readJson<{ models: CatalogModel[] | null; suggested: { cover_art?: string | null } | null }>((isVos ? '/v1/provider/catalog' : '/v1/openrouter/catalog')),
       readJson<{ selections?: { capability: string; cloud_model: string | null }[] }>('/v1/configuration'),
       readJson<{ templates?: CoverTemplate[]; default_id?: string | null }>('/v1/cover-templates'),
     ])
@@ -461,7 +462,7 @@ const AiDrawing: React.FC<{ song: Song; onChoice: (choice: PickedMedia) => void;
     setBusy(true);
     setProblem(null);
     try {
-      const response = await fetch('/v1/openrouter/covers', {
+      const response = await fetch((isVos ? '/v1/provider/covers' : '/v1/openrouter/covers'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model_id: modelId, prompt: prompt.trim() }),
@@ -469,7 +470,7 @@ const AiDrawing: React.FC<{ song: Song; onChoice: (choice: PickedMedia) => void;
       const body = await response.json().catch(() => null);
       if (!response.ok) throw new Error(body?.error || `Cover generation failed (${response.status})`);
       const image = body?.body?.data?.[0];
-      if (!image?.b64_json) throw new Error('OpenRouter returned no image data.');
+      if (!image?.b64_json) throw new Error('Provider returned no image data.');
       const mediaType = typeof image.media_type === 'string' ? image.media_type : 'image/png';
       onChoice({ kind: 'image', base64: image.b64_json, mediaType, url: `data:${mediaType};base64,${image.b64_json}` });
     } catch (reason) {

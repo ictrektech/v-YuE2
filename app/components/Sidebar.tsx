@@ -1,6 +1,6 @@
 import { isVos } from '../services/vos';
 import React, { useEffect, useState } from 'react';
-import { useOpenRouterSettings, useSetupStatus } from '../services/studioQueries';
+import { useOpenRouterSettings, useSetupStatus, useRuntimeInfo } from '../services/studioQueries';
 import { Disc, Download, Layers, Library, Moon, Newspaper, ScrollText, Search, SlidersHorizontal, Sun } from 'lucide-react';
 import { View } from '../types';
 import { useI18n } from '../context/I18nContext';
@@ -25,6 +25,7 @@ interface SidebarProps {
 type NativeSetupStatus = {
   ready: boolean;
   engine_ready: boolean;
+  engine_standby?: boolean;
   engine_id: string;
   selected_profile_id?: string | null;
   selected_component_ids?: string[] | null;
@@ -38,7 +39,7 @@ const StatusLine: React.FC<{ active: boolean; pending?: boolean; label: string }
 );
 
 const SystemWidget: React.FC<{ isOpen?: boolean }> = ({ isOpen }) => {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const tt = t as unknown as (key: string) => string;
   const setupQuery = useSetupStatus<NativeSetupStatus>();
   const setup = setupQuery.isError ? null : setupQuery.data ?? null;
@@ -54,7 +55,7 @@ const SystemWidget: React.FC<{ isOpen?: boolean }> = ({ isOpen }) => {
     ? profileLabel(t, { id: setup.selected_profile_id, label: setup.selected_profile_id })
     : (setup?.selected_component_ids?.length ? t('customSet') : t('noProfile'));
   // Without a model set on disk the engine is not starting, it is waiting.
-  const engineLabel = unreachable ? t('engineUnavailable') : engineReady ? t('engineReachable') : modelReady ? t('engineStarting') : tt('engineWaitsForModels');
+  const engineLabel = isVos && setup?.engine_standby ? (language === 'zh' ? '引擎待命 · V-Scheduler 调度' : 'Engine standby · V-Scheduler') : unreachable ? t('engineUnavailable') : engineReady ? t('engineReachable') : modelReady ? t('engineStarting') : tt('engineWaitsForModels');
   const modelLabel = modelReady ? `${t('profileReady')}: ${profile}` : t('profileNotInstalled');
 
   if (!isOpen) {
@@ -79,7 +80,7 @@ const SystemWidget: React.FC<{ isOpen?: boolean }> = ({ isOpen }) => {
     <div className="space-y-1.5 rounded-xl border border-zinc-200/70 bg-zinc-50/80 px-3 py-2 text-[10px] dark:border-white/5 dark:bg-zinc-900/50">
       <StatusLine active={engineReady && modelReady} pending={!unreachable && !(engineReady && modelReady)} label={engineLabel} />
       <StatusLine active={modelReady} pending={!unreachable && !modelReady} label={modelLabel} />
-      <StatusLine active={openRouterConfigured} label={openRouterConfigured ? t('openRouterConfigured') : t('openRouterNotConfigured')} />
+      <StatusLine active={openRouterConfigured} label={isVos ? (openRouterConfigured ? 'V-Scheduler' : (t('serviceUnavailable') + ' · V-Scheduler')) : (openRouterConfigured ? t('openRouterConfigured') : t('openRouterNotConfigured'))} />
     </div>
   );
 };
@@ -97,6 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleJournal,
 }) => {
   const { t, language } = useI18n();
+  const runtime = useRuntimeInfo().data;
   const portable = useSetupStatus<{ portable?: boolean }>().data?.portable;
 
   return (
@@ -117,7 +119,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {isOpen && (
               <span className="flex min-w-0 flex-col" title="v-YuE2">
                 <span className="text-[13px] font-bold leading-[1.15] text-zinc-900 dark:text-white">v-YuE2</span>
-                <span className="flex flex-wrap gap-x-1.5 text-[10px] font-medium leading-4 text-zinc-500 dark:text-zinc-400"><span>v{__APP_VERSION__}</span>{portable && <span>{t('portableEdition')}</span>}</span>
+                <span className="flex flex-wrap gap-x-1.5 text-[10px] font-medium leading-4 text-zinc-500 dark:text-zinc-400"><span>{isVos ? (runtime?.version ? `v${runtime.version}` : '—') : `v${__APP_VERSION__}`}</span>{portable && <span>{t('portableEdition')}</span>}</span>
               </span>
             )}
           </div>

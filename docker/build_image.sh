@@ -61,6 +61,7 @@ PY
  cp -a licenses/. "$artifacts/web/licenses/"
  cp LICENSE "$artifacts/web/licenses/YuE2-Studio-MIT.txt"
  if [[ "$reuse_app" == false ]]; then python3 vos/scripts/collect_notices.py --source "$build/source" --vendor "$build/sources/vendor" --output "$artifacts/web/licenses/dependencies"; fi
+ python3 vos/scripts/patch_engine.py "$build/sources/yue2.cpp"
  engine_build="${YUE_ENGINE_BUILD_DIR:-$build/engine-${prefix}}"
  cmake -S "$build/sources/yue2.cpp" -B "$engine_build" -DCMAKE_BUILD_TYPE=Release \
   -DGGML_NATIVE=OFF -DGGML_CUDA="$cuda" -DGGML_VULKAN=OFF -DGGML_BACKEND_DL=OFF \

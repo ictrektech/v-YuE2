@@ -1,3 +1,4 @@
+import { isVos } from './vos';
 import { QueryClient, useQuery } from '@tanstack/react-query';
 import type { Playlist, Song } from '../types';
 import { loadNativeLibrarySongs, loadNativePlaylists } from './nativeLibrary';
@@ -71,7 +72,7 @@ const openRouterSettingsKey = ['openrouter-settings'] as const;
 
 /** Whether an OpenRouter key is saved; the key itself stays in the service. */
 export function useOpenRouterSettings<T extends object>() {
-  return useQuery({ queryKey: openRouterSettingsKey, queryFn: () => readJson<T>('/v1/openrouter/settings'), refetchInterval: 15_000 });
+  return useQuery({ queryKey: openRouterSettingsKey, queryFn: () => readJson<T>(isVos ? '/v1/provider/settings' : '/v1/openrouter/settings'), refetchInterval: 15_000 });
 }
 
 export function openRouterSettingsChanged(): void {
@@ -234,4 +235,9 @@ export function useHubState(lang: string) {
 
 export function hubStateChanged(): void {
   void queryClient.invalidateQueries({ queryKey: hubStateKey });
+}
+
+/** Runtime package version is independent of the reusable service image. */
+export function useRuntimeInfo() {
+  return useQuery({ queryKey: ['vos-runtime'], queryFn: () => readJson<{version:string;profile:string;image:string}>('/vos/about'), enabled: isVos, staleTime: Infinity });
 }

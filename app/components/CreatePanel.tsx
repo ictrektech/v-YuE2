@@ -1,3 +1,4 @@
+import { isVos } from '../services/vos';
 import { studioStorage } from '../services/storage';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { libraryChanged, useActivity, useAssistantStatus, useSetupStatus, type ActivityEntry } from '../services/studioQueries';
@@ -101,9 +102,9 @@ const NEW_PLAYLIST = '__new__';
 const finishedStyle = (text: string) => text.trim().replace(/,$/, '').trimEnd();
 const SEMANTIC_CODES_PER_SECOND = 25;
 /** 9000 semantic frames at 25 per second, the stage's own budget. */
-const MAX_DURATION_SECONDS = 600;
+const MAX_DURATION_SECONDS = isVos ? 120 : 600;
 /** A new prompt's ceiling: 2:10. Examples and prompt files keep their own. */
-const DEFAULT_DURATION_SECONDS = 130;
+const DEFAULT_DURATION_SECONDS = isVos ? 120 : 130;
 /** The file format last chosen by hand, kept between sessions like the duration. */
 /** The words of the form (name, style, lyrics), kept across restarts until Reset clears them. */
 const DRAFT_KEY = 'studio.createDraft';
@@ -665,6 +666,7 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
       style: finishedStyle(style),
       lyrics: lyrics.replace(/\r\n?/g, '\n').trim(),
       output_format: format,
+      ...(isVos ? { steps: 32, lm_batch_size: 1, synth_batch_size: 1, solver: 'midpoint' as const } : {}),
     };
     if (abc.trim() && effectiveCot !== 'off') request.abc = abc.trim();
     if (abc.trim() && effectiveCot !== 'off' && !semanticTokens.trim() && Number(transpose) !== 0) request.transpose = Number(transpose);
@@ -1199,6 +1201,7 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
     <section className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-zinc-50 text-zinc-900 dark:bg-suno-panel dark:text-white">
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain custom-scrollbar">
         <div className="space-y-3 p-4 pb-6">
+          {isVos && <p className="text-[11px] leading-5 text-zinc-500">{language === 'zh' ? '本地任务由 V-Scheduler 排队调度；当前已校准生成上限为 120 秒、32 步。' : 'V-Scheduler queues and schedules local jobs. Current calibrated generation limits: 120 seconds, 32 steps.'}</p>}
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               <h1 className="truncate text-base font-bold">{t('createMusic')}</h1>

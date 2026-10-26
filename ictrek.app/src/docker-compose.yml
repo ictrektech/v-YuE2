@@ -61,10 +61,13 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
       ],
-      "runtime": "nvidia"
+      "runtime": "nvidia",
+      "cpus": 8,
+      "mem_limit": "32g",
+      "memswap_limit": "32g"
     },
     "v-yue2-amd-without-cuda": {
       "image": "${VYUE2_AMD_IMAGE}",
@@ -125,9 +128,12 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
-      ]
+      ],
+      "cpus": 8,
+      "mem_limit": "32g",
+      "memswap_limit": "32g"
     },
     "v-yue2-arm": {
       "image": "${VYUE2_ARM_CUDA_IMAGE}",
@@ -190,10 +196,13 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
       ],
-      "runtime": "nvidia"
+      "runtime": "nvidia",
+      "cpus": 8,
+      "mem_limit": "32g",
+      "memswap_limit": "32g"
     },
     "v-yue2-arm-without-cuda": {
       "image": "${VYUE2_ARM_IMAGE}",
@@ -254,9 +263,12 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
-      ]
+      ],
+      "cpus": 8,
+      "mem_limit": "32g",
+      "memswap_limit": "32g"
     },
     "v-yue2-l4t": {
       "image": "${VYUE2_L4T_IMAGE}",
@@ -319,10 +331,13 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
       ],
-      "runtime": "nvidia"
+      "runtime": "nvidia",
+      "cpus": 8,
+      "mem_limit": "32g",
+      "memswap_limit": "32g"
     },
     "v-yue2-thor-spark": {
       "image": "${VYUE2_THOR_IMAGE}",
@@ -385,10 +400,13 @@
         "traefik.http.routers.v-yue2-top-open.service=v-yue2",
         "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
-        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/com-ictrek-v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/app-drawer/com.ictrek.v-yue2/v-yue2",
         "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
       ],
-      "runtime": "nvidia"
+      "runtime": "nvidia",
+      "cpus": 8,
+      "mem_limit": "32g",
+      "memswap_limit": "32g"
     }
   },
   "networks": {

@@ -235,10 +235,10 @@ def package(version: str, stage: Path) -> Path:
     if profiles != used or manifest["id"] != "com.ictrek.v-yue2":
         raise RuntimeError("manifest/compose profile mismatch")
     routers = yaml.safe_load((stage / "routers.yml").read_text())["routers"]
-    group = routers[0]
-    page = group["children"][0]
-    if (group["id"] != "com-ictrek-v-yue2" or group["kind"] != "group"
-            or page["id"] != "v-yue2" or page["kind"] != "page"
+    if len(routers) != 1:
+        raise RuntimeError("expected a single flat VOS entry")
+    page = routers[0]
+    if (page["id"] != "v-yue2" or page["kind"] != "page"
             or page["iframe-src"] != f"/app/com.ictrek.v-yue2/?v={version}"
             or not page.get("entry-point") or not page.get("embed")):
         raise RuntimeError("invalid VOS navigation contract")

@@ -990,12 +990,14 @@ pub async fn serve() -> anyhow::Result<()> {
         openrouter_catalog: Arc::new(RwLock::new(OpenRouterCatalogState::default())),
         library: library::Library::open_default()?,
         engine: Arc::new(tokio::sync::Mutex::new(None)),
-        engine_options: Arc::new(RwLock::new(persisted.as_ref().map(|settings| settings.engine_options.clone()).unwrap_or_default())),
+        engine_options: Arc::new(RwLock::new(if providers::scheduler::enabled() {
+            EngineOptions { max_batch: Some(1), max_seq: Some(8192), vae_core: Some(512), vae_halo: Some(16), keep_loaded: false, clamp_fp16: true, extra_args: String::new(), ..Default::default() }
+        } else { persisted.as_ref().map(|settings| settings.engine_options.clone()).unwrap_or_default() })),
         engine_runtime: Arc::new(engine_runtime::EngineRuntime::new(&engine_bundle_root(), &studio_data_root().unwrap_or_else(|| std::path::PathBuf::from(".")))),
         failed_devices: Arc::new(RwLock::new(Vec::new())),
         engine_start_error: Arc::new(RwLock::new(None)),
         active_device: Arc::new(RwLock::new(None)),
-        assistant: Arc::new(RwLock::new(persisted.as_ref().map(|settings| settings.assistant.clone()).unwrap_or_default())),
+        assistant: Arc::new(RwLock::new({let mut config=persisted.as_ref().map(|settings| settings.assistant.clone()).unwrap_or_default();if providers::scheduler::enabled() && config.provider!=AssistantProvider::OpenRouter{config.provider=AssistantProvider::None};config})),
         assistant_runtime: Arc::new(assistant_runtime::AssistantRuntime::new(
             &studio_data_root().unwrap_or_else(|| std::path::PathBuf::from(".")),
         )),
@@ -1003,7 +1005,7 @@ pub async fn serve() -> anyhow::Result<()> {
             &studio_data_root().unwrap_or_else(|| std::path::PathBuf::from(".")),
         )),
         lyrics_sync_config: Arc::new(RwLock::new(
-            persisted.as_ref().map(|settings| settings.lyrics_sync.clone().migrated()).unwrap_or_default(),
+            {let mut config=persisted.as_ref().map(|settings| settings.lyrics_sync.clone().migrated()).unwrap_or_default();if providers::scheduler::enabled() && matches!(config.provider,lyrics_sync::AsrProvider::Whisper|lyrics_sync::AsrProvider::Parakeet){config.provider=lyrics_sync::AsrProvider::None;config.enabled=false};config},
         )),
         hub: start_hub(),
     };
@@ -1225,6 +1227,7 @@ pub async fn serve() -> anyhow::Result<()> {
     // the MCP tools call the same routes, inside the process
     mcp::install(app.clone());
     let app = app
+        .layer(axum::middleware::from_fn(providers::scheduler::remember_identity))
         // POST only: a GET is answered 405, as the stateless revision asks
         .route("/mcp", post(mcp::handle))
         .route("/mcp/status", get(mcp::status))
@@ -1263,6 +1266,7 @@ pub async fn serve() -> anyhow::Result<()> {
             // two seconds is what filled a whole log with one sentence.
             let mut was_running = false;
             loop {
+                if providers::scheduler::enabled() && std::env::var("YUE_COMPUTE_ADMITTED").as_deref() != Ok("1") { tokio::time::sleep(std::time::Duration::from_secs(2)).await; continue; }
                 let ready = state.model_manager.status(effective_install_target(&state).await).await.ready;
                 // an engine inside a long step does not answer /health in time; while it is still a
                 // running process with a job on it, it is at work, not gone
@@ -3518,6 +3522,7 @@ async fn draw_cover(state: &AppState, song_id: &str) -> anyhow::Result<()> {
     let catalog = catalog_for(state).await.map_err(|error| anyhow::anyhow!(error))?;
     let model = match model {
         Some(model) => model,
+        None if providers::scheduler::enabled() => anyhow::bail!("Select a cover model from V-Scheduler in Providers"),
         None => providers::openrouter::suggested_model(&catalog, Capability::CoverArt)
             .context("no image model is chosen for covers")?,
     };
@@ -4268,7 +4273,19 @@ async fn configuration(State(state): State<AppState>) -> Json<StudioConfiguratio
 async fn update_configuration(
     State(state): State<AppState>,
     Json(update): Json<StudioConfiguration>,
-) -> Json<StudioConfiguration> {
+) -> Result<Json<StudioConfiguration>, (StatusCode, Json<ApiError>)> {
+    if providers::scheduler::enabled() {
+        let catalog = providers::scheduler::catalog().await.map_err(|e| api_error(StatusCode::BAD_GATEWAY, e.to_string()))?;
+        for selection in &update.selections {
+            if selection.capability == Capability::MusicGeneration {
+                if selection.mode != ExecutionMode::Local || selection.local_engine.as_deref() != Some("yue2-cpp") { return Err(api_error(StatusCode::BAD_REQUEST, "YuE2 music generation runs locally".into())); }
+            } else if selection.mode != ExecutionMode::OpenRouter || selection.local_engine.is_some() {
+                return Err(api_error(StatusCode::BAD_REQUEST, "Configure auxiliary providers through V-Scheduler".into()));
+            } else if let Some(model) = selection.cloud_model.as_deref().filter(|m| !m.is_empty()) {
+                catalog.selected(selection.capability, model).map_err(|e| api_error(StatusCode::BAD_REQUEST, e.to_string()))?;
+            }
+        }
+    }
     // A page that changes one capability sends one selection. Storing the
     // request verbatim then erased every other choice - which is how a studio
     // with a downloaded engine started answering "the local music engine is not
@@ -4325,9 +4342,7 @@ async fn update_configuration(
                 match selection.mode {
                     ExecutionMode::OpenRouter => {
                         assistant.provider = AssistantProvider::OpenRouter;
-                        if let Some(model) = selection.cloud_model.clone() {
-                            assistant.openrouter_model = Some(model);
-                        }
+                        assistant.openrouter_model = selection.cloud_model.clone();
                     }
                     ExecutionMode::Local if matches!(assistant.provider, AssistantProvider::Agent | AssistantProvider::Cli) => {}
                     ExecutionMode::Local => {
@@ -4346,7 +4361,7 @@ async fn update_configuration(
     }
 
     let _ = persist_studio_settings(&state).await;
-    Json(configuration)
+    Ok(Json(configuration))
 }
 
 async fn engine_options(State(state): State<AppState>) -> Json<Value> {
@@ -4469,6 +4484,7 @@ async fn engine_at_work(state: &AppState) -> bool {
 }
 
 async fn restart_engine(state: &AppState) -> Result<(), String> {
+    if providers::scheduler::enabled() && std::env::var("YUE_COMPUTE_ADMITTED").as_deref() != Ok("1") { return Ok(()); }
     let mut supervisor = state.engine.lock().await;
     let owned = supervisor.is_some();
     if let Some(engine) = supervisor.as_mut() {
@@ -4746,7 +4762,11 @@ async fn reload_engine_if_models_changed(state: &AppState) {
     }
 }
 
-async fn openrouter_catalog(State(state): State<AppState>) -> Json<Value> {
+async fn openrouter_catalog(State(state): State<AppState>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)> {
+    if providers::scheduler::enabled() {
+        let catalog = providers::scheduler::catalog().await.map_err(|e| api_error(StatusCode::BAD_GATEWAY, format!("V-Scheduler directory unavailable: {e}")))?;
+        return Ok(Json(serde_json::json!({"models":catalog.models,"suggested":{},"refreshed_at":chrono_like_timestamp()})));
+    }
     // Fetch it if this process has not yet: an empty answer here made every
     // capability read "no model in the refreshed catalog", which is a lie -
     // the catalog had simply never been read.
@@ -4762,11 +4782,11 @@ async fn openrouter_catalog(State(state): State<AppState>) -> Json<Value> {
             "cover_art": providers::openrouter::suggested_model(catalog, Capability::CoverArt),
         })
     });
-    Json(serde_json::json!({
+    Ok(Json(serde_json::json!({
         "models": catalog.map(|catalog| catalog.models),
         "refreshed_at": refreshed_at,
         "suggested": suggested,
-    }))
+    })))
 }
 
 
@@ -4819,6 +4839,7 @@ async fn catalog_describing(state: &AppState, model: &str) -> Result<providers::
 }
 
 async fn catalog_for(state: &AppState) -> Result<providers::openrouter::CapabilityCatalog, String> {
+    if providers::scheduler::enabled() { return providers::scheduler::catalog().await.map_err(|e| format!("V-Scheduler directory unavailable: {e}")); }
     if let Some(catalog) = state.openrouter_catalog.read().await.catalog.clone() {
         return Ok(catalog);
     }
@@ -4856,6 +4877,10 @@ async fn catalog_for(state: &AppState) -> Result<providers::openrouter::Capabili
 }
 
 async fn refresh_openrouter_catalog(State(state): State<AppState>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)> {
+    if providers::scheduler::enabled() {
+        let catalog = providers::scheduler::catalog().await.map_err(|e| api_error(StatusCode::BAD_GATEWAY, format!("V-Scheduler directory unavailable: {e}")))?;
+        return Ok(Json(serde_json::json!({"models":catalog.models,"refreshed_at":chrono_like_timestamp()})));
+    }
     let client = net::client();
     let fetch = |path: &'static str| {
         let client = client.clone();
@@ -4906,13 +4931,15 @@ async fn execute_openrouter_json(
         .to_string();
     request_log::asked(what, &model, authenticated.request.body.to_string().chars().count());
     let started = std::time::Instant::now();
-    let response = net::client()
+    let response = if providers::scheduler::enabled() {
+        providers::scheduler::send(&authenticated.request).await?
+    } else { net::client()
         .post(format!("{}{}", providers::openrouter::API_BASE_URL, authenticated.request.path))
         .bearer_auth(authenticated.api_key)
         .json(&authenticated.request.body)
         .send()
         .await
-        .inspect_err(|error| request_log::failed(what, &model, &error.to_string()))?;
+        .inspect_err(|error| request_log::failed(what, &model, &error.to_string()))? };
     let status = response.status();
     let response = match response.error_for_status_ref() {
         Ok(_) => response,
@@ -4920,6 +4947,11 @@ async fn execute_openrouter_json(
             let text = response.text().await.unwrap_or_default();
             request_log::answered(what, &model, status.as_u16(), started.elapsed().as_secs_f64(), text.chars().count());
             request_log::unusable(what, &model, &error.to_string(), &text);
+            if providers::scheduler::enabled() {
+                let value=serde_json::from_str::<Value>(&text).unwrap_or(Value::Null);
+                let message=value.pointer("/error/message").or_else(||value.get("msg")).and_then(Value::as_str).unwrap_or("provider request failed");
+                anyhow::bail!("V-Scheduler {status}: {}",message.chars().take(1024).collect::<String>());
+            }
             return Err(error.into());
         }
     };
@@ -4928,7 +4960,8 @@ async fn execute_openrouter_json(
         .get("X-Generation-Id")
         .and_then(|value| value.to_str().ok())
         .map(str::to_owned);
-    let body = response.json::<Value>().await?;
+    let mut body = response.json::<Value>().await?;
+    if providers::scheduler::enabled() && authenticated.request.path=="/images/generations" {providers::scheduler::normalize_images(&mut body).await?;}
     request_log::answered(what, &model, status.as_u16(), started.elapsed().as_secs_f64(), body.to_string().chars().count());
     Ok(OpenRouterResponse { body, generation_id })
 }
@@ -5208,8 +5241,9 @@ async fn compose_setup_status(state: &AppState, manager_status: model_manager::M
     if let Value::Object(ref mut fields) = status {
         fields.insert(
             "engine_ready".into(),
-            Value::Bool(state.music_server.health().await),
+            Value::Bool(state.music_server.health().await || (providers::scheduler::enabled() && selected_set_ready && std::env::var("YUE_COMPUTE_ADMITTED").as_deref() != Ok("1"))),
         );
+        fields.insert("engine_standby".into(), Value::Bool(providers::scheduler::enabled() && std::env::var("YUE_COMPUTE_ADMITTED").as_deref() != Ok("1")));
         fields.insert("engine_error".into(), serde_json::to_value(state.engine_start_error.read().await.clone()).unwrap_or(Value::Null));
         fields.insert("engine_id".into(), Value::String(PRIMARY_MUSIC_ENGINE_ID.into()));
         fields.insert("selected_profile_id".into(), serde_json::to_value(selected_profile_id).unwrap_or(Value::Null));
@@ -5789,6 +5823,15 @@ async fn update_karaoke_settings(
     State(state): State<AppState>,
     Json(request): Json<KaraokeSettingsRequest>,
 ) -> Result<Json<lyrics_sync::SyncStatus>, (StatusCode, Json<ApiError>)> {
+    if providers::scheduler::enabled() {
+        if request.provider.is_some_and(|p| !matches!(p,lyrics_sync::AsrProvider::OpenRouter|lyrics_sync::AsrProvider::None)) || request.runtime.is_some() || request.whisper_model.is_some() {
+            return Err(api_error(StatusCode::BAD_REQUEST,"Configure speech recognition through V-Scheduler".into()));
+        }
+        if let Some(Some(model))=&request.openrouter_model {
+            let catalog=providers::scheduler::catalog().await.map_err(|e|api_error(StatusCode::BAD_GATEWAY,e.to_string()))?;
+            catalog.selected(Capability::SpeechToText,model).map_err(|e|api_error(StatusCode::BAD_REQUEST,e.to_string()))?;
+        }
+    }
     let merged = {
         let mut config = state.lyrics_sync_config.write().await;
         if let Some(enabled) = request.enabled { config.enabled = enabled; }
@@ -6108,7 +6151,7 @@ async fn karaoke_words_from_openrouter(
         .clone()
         .filter(|value| !value.trim().is_empty())
         // Only the Whisper family returns timings, and that is what karaoke is.
-        .or_else(|| providers::openrouter::suggested_model(&catalog, Capability::SpeechToText))
+        .or_else(|| (!providers::scheduler::enabled()).then(|| providers::openrouter::suggested_model(&catalog, Capability::SpeechToText)).flatten())
         .unwrap_or_default();
     let bytes = std::fs::read(audio)?;
     let encoded = base64::engine::general_purpose::STANDARD.encode(&bytes);
@@ -6148,6 +6191,7 @@ async fn karaoke_words_from_openrouter(
 /// showed one model while another answered. The provider selection wins,
 /// because that page is where every other capability is chosen.
 async fn assistant_openrouter_model(state: &AppState, config: &AssistantConfig) -> String {
+    if providers::scheduler::enabled() { return config.openrouter_model.clone().unwrap_or_default(); }
     let selected = state
         .configuration
         .read()
@@ -6285,7 +6329,7 @@ async fn assistant_write_stream(
                         return;
                     }
                 };
-                ("https://openrouter.ai/api/v1".to_string(), model, Some(key))
+                (if providers::scheduler::enabled() { providers::scheduler::inference_base() } else { "https://openrouter.ai/api/v1".into() }, model, Some(key))
             }
             AssistantProvider::Managed => {
                 let own_file = config.managed_path.clone().unwrap_or_default();
@@ -7333,6 +7377,7 @@ async fn openrouter_logs() -> Json<Value> {
 }
 
 async fn openrouter_settings() -> Json<Value> {
+    if providers::scheduler::enabled() { return Json(serde_json::json!({"provider":"v-scheduler","configured":providers::scheduler::catalog().await.is_ok()})); }
     let source = credentials::openrouter_source();
     Json(serde_json::json!({
         "configured": source.is_some(),
@@ -9388,6 +9433,7 @@ fn apply_remote_status(job: &mut MusicJob, remote_status: &str, failure: Option<
 }
 
 fn api_error(status: StatusCode, error: String) -> (StatusCode, Json<ApiError>) {
+    let error = if providers::scheduler::enabled() { error.replace("OpenRouter", "V-Scheduler") } else { error };
     (status, Json(ApiError { error }))
 }
 

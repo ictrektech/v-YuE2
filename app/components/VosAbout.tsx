@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useI18n } from '../context/I18nContext';
+import { useRuntimeInfo } from '../services/studioQueries';
 import { vosBase } from '../services/vos';
 
 export function VosAbout() {
   const { language } = useI18n();
   const zh = language === 'zh';
-  const [info, setInfo] = useState<{ version: string; profile: string; image: string }>();
-  useEffect(() => { void fetch('/vos/about').then(r => r.ok ? r.json() : undefined).then(setInfo).catch(() => {}); }, []);
+  const info = useRuntimeInfo().data;
   return <section className="space-y-5 text-sm text-zinc-600 dark:text-zinc-300">
     <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">v-YuE2</h2>
     <p>{zh ? '免费本地歌曲创作与可编辑乐谱工作台。' : 'A free local song studio with editable scores.'}</p>
     <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-2">
-      <dt>{zh ? '应用版本' : 'App version'}</dt><dd>{info?.version ?? __APP_VERSION__}</dd>
+      <dt>{zh ? '应用版本' : 'App version'}</dt><dd>{info?.version ?? '—'}</dd>
       <dt>{zh ? '安装平台' : 'Installation profile'}</dt><dd>{info?.profile ?? '—'}</dd>
       <dt>{zh ? '服务镜像' : 'Service image'}</dt><dd className="break-all">{info?.image?.split('/').at(-1) ?? '—'}</dd>
     </dl>

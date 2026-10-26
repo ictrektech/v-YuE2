@@ -2,11 +2,19 @@
 
 Free, local song creation with lyrics, editable ABC scores, covers, replay and a private song library, adapted from [YuE2 Studio](https://github.com/timoncool/YuE2-Studio).
 
-- Open from VOS: `/app/com.ictrek.v-yue2/`. VOS OAuth2 PKCE authenticates each account; songs, settings and provider keys are isolated per account.
+- Open from VOS: `/app/com.ictrek.v-yue2/`. VOS OAuth2 PKCE authenticates each account; songs and settings are isolated per account. The app has one flat VOS navigation entry; its displayed version comes from the installed package runtime.
 - No model weights in the app package or service image. Confirm the model licenses, choose a model set, and request a download. Model administrators download selected files through V-Scheduler from [`vivibit/YuE2-Studio-GGUF`](https://modelscope.cn/models/vivibit/YuE2-Studio-GGUF).
 - V-Scheduler owns shared downloads and snapshots; v-YuE2 mounts its model directory read-only, verifies the pinned SHA-256 and links the chosen files into the account workspace. Remove shared files through V-Scheduler. Models, songs and settings remain in persistent storage after restart.
 - Chinese and English follow VOS language changes without reopening the app. Program updates use VOS App Store, not the upstream desktop updater. Upstream telemetry/news are disabled.
 - Core creation, score editing, replay, library and browser MIDI editing are supported. Desktop executable/folder pickers, network sharing, CLI agents, VST hosts and LoRA training are not exposed as VOS browser operations. Optional upstream tools must not be presented as commercially licensed models.
+
+## Providers and local compute
+
+The Providers page selects models discovered from V-Scheduler for writing, cover generation and speech recognition. Only models declaring both the required capability and the supported synchronous API appear. Configure upstreams and provider credentials in V-Scheduler; the VOS app neither stores OpenRouter keys nor calls OpenRouter directly. Model requests use the current VOS user's identity, retaining private-model visibility and gateway authorization. Cloud models do not consume local compute permits; local gateway models follow V-Scheduler policy.
+
+Native YuE2 jobs require a trusted V-Scheduler binding, a calibrated executor and a claimed resource permit before the native engine starts. Admission waits use V-Scheduler priorities; active jobs renew and verify their lease, receive stop requests, and return resources only after the native process group exits and model memory is unloaded. Missing approvals, unavailable scheduling, unsupported model combinations and out-of-range input are rejected rather than executed directly. Idle account services do not load the engine. Interrupted receipts stay in a private journal for stop/release reconciliation.
+
+The first native calibration targets `amd`, Q8 backbone + F32 VAE + companion v9, one job/batch, 8 threads, a fixed 8192-token context and strict unload. Bounds are supplied by the trusted calibration; the intended validation envelope is at most 120 seconds, 32 steps, 1024 prompt Unicode characters and 4096 lyric Unicode characters. LoRA, custom sampling, score-to-audio variants and uncalibrated local transcription are not covered by that executor. Other profiles and model sets require their own calibration; model readiness alone never authorizes compute. The container also enforces 8 CPU / 32 GiB RAM limits.
 
 ## Model licenses
 
