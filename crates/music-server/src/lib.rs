@@ -4461,9 +4461,10 @@ async fn pick_engine_executable() -> Result<Json<Value>, (StatusCode, Json<ApiEr
     })))
 }
 
-/// A job is running and the engine the studio started is still a running process.
+/// A submitted job can still be queued while the engine loads its weights.
+/// Keep that live process through slow first loads as well as running steps.
 async fn engine_at_work(state: &AppState) -> bool {
-    let working = state.jobs.read().await.values().any(|job| matches!(job.status, MusicJobStatus::Running));
+    let working = state.jobs.read().await.values().any(|job| matches!(job.status, MusicJobStatus::Queued | MusicJobStatus::Running));
     working && state.engine.lock().await.as_mut().is_some_and(|engine| engine.process_alive())
 }
 
