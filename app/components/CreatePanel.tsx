@@ -80,6 +80,7 @@ type SetupStatus = {
   ready?: boolean;
   profile_files?: ProfileFiles | null;
   engine_ready?: boolean;
+  engine_standby?: boolean;
   selected_profile_id?: string | null;
   selected_component_ids?: string[] | null;
   effective_max_batch?: number;
@@ -510,11 +511,15 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
 
 
   useEffect(() => {
+    if (isVos && setup?.engine_standby !== false) {
+      setCatalog(null);
+      return;
+    }
     void fetch('/v1/local-models/music')
       .then(response => (response.ok ? response.json() : Promise.reject(new Error())))
       .then((body: { catalog?: EngineCatalog }) => setCatalog(body.catalog ?? null))
       .catch(() => setCatalog(null));
-  }, [setup?.engine_ready, setup?.selected_profile_id]);
+  }, [setup?.engine_ready, setup?.engine_standby, setup?.selected_profile_id]);
 
 
   /** Fills the form from a stored request: a reused track, a file, an example. */

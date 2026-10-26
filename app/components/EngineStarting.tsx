@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Check, ChevronDown, Loader2, ScrollText } from 'lucide-react';
 import { useI18n } from '../context/I18nContext';
+import { isVos } from '../services/vos';
 
 /**
  * The engine coming up.
@@ -33,7 +34,7 @@ export const EngineStarting: React.FC<{ onReady?: () => void }> = ({ onReady }) 
 
   useEffect(() => {
     const read = async () => {
-      await fetch('/v1/engine/logs')
+      if (!isVos) await fetch('/v1/engine/logs')
         .then((response) => (response.ok ? response.json() : Promise.reject(new Error())))
         .then((body: { lines?: string[] }) => setLines((body.lines ?? []).slice(-40)))
         .catch(() => undefined);
