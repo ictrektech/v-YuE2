@@ -1,3 +1,4 @@
+import { studioStorage } from '../services/storage';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { BookOpen, CheckSquare, ChevronDown, Move, Square, X } from 'lucide-react';
@@ -25,7 +26,7 @@ interface Geometry {
 
 function load<T>(key: string, fallback: T): T {
   try {
-    const raw = localStorage.getItem(key);
+    const raw = studioStorage.getItem(key);
     if (raw) return JSON.parse(raw) as T;
   } catch {
     // A blocked or corrupt entry only costs the remembered layout.
@@ -35,7 +36,7 @@ function load<T>(key: string, fallback: T): T {
 
 function save(key: string, value: unknown) {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    studioStorage.setItem(key, JSON.stringify(value));
   } catch {
     // The layout is a convenience, not state worth failing over.
   }

@@ -1,3 +1,4 @@
+import { studioStorage } from './storage';
 /**
  * What the visualiser shows and where, shared by the studio window, the
  * visualiser's own window and the agent: one state kept alike in every window
@@ -46,7 +47,7 @@ const DEFAULT: VisualizerState = {
 
 function load(): VisualizerState {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORE) ?? 'null') as Partial<VisualizerState> | null;
+    const saved = JSON.parse(studioStorage.getItem(STORE) ?? 'null') as Partial<VisualizerState> | null;
     // where it is shown and fullscreen belong to this run
     return { ...DEFAULT, ...(saved ?? {}), place: 'closed', fullscreen: false };
   } catch {
@@ -62,7 +63,7 @@ const channel = typeof BroadcastChannel === 'undefined' ? null : new BroadcastCh
 function publish(next: VisualizerState, share: boolean): void {
   state = next;
   try {
-    localStorage.setItem(STORE, JSON.stringify(state));
+    studioStorage.setItem(STORE, JSON.stringify(state));
   } catch {
     // kept for this run only
   }

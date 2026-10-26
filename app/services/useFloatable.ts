@@ -1,3 +1,4 @@
+import { studioStorage } from './storage';
 import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 
 /**
@@ -16,7 +17,7 @@ export interface Floatable {
 
 function remembered(key: string): string | null {
   try {
-    return localStorage.getItem(key);
+    return studioStorage.getItem(key);
   } catch {
     return null;
   }
@@ -24,7 +25,7 @@ function remembered(key: string): string | null {
 
 function remember(key: string, value: string): void {
   try {
-    localStorage.setItem(key, value);
+    studioStorage.setItem(key, value);
   } catch {
     // a panel that forgets its place still works
   }

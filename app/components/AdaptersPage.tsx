@@ -1,3 +1,4 @@
+import { isVos } from '../services/vos';
 import { NumberField } from './NumberField';
 import { saveFile } from '../services/saveFile';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -602,7 +603,7 @@ export function AdaptersPage(): React.ReactElement {
         </div>
 
         <div role="tablist" className="flex rounded-lg bg-zinc-100 p-1 dark:bg-white/5">
-          {(['installed', 'catalog', 'hub', 'training'] as Tab[]).map(value => (
+          {((isVos ? ['installed'] : ['installed', 'catalog', 'hub', 'training']) as Tab[]).map(value => (
             <button
               key={value}
               type="button"
@@ -654,10 +655,10 @@ export function AdaptersPage(): React.ReactElement {
                   {importing ? <Loader2 size={14} className="animate-spin" /> : <FolderOpen size={14} />}
                   {importing ? t('adaptersImporting') : t('adaptersImport')}
                 </button>
-                <button type="button" onClick={() => void importFolder()} disabled={importing} className={`${PRIMARY} shrink-0`} title={t('adaptersFolderHint')}>
+                {!isVos && <button type="button" onClick={() => void importFolder()} disabled={importing} className={`${PRIMARY} shrink-0`} title={t('adaptersFolderHint')}>
                   <FolderOpen size={14} />
                   {t('adaptersFolder')}
-                </button>
+                </button>}
                 <input
                   ref={filePicker}
                   type="file"

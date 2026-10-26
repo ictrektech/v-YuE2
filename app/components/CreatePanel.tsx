@@ -1,3 +1,4 @@
+import { studioStorage } from '../services/storage';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { libraryChanged, useActivity, useAssistantStatus, useSetupStatus, type ActivityEntry } from '../services/studioQueries';
 import { hasSungLines, karaokeReason } from '../services/karaoke';
@@ -108,14 +109,14 @@ const DEFAULT_DURATION_SECONDS = 130;
 const DRAFT_KEY = 'studio.createDraft';
 function keptDraft(): Record<string, string> {
   try {
-    const kept: unknown = JSON.parse(window.localStorage.getItem(DRAFT_KEY) ?? '{}');
+    const kept: unknown = JSON.parse(studioStorage.getItem(DRAFT_KEY) ?? '{}');
     return kept && typeof kept === 'object' ? (kept as Record<string, string>) : {};
   } catch { return {}; }
 }
 
 const keptFormat = (): YueOutputFormat => {
   try {
-    const kept = window.localStorage.getItem('studio.createFormat');
+    const kept = studioStorage.getItem('studio.createFormat');
     return kept === 'mp3' || kept === 'wav32' ? kept : 'flac';
   } catch { return 'flac'; }
 };
@@ -336,7 +337,7 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
   const [style, setStyle] = useState(() => keptDraft().style ?? '');
   const [lyrics, setLyrics] = useState(() => keptDraft().lyrics ?? '');
   useEffect(() => {
-    try { window.localStorage.setItem(DRAFT_KEY, JSON.stringify({ name, style, lyrics })); } catch { /* kept until a reload */ }
+    try { studioStorage.setItem(DRAFT_KEY, JSON.stringify({ name, style, lyrics })); } catch { /* kept until a reload */ }
   }, [name, style, lyrics]);
   const [abc, setAbc] = useState('');
   const [cot, setCot] = useState<YueCot | ''>('');
@@ -347,13 +348,13 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
   // a song made longer once is not cut at 2:10 after the next start.
   const [duration, setDuration] = useState(() => {
     try {
-      const kept = Number(window.localStorage.getItem('studio.createDuration'));
+      const kept = Number(studioStorage.getItem('studio.createDuration'));
       return kept >= 10 && kept <= MAX_DURATION_SECONDS ? String(kept) : String(DEFAULT_DURATION_SECONDS);
     } catch { return String(DEFAULT_DURATION_SECONDS); }
   });
   const chooseDuration = (value: string) => {
     setDuration(value);
-    try { window.localStorage.setItem('studio.createDuration', value); } catch { /* kept until a reload */ }
+    try { studioStorage.setItem('studio.createDuration', value); } catch { /* kept until a reload */ }
   };
   const [lmBatch, setLmBatch] = useState('');
   const [synthBatch, setSynthBatch] = useState('');
@@ -382,7 +383,7 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
   const [format, setFormat] = useState<YueOutputFormat>(keptFormat);
   const chooseFormat = (value: YueOutputFormat) => {
     setFormat(value);
-    try { window.localStorage.setItem('studio.createFormat', value); } catch { /* kept until a reload */ }
+    try { studioStorage.setItem('studio.createFormat', value); } catch { /* kept until a reload */ }
   };
 
   const setupQuery = useSetupStatus<SetupStatus>();

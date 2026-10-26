@@ -12,12 +12,14 @@
  * dev server, and from a plain browser tab.
  */
 
+import { isVos, vosBase, vosToken, resetVosSession } from './vos';
 const DEFAULT_BASE = 'http://127.0.0.1:8791';
 
 /** Paths owned by the studio service; everything else is left untouched. */
-const SERVICE_PREFIXES = ['/v1/', '/setup/', '/engine/', '/health'];
+const SERVICE_PREFIXES = ['/v1/', '/setup/', '/engine/', '/health', '/mcp', '/vos/'];
 
 function resolveBase(): string {
+  if (isVos) return vosBase;
   const override = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_STUDIO_API_BASE;
   if (override) return override.replace(/\/$/, '');
   // Only the desktop window's own pages live on another host than the service.
@@ -31,6 +33,7 @@ function resolveBase(): string {
 export const API_BASE = resolveBase();
 
 export function apiUrl(path: string): string {
+  if (isVos && path.startsWith(vosBase + '/')) return path;
   if (!API_BASE || !path.startsWith('/')) return path;
   return `${API_BASE}${path}`;
 }
@@ -47,7 +50,20 @@ function isServicePath(path: string): boolean {
 export function installApiBase(): void {
   if (!API_BASE || typeof window === 'undefined') return;
   const original = window.fetch.bind(window);
-  window.fetch = (input: RequestInfo | URL, init?: RequestInit) => {
+  window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    if (isVos) {
+      const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url, location.href);
+      const local = url.origin === location.origin;
+      if (local && (isServicePath(url.pathname) || url.pathname.startsWith(vosBase + '/'))) {
+        if (isServicePath(url.pathname)) url.pathname = vosBase + url.pathname;
+        const headers = new Headers(init?.headers ?? (input instanceof Request ? input.headers : undefined));
+        headers.set('Authorization', `Bearer ${await vosToken()}`);
+        const request = input instanceof Request ? new Request(url.href, input) : url.href;
+        const response = await original(request, { ...init, headers });
+        if (response.status === 401) resetVosSession();
+        return response;
+      }
+    }
     if (typeof input === 'string' && input.startsWith('/') && isServicePath(input)) {
       return original(apiUrl(input), init);
     }

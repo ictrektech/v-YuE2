@@ -1,0 +1,105 @@
+{
+  "modelscope_repo": "vivibit/YuE2-Studio-GGUF",
+  "files": [
+    {
+      "id": "backbone-bf16",
+      "kind": "backbone",
+      "path": "YuE2-3B-BF16.gguf",
+      "size": 7166072352,
+      "sha256": "668ca9ffa4622449916aae5068b5737363e7ec186a824cd3d7a1a8a95269f166",
+      "repo": "Serveurperso/YuE2-GGUF",
+      "revision": "e630f2b8f6aedf8254c3186438633c1b5eeaf80a",
+      "license": "CC-BY-NC-4.0; YuE2 backbone/VAE individual creator permission applies"
+    },
+    {
+      "id": "backbone-q8",
+      "kind": "backbone",
+      "path": "YuE2-3B-Q8_0.gguf",
+      "size": 3810232064,
+      "sha256": "41121ce97786d7795a325bcf123ca196956c03bb252c9e75384cfc1f2fc19e6b",
+      "repo": "Serveurperso/YuE2-GGUF",
+      "revision": "e630f2b8f6aedf8254c3186438633c1b5eeaf80a",
+      "license": "CC-BY-NC-4.0; YuE2 backbone/VAE individual creator permission applies"
+    },
+    {
+      "id": "backbone-q6",
+      "kind": "backbone",
+      "path": "YuE2-3B-Q6_K.gguf",
+      "size": 2943331072,
+      "sha256": "42068d5e57713df11b9f6a5a3751072d9bbefe231d1d088f9c100e026ffa4ef9",
+      "repo": "Serveurperso/YuE2-GGUF",
+      "revision": "e630f2b8f6aedf8254c3186438633c1b5eeaf80a",
+      "license": "CC-BY-NC-4.0; YuE2 backbone/VAE individual creator permission applies"
+    },
+    {
+      "id": "backbone-q5",
+      "kind": "backbone",
+      "path": "YuE2-3B-Q5_K_M.gguf",
+      "size": 2622936832,
+      "sha256": "cd3efd250b734a229172800f08f33a893ad1f66b521666e176cdae4a0729b281",
+      "repo": "Serveurperso/YuE2-GGUF",
+      "revision": "e630f2b8f6aedf8254c3186438633c1b5eeaf80a",
+      "license": "CC-BY-NC-4.0; YuE2 backbone/VAE individual creator permission applies"
+    },
+    {
+      "id": "vae-f32",
+      "kind": "vae",
+      "path": "YuE2-Vae-F32.gguf",
+      "size": 530497344,
+      "sha256": "93e49dfb1970e89ad64cacb17cf13b5d05f6bb30ef7ed3adae3050bcb728638a",
+      "repo": "Serveurperso/YuE2-GGUF",
+      "revision": "e630f2b8f6aedf8254c3186438633c1b5eeaf80a",
+      "license": "CC-BY-NC-4.0; YuE2 backbone/VAE individual creator permission applies"
+    },
+    {
+      "id": "transcriber-f32",
+      "kind": "transcriber",
+      "path": "SheetSage2-F32.gguf",
+      "size": 228738176,
+      "sha256": "4988c01b64c2812dd71eb89a9ab1937a3385ff2ba869bf495ccb69af4ec744cd",
+      "repo": "Serveurperso/YuE2-GGUF",
+      "revision": "e630f2b8f6aedf8254c3186438633c1b5eeaf80a",
+      "license": "CC-BY-NC-4.0; YuE2 backbone/VAE individual creator permission applies"
+    },
+    {
+      "id": "transcriber-q8",
+      "kind": "transcriber",
+      "path": "SheetSage2-Q8_0.gguf",
+      "size": 105629856,
+      "sha256": "95d8fa8761753b4833782a52b68d5c0afa3bd3cfbc03d3dcbbf8ded0c13f611e",
+      "repo": "Serveurperso/YuE2-GGUF",
+      "revision": "e630f2b8f6aedf8254c3186438633c1b5eeaf80a",
+      "license": "CC-BY-NC-4.0; YuE2 backbone/VAE individual creator permission applies"
+    },
+    {
+      "id": "mert-f32",
+      "kind": "transcriber-base",
+      "path": "MERT-v2-FullSong-F32.gguf",
+      "size": 2529780448,
+      "sha256": "695b247660405474fffa7bab4d019227325b8d169f96aaa96bad488033fec637",
+      "repo": "Serveurperso/YuE2-GGUF",
+      "revision": "e630f2b8f6aedf8254c3186438633c1b5eeaf80a",
+      "license": "CC-BY-NC-4.0; YuE2 backbone/VAE individual creator permission applies"
+    },
+    {
+      "id": "mert-q8",
+      "kind": "transcriber-base",
+      "path": "MERT-v2-FullSong-Q8_0.gguf",
+      "size": 902283712,
+      "sha256": "35a6032ec7e8123c02becdefc7bfe10a3adb33faa8a1951dc0af864b4494b8ef",
+      "repo": "Serveurperso/YuE2-GGUF",
+      "revision": "e630f2b8f6aedf8254c3186438633c1b5eeaf80a",
+      "license": "CC-BY-NC-4.0; YuE2 backbone/VAE individual creator permission applies"
+    },
+    {
+      "id": "companion-v9",
+      "kind": "companion",
+      "path": "nar_lora_joint_v9.safetensors",
+      "size": 140560592,
+      "sha256": "585f303da1d5252d228d1e8ac6d4c4d11d970df9297406935cc8bdafa49cfa7e",
+      "repo": "Mothersuperior/yue2-mothersuperior-realaudio-tokenizer-v4",
+      "revision": "e2e63d859f3af879baf1b4d4e9f22d1eeda6fde5",
+      "license": "CC-BY-NC-4.0"
+    }
+  ]
+}

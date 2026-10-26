@@ -1,0 +1,7 @@
+configs:
+  - name: MODEL_HUB_SHARED_MODELS_PATH
+    type: path
+    title: {zh-CN: V-Scheduler 共享模型目录, en: V-Scheduler Shared Models Path}
+    description: {zh-CN: 与 V-Scheduler 使用同一目录；模型共享，作品和配置按账户隔离。, en: Use the same directory as V-Scheduler. Models are shared; songs and settings are private per account.}
+    default: /data/vos_workspace/model_hub
+    hints: [com.ictrek.model.storage]

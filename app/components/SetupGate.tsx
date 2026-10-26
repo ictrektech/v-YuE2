@@ -1,3 +1,4 @@
+import { isVos } from '../services/vos';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { openRouterSettingsChanged } from '../services/studioQueries';
 import { Check, ChevronDown, Download, FolderDown, FolderOpen, Loader2, Square, Trash2, X } from 'lucide-react';
@@ -678,7 +679,7 @@ const WhereItRuns: React.FC<{ trainingVram: number | null }> = ({ trainingVram }
 };
 
 export const SetupGate: React.FC<{ onReady?: () => void; mode?: 'first-run' | 'settings'; focus?: string | null }> = ({ onReady, mode = 'first-run', focus = null }) => {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [status, setStatus] = useState<SetupStatus | null>(null);
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [choice, setChoice] = useState<Record<string, string>>({});
@@ -785,8 +786,9 @@ export const SetupGate: React.FC<{ onReady?: () => void; mode?: 'first-run' | 's
   // counted.
   const [starting, setStarting] = useState(false);
   // The start screen's statistics checkbox: checked, and sent with the first download (it counts as seen).
-  const [telemetryOn, setTelemetryOn] = useState(true);
+  const [telemetryOn, setTelemetryOn] = useState(!isVos);
   const [telemetryPreview, setTelemetryPreview] = useState(false);
+  const [vosAdvanced, setVosAdvanced] = useState(false);
   const download = async () => {
     if (!chosenIds || starting) return;
     setError(null);
@@ -823,9 +825,55 @@ export const SetupGate: React.FC<{ onReady?: () => void; mode?: 'first-run' | 's
     await refresh().catch(() => undefined);
   };
 
+  if (isVos) {
+    const zh = language === 'zh';
+    const downloading = active?.status === 'downloading';
+    const failed = active?.status === 'failed' || active?.status === 'cancelled';
+    return <main className="h-full overflow-y-auto bg-white p-6 text-zinc-900 dark:bg-suno dark:text-white">
+      <section className="mx-auto max-w-2xl space-y-6 py-8">
+        <h1 className="text-3xl font-semibold">{zh ? '准备音乐创作' : 'Prepare your music studio'}</h1>
+        <p className="text-zinc-500 dark:text-zinc-400">{zh ? '点击“准备模型”，我们会根据本机硬件自动准备创作和转谱需要的文件。下载完成后即可在本机生成歌曲。' : 'Select Prepare models. We automatically prepare the files needed for song creation and score transcription based on this machine’s hardware. Songs generate locally after setup.'}</p>
+        <div className="rounded-2xl border border-zinc-200 p-5 space-y-3 dark:border-white/10">
+          <h2 className="font-medium">{zh ? '本机推荐方案' : 'Recommended for this machine'}</h2>
+          <p className="text-sm text-zinc-500">{status?.hardware?.gpuName || (zh ? 'CPU 本地运行' : 'Local CPU')}{status?.hardware?.totalVramGb ? ` · ${status.hardware.totalVramGb.toFixed(1)} GB` : ''}</p>
+          <p className="text-sm">{recommended ? `${profileLabel(t, recommended)} · ${bytes(recommended.total_bytes)}` : (zh ? '正在检查硬件和模型状态…' : 'Checking hardware and model status…')}</p>
+          <p className="text-sm text-zinc-500">{zh ? '来源：vivibit / ModelScope；下载与共享文件由 V-Scheduler 管理。镜像不含模型，模型管理账户点击后才开始下载。' : 'Source: vivibit / ModelScope. V-Scheduler manages downloads and shared files. No models are bundled; a model administrator starts the download explicitly.'}</p>
+        </div>
+        {error && <p role="alert" className="rounded-xl bg-rose-500/10 p-4 text-sm text-rose-600 dark:text-rose-300">{error}</p>}
+        {failed && active?.error && <p role="alert" className="rounded-xl bg-rose-500/10 p-4 text-sm text-rose-600 dark:text-rose-300">{active.error}</p>}
+        {downloading && <div className="space-y-3" aria-live="polite">
+          <p className="flex items-center gap-2"><Loader2 className="animate-spin" size={18} />{zh ? '正在准备模型' : 'Preparing models'} · {progress.toFixed(1)}%</p>
+          <progress aria-label={zh ? '模型准备进度' : 'Model preparation progress'} className="w-full accent-pink-500" value={progress} max={100} />
+          <p className="text-sm text-zinc-500">{bytes(active.downloaded_bytes)} / {bytes(active.total_bytes)}</p>
+        </div>}
+        <div className="flex flex-wrap gap-3">
+          {downloading ? <button className="rounded-xl border border-zinc-400 px-5 py-3" onClick={() => void cancel()}>{zh ? '取消准备' : 'Cancel preparation'}</button> : missing.length > 0 || !chosenIds ? <button
+            className="inline-flex items-center gap-2 rounded-xl bg-pink-600 px-5 py-3 font-semibold text-white disabled:opacity-40"
+            disabled={starting || !chosenIds} onClick={() => void download()}>
+            {starting ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
+            {failed ? (zh ? '重新准备模型' : 'Retry preparation') : (zh ? '准备模型' : 'Prepare models')}
+          </button> : canApply ? <button className="rounded-xl bg-pink-600 px-5 py-3 font-semibold text-white" onClick={() => void apply()}>{zh ? '使用已准备的模型' : 'Use prepared models'}</button> : <p className="flex items-center gap-2 text-emerald-600"><Check size={18} />{status?.engine_ready ? (zh ? '模型已就绪' : 'Models ready') : (zh ? '文件已准备，正在启动本地引擎…' : 'Files prepared. Starting the local engine…')}</p>}
+          <button className="rounded-xl border border-zinc-300 px-5 py-3 dark:border-zinc-700" onClick={() => setVosAdvanced(!vosAdvanced)} aria-expanded={vosAdvanced}>{zh ? '高级选项' : 'Advanced options'}</button>
+        </div>
+        {vosAdvanced && <div className="rounded-xl border border-zinc-200 p-5 space-y-3 dark:border-zinc-700">
+          <label className="block text-sm" htmlFor="vos-model-set">{zh ? '模型精度（通常无需修改）' : 'Model precision (usually no change needed)'}</label>
+          <select id="vos-model-set" className="w-full rounded-lg border border-zinc-300 bg-transparent p-3 dark:border-zinc-700" value={catalog?.profiles.find(p => [...p.components].sort().join('|') === chosenKey)?.id || ''} disabled={downloading} onChange={e => {
+            const profile = catalog?.profiles.find(p => p.id === e.target.value); if (!profile) return;
+            const picked: Record<string, string> = {}; for (const id of profile.components) { const component = catalog?.components.find(c => c.id === id); if (component) picked[component.kind] = id; } setChoice(picked);
+          }}>
+            {(catalog?.profiles ?? []).filter(p => p.installable).map(p => <option key={p.id} value={p.id}>{profileLabel(t, p)} · {bytes(p.total_bytes)}</option>)}
+          </select>
+          <p className="text-sm text-zinc-500">{zh ? '共享模型的删除和下载任务管理请在 V-Scheduler 中完成。' : 'Manage shared model deletion and download tasks in V-Scheduler.'}</p>
+        </div>}
+        <p className="text-xs leading-5 text-zinc-500">{zh ? '各模型原始许可适用。YuE2 的个人创作者特许不自动覆盖企业商用或转谱等附加模型。' : 'Original model licenses apply. YuE2’s individual-creator permission does not automatically cover company commercial use or additional transcription models.'}</p>
+      </section>
+    </main>;
+  }
+
   return (
     <div className="flex h-full w-full justify-center overflow-y-auto bg-white px-5 py-10 dark:bg-suno">
       <div className="w-full max-w-2xl">
+        {isVos && <p className="mb-5 rounded-xl border border-zinc-300 p-4 text-sm dark:border-zinc-700">{language === 'zh' ? '模型由 V-Scheduler 从 vivibit / ModelScope 按需下载，安装包不含权重。下载需要模型管理权限；共享模型的删除与任务管理请在 V-Scheduler 完成。各模型原始许可适用。' : 'Models download on demand through V-Scheduler from vivibit on ModelScope. No weights are bundled. Model management permission is required; manage shared files and tasks in V-Scheduler. Original model licenses apply.'}</p>}
         {mode === 'first-run' && (
           <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-pink-500">
             <span className="h-2 w-2 rounded-full bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.75)]" />

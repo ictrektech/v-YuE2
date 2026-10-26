@@ -1,3 +1,4 @@
+import { isVos } from '../services/vos';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Copy, Download, FileAudio, KeyboardMusic, Loader2, Music, Play, RefreshCw, Scissors, Search, SlidersHorizontal, Wand2 } from 'lucide-react';
 import { useI18n } from '../context/I18nContext';
@@ -201,6 +202,33 @@ export function StudioToolsPanel({ initialSongId }: { initialSongId?: string | n
   const running = Boolean(run && !run.done);
   const percent = Math.round((run?.progress ?? 0) * 100);
   const download = status?.download;
+
+  if (isVos) return (
+    <main className="flex-1 overflow-y-auto bg-white p-6 dark:bg-suno">
+      <div className="mx-auto max-w-4xl space-y-6">
+        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-white">{t('studioTools')}</h1>
+        <section className={CARD}>
+          <h2 className="font-semibold text-zinc-900 dark:text-white">{t('midiEdTitle')}</h2>
+          <p className="my-3 text-sm text-zinc-500">{t('midiEdIntro')}</p>
+          <button className={CONTROL} onClick={() => setMidiEditorOpen(true)}>{t('midiEdOpen')}</button>
+          {midiEditorOpen && <MidiEditor source={{ kind: 'new' }} onClose={() => setMidiEditorOpen(false)} />}
+        </section>
+        <section className={CARD}>
+          <h2 className="font-semibold text-zinc-900 dark:text-white">{t('audioEditor')}</h2>
+          <p className="my-3 text-sm text-zinc-500">{t('audioEditorIntro')}</p>
+          <select className={CONTROL} value={songId ?? ''} onChange={e => setSongId(e.target.value)}>
+            <option value="">{t('searchYourSongs')}</option>
+            {songs.map(song => <option key={song.id} value={song.id}>{song.title}</option>)}
+          </select>
+          <button disabled={!songId} className={`${CONTROL} mt-3 disabled:opacity-40`} onClick={() => {
+            if (!songId) return;
+            const audio = apiUrl(`/v1/library/media/${encodeURIComponent(songId)}`);
+            void openExternal(apiUrl(`/editor/index.html?audioUrl=${encodeURIComponent(audio)}`));
+          }}>{t('audioEditor')}</button>
+        </section>
+      </div>
+    </main>
+  );
 
   return (
     <div className="flex-1 overflow-y-auto bg-white px-5 py-6 dark:bg-suno md:px-8">

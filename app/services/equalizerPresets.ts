@@ -1,3 +1,4 @@
+import { studioStorage } from './storage';
 import { creator, parser, type EqfPreset } from 'winamp-eqf';
 import { EQ_BANDS, EQ_RANGE_DB } from './equalizerCurve';
 
@@ -72,7 +73,7 @@ const OWN = 'studio:equalizer-own-presets';
 
 export function ownPresets(): EqPreset[] {
   try {
-    const list = JSON.parse(localStorage.getItem(OWN) ?? '[]') as EqPreset[];
+    const list = JSON.parse(studioStorage.getItem(OWN) ?? '[]') as EqPreset[];
     return Array.isArray(list)
       ? list.filter((entry) => typeof entry?.name === 'string' && Array.isArray(entry.gains) && entry.gains.length === EQ_BANDS.length)
       : [];
@@ -82,7 +83,7 @@ export function ownPresets(): EqPreset[] {
 }
 
 export function storeOwnPresets(presets: EqPreset[]): void {
-  localStorage.setItem(OWN, JSON.stringify(presets));
+  studioStorage.setItem(OWN, JSON.stringify(presets));
   window.dispatchEvent(new CustomEvent(OWN_CHANGED));
 }
 

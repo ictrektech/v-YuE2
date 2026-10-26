@@ -38,8 +38,8 @@ jobs:
           cache: npm
           cache-dependency-path: app/package-lock.json
       - run: npm ci --no-audit --no-fund
-      - name: Build
-        run: npm run build
+      - name: Build VOS frontend
+        run: VITE_VOS=true npm run build
       - name: Types
         run: npx tsc --noEmit -p .
       - name: Tests

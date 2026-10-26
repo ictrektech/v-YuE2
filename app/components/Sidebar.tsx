@@ -1,6 +1,7 @@
+import { isVos } from '../services/vos';
 import React, { useEffect, useState } from 'react';
 import { useOpenRouterSettings, useSetupStatus } from '../services/studioQueries';
-import { Disc, Layers, Library, Moon, Newspaper, ScrollText, Search, SlidersHorizontal, Sun } from 'lucide-react';
+import { Disc, Download, Layers, Library, Moon, Newspaper, ScrollText, Search, SlidersHorizontal, Sun } from 'lucide-react';
 import { View } from '../types';
 import { useI18n } from '../context/I18nContext';
 import { profileLabel } from '../services/modelCatalog';
@@ -95,7 +96,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   journalOpen = false,
   onToggleJournal,
 }) => {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const portable = useSetupStatus<{ portable?: boolean }>().data?.portable;
 
   return (
@@ -108,14 +109,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="mb-6 flex min-w-0 items-center justify-between gap-2 px-3">
           <div className="flex min-w-0 items-center gap-3">
             {/* The studio mark: the application icon. */}
-            <button type="button" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] shadow-lg transition-transform hover:scale-105" onClick={() => onNavigate('create')} title="YuE2 Studio">
+            <button type="button" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] shadow-lg transition-transform hover:scale-105" onClick={() => onNavigate('create')} title="v-YuE2">
               {/* The application's own icon, so the window and the taskbar
                   show the same mark. */}
-              <img src="/brand/yue2.png" alt="" className="h-10 w-10 rounded-[11px]" />
+              <img src={`${import.meta.env.BASE_URL}brand/yue2.png`} alt="" className="h-10 w-10 rounded-[11px]" />
             </button>
             {isOpen && (
-              <span className="flex min-w-0 flex-col" title="YuE2 Studio">
-                <span className="text-[13px] font-bold leading-[1.15] text-zinc-900 dark:text-white">YuE2 Studio</span>
+              <span className="flex min-w-0 flex-col" title="v-YuE2">
+                <span className="text-[13px] font-bold leading-[1.15] text-zinc-900 dark:text-white">v-YuE2</span>
                 <span className="flex flex-wrap gap-x-1.5 text-[10px] font-medium leading-4 text-zinc-500 dark:text-zinc-400"><span>v{__APP_VERSION__}</span>{portable && <span>{t('portableEdition')}</span>}</span>
               </span>
             )}
@@ -132,10 +133,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <nav className="flex min-h-0 w-full flex-1 flex-col gap-2 overflow-y-auto px-3 scrollbar-hide">
           <NavItem icon={<Disc size={20} />} label={t('create')} active={currentView === 'create'} onClick={() => onNavigate('create')} isExpanded={isOpen} />
           <NavItem icon={<Library size={20} />} label={t('library')} active={currentView === 'library'} onClick={() => onNavigate('library')} isExpanded={isOpen} />
+          {isVos && <NavItem icon={<Download size={20} />} label={language === 'zh' ? '准备模型' : 'Prepare models'} onClick={onOpenSettings} isExpanded={isOpen} />}
           <NavItem icon={<Search size={20} />} label={t('search')} active={currentView === 'search'} onClick={() => onNavigate('search')} isExpanded={isOpen} />
           <NavItem icon={<Layers size={20} />} label={t('adaptersNav')} active={currentView === 'adapters'} onClick={() => onNavigate('adapters')} isExpanded={isOpen} />
           <NavItem icon={<SlidersHorizontal size={20} />} label={t('studioTools')} active={currentView === 'tools'} onClick={() => onNavigate('tools')} isExpanded={isOpen} />
-          <NavItem icon={<Newspaper size={20} />} label={t('news')} active={currentView === 'news'} onClick={() => onNavigate('news')} isExpanded={isOpen} />
+          {!isVos && <NavItem icon={<Newspaper size={20} />} label={t('news')} active={currentView === 'news'} onClick={() => onNavigate('news')} isExpanded={isOpen} />}
           {onToggleJournal && <NavItem icon={<ScrollText size={20} />} label={t('journal')} active={journalOpen} opens={journalOpen} onClick={onToggleJournal} isExpanded={isOpen} />}
 
           <div className="mt-auto flex flex-col gap-2">

@@ -1,0 +1,226 @@
+{
+  "id": "com.ictrek.v-yue2",
+  "name": {
+    "zh-CN": "v-YuE2",
+    "en": "v-YuE2"
+  },
+  "description": {
+    "zh-CN": "免费本地歌曲创作工作台，支持歌词、可编辑乐谱和作品库。模型由用户通过 V-Scheduler 下载，原始许可适用。",
+    "en": "Free local song studio with lyrics, editable scores and a library. Users download models through V-Scheduler; original model licenses apply."
+  },
+  "version": "__APP_VERSION__",
+  "author": "ictrek",
+  "category": [
+    "ai"
+  ],
+  "icon": "icon.png",
+  "arch": [
+    "amd64",
+    "arm64"
+  ],
+  "frontend": {
+    "enabled": true,
+    "basePath": "/app/com.ictrek.v-yue2"
+  },
+  "platform": {
+    "version": ">=3.0.0"
+  },
+  "dependencies": {
+    "apps": [
+      {
+        "id": "com.ictrek.v-scheduler",
+        "version": "latest",
+        "optional": false
+      }
+    ]
+  },
+  "oauth2": {
+    "client": {}
+  },
+  "permissions": {
+    "defines": [
+      {
+        "code": "com.ictrek.v-yue2:model:manage",
+        "name": {
+          "zh-CN": "管理音乐模型",
+          "en": "Manage Music Models"
+        },
+        "description": {
+          "zh-CN": "通过 V-Scheduler 下载和取消共享模型任务。",
+          "en": "Download shared models through V-Scheduler and cancel their tasks."
+        },
+        "default_roles": [
+          "system_admin",
+          "platform_admin"
+        ]
+      }
+    ]
+  },
+  "profiles": [
+    {
+      "name": "amd",
+      "title": {
+        "zh-CN": "AMD64 CUDA",
+        "en": "AMD64 CUDA"
+      },
+      "description": {
+        "zh-CN": "AMD64 CUDA 本地推理",
+        "en": "AMD64 CUDA local inference"
+      },
+      "caps": {
+        "arch": "amd64",
+        "software": [
+          "cuda"
+        ]
+      },
+      "conflicts": [
+        "amd-without-cuda",
+        "arm",
+        "arm-without-cuda",
+        "l4t",
+        "thor-spark"
+      ]
+    },
+    {
+      "name": "amd-without-cuda",
+      "title": {
+        "zh-CN": "AMD64 CPU",
+        "en": "AMD64 CPU"
+      },
+      "description": {
+        "zh-CN": "AMD64 CPU 本地推理",
+        "en": "AMD64 CPU local inference"
+      },
+      "caps": {
+        "arch": "amd64"
+      },
+      "conflicts": [
+        "amd",
+        "arm",
+        "arm-without-cuda",
+        "l4t",
+        "thor-spark"
+      ]
+    },
+    {
+      "name": "arm",
+      "title": {
+        "zh-CN": "ARM64 CUDA",
+        "en": "ARM64 CUDA"
+      },
+      "description": {
+        "zh-CN": "ARM64 CUDA 本地推理",
+        "en": "ARM64 CUDA local inference"
+      },
+      "caps": {
+        "arch": "arm64",
+        "software": [
+          "cuda"
+        ],
+        "device-type": "generic"
+      },
+      "conflicts": [
+        "amd",
+        "amd-without-cuda",
+        "arm-without-cuda",
+        "l4t",
+        "thor-spark"
+      ]
+    },
+    {
+      "name": "arm-without-cuda",
+      "title": {
+        "zh-CN": "ARM64 CPU",
+        "en": "ARM64 CPU"
+      },
+      "description": {
+        "zh-CN": "ARM64 CPU 本地推理",
+        "en": "ARM64 CPU local inference"
+      },
+      "caps": {
+        "arch": "arm64"
+      },
+      "conflicts": [
+        "amd",
+        "amd-without-cuda",
+        "arm",
+        "l4t",
+        "thor-spark"
+      ]
+    },
+    {
+      "name": "l4t",
+      "title": {
+        "zh-CN": "Jetson / L4T",
+        "en": "Jetson / L4T"
+      },
+      "description": {
+        "zh-CN": "Jetson / L4T 本地推理",
+        "en": "Jetson / L4T local inference"
+      },
+      "caps": {
+        "arch": "arm64",
+        "software": [
+          "cuda"
+        ],
+        "device-type": [
+          {
+            "any-of": [
+              "l4t",
+              "jetson"
+            ]
+          }
+        ]
+      },
+      "conflicts": [
+        "amd",
+        "amd-without-cuda",
+        "arm",
+        "arm-without-cuda",
+        "thor-spark"
+      ]
+    },
+    {
+      "name": "thor-spark",
+      "title": {
+        "zh-CN": "Thor / Spark",
+        "en": "Thor / Spark"
+      },
+      "description": {
+        "zh-CN": "Thor / Spark 本地推理",
+        "en": "Thor / Spark local inference"
+      },
+      "caps": {
+        "arch": "arm64",
+        "software": [
+          "cuda"
+        ],
+        "device-type": [
+          {
+            "any-of": [
+              "thor-spark",
+              "thor",
+              "spark"
+            ]
+          }
+        ]
+      },
+      "conflicts": [
+        "amd",
+        "amd-without-cuda",
+        "arm",
+        "arm-without-cuda",
+        "l4t"
+      ]
+    }
+  ],
+  "storage": {
+    "directories": [
+      {
+        "path": "data",
+        "mode": "0700"
+      }
+    ]
+  },
+  "require-profiles": true
+}

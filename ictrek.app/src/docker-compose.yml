@@ -1,0 +1,399 @@
+{
+  "services": {
+    "v-yue2-amd": {
+      "image": "${VYUE2_AMD_CUDA_IMAGE}",
+      "profiles": [
+        "amd"
+      ],
+      "restart": "unless-stopped",
+      "init": true,
+      "extra_hosts": [
+        "host.docker.internal:host-gateway"
+      ],
+      "networks": {
+        "vos_default": {
+          "aliases": [
+            "v-yue2",
+            "v-yue2-backend",
+            "v-yue2-frontend"
+          ]
+        }
+      },
+      "environment": {
+        "APP_VERSION": "__APP_VERSION__",
+        "YUE_PROFILE": "amd",
+        "YUE_IMAGE": "${VYUE2_AMD_CUDA_IMAGE}",
+        "YUE_DATA_ROOT": "/data",
+        "YUE_ENGINE_ROOT": "/opt/v-yue2/engine",
+        "YUE_ENGINE_BIN": "/opt/v-yue2/engine/yue-server",
+        "YUE_VOS": "1",
+        "YUE_SCHEDULER_MODELS_URL": "http://v-scheduler:6005/api/v1",
+        "YUE_MODELHUB_ROOT": "/modelhub",
+        "VOS_USERINFO_URL": "http://${VOS_HOST_GW_IP}:${VOS_API_GW_PORT_INTERNAL}/v1000/oauth2/userinfo",
+        "DO_NOT_TRACK": "1",
+        "STUDIO_TELEMETRY": "0",
+        "NVIDIA_VISIBLE_DEVICES": "${NVIDIA_VISIBLE_DEVICES:-all}",
+        "NVIDIA_DRIVER_CAPABILITIES": "compute,utility"
+      },
+      "volumes": [
+        "${VOS_APP_STORAGE_PATH}/data:/data",
+        "${MODEL_HUB_SHARED_MODELS_PATH:-/data/vos_workspace/model_hub}:/modelhub:ro"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "/opt/v-yue2/v-yue2-gateway",
+          "healthcheck"
+        ],
+        "interval": "30s",
+        "timeout": "5s",
+        "start_period": "10s",
+        "retries": 3
+      },
+      "labels": [
+        "traefik.enable=true",
+        "traefik.docker.network=vos_default",
+        "traefik.http.routers.v-yue2.rule=PathPrefix(`/app/com.ictrek.v-yue2`)",
+        "traefik.http.routers.v-yue2.service=v-yue2",
+        "traefik.http.services.v-yue2.loadbalancer.server.port=8791",
+        "traefik.http.routers.v-yue2-top-open.rule=PathPrefix(`/app/com.ictrek.v-yue2`) && HeaderRegexp(`Sec-Fetch-Dest`, `document`)",
+        "traefik.http.routers.v-yue2-top-open.priority=1000",
+        "traefik.http.routers.v-yue2-top-open.service=v-yue2",
+        "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
+      ],
+      "runtime": "nvidia"
+    },
+    "v-yue2-amd-without-cuda": {
+      "image": "${VYUE2_AMD_IMAGE}",
+      "profiles": [
+        "amd-without-cuda"
+      ],
+      "restart": "unless-stopped",
+      "init": true,
+      "extra_hosts": [
+        "host.docker.internal:host-gateway"
+      ],
+      "networks": {
+        "vos_default": {
+          "aliases": [
+            "v-yue2",
+            "v-yue2-backend",
+            "v-yue2-frontend"
+          ]
+        }
+      },
+      "environment": {
+        "APP_VERSION": "__APP_VERSION__",
+        "YUE_PROFILE": "amd-without-cuda",
+        "YUE_IMAGE": "${VYUE2_AMD_IMAGE}",
+        "YUE_DATA_ROOT": "/data",
+        "YUE_ENGINE_ROOT": "/opt/v-yue2/engine",
+        "YUE_ENGINE_BIN": "/opt/v-yue2/engine/yue-server",
+        "YUE_VOS": "1",
+        "YUE_SCHEDULER_MODELS_URL": "http://v-scheduler:6005/api/v1",
+        "YUE_MODELHUB_ROOT": "/modelhub",
+        "VOS_USERINFO_URL": "http://${VOS_HOST_GW_IP}:${VOS_API_GW_PORT_INTERNAL}/v1000/oauth2/userinfo",
+        "DO_NOT_TRACK": "1",
+        "STUDIO_TELEMETRY": "0"
+      },
+      "volumes": [
+        "${VOS_APP_STORAGE_PATH}/data:/data",
+        "${MODEL_HUB_SHARED_MODELS_PATH:-/data/vos_workspace/model_hub}:/modelhub:ro"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "/opt/v-yue2/v-yue2-gateway",
+          "healthcheck"
+        ],
+        "interval": "30s",
+        "timeout": "5s",
+        "start_period": "10s",
+        "retries": 3
+      },
+      "labels": [
+        "traefik.enable=true",
+        "traefik.docker.network=vos_default",
+        "traefik.http.routers.v-yue2.rule=PathPrefix(`/app/com.ictrek.v-yue2`)",
+        "traefik.http.routers.v-yue2.service=v-yue2",
+        "traefik.http.services.v-yue2.loadbalancer.server.port=8791",
+        "traefik.http.routers.v-yue2-top-open.rule=PathPrefix(`/app/com.ictrek.v-yue2`) && HeaderRegexp(`Sec-Fetch-Dest`, `document`)",
+        "traefik.http.routers.v-yue2-top-open.priority=1000",
+        "traefik.http.routers.v-yue2-top-open.service=v-yue2",
+        "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
+      ]
+    },
+    "v-yue2-arm": {
+      "image": "${VYUE2_ARM_CUDA_IMAGE}",
+      "profiles": [
+        "arm"
+      ],
+      "restart": "unless-stopped",
+      "init": true,
+      "extra_hosts": [
+        "host.docker.internal:host-gateway"
+      ],
+      "networks": {
+        "vos_default": {
+          "aliases": [
+            "v-yue2",
+            "v-yue2-backend",
+            "v-yue2-frontend"
+          ]
+        }
+      },
+      "environment": {
+        "APP_VERSION": "__APP_VERSION__",
+        "YUE_PROFILE": "arm",
+        "YUE_IMAGE": "${VYUE2_ARM_CUDA_IMAGE}",
+        "YUE_DATA_ROOT": "/data",
+        "YUE_ENGINE_ROOT": "/opt/v-yue2/engine",
+        "YUE_ENGINE_BIN": "/opt/v-yue2/engine/yue-server",
+        "YUE_VOS": "1",
+        "YUE_SCHEDULER_MODELS_URL": "http://v-scheduler:6005/api/v1",
+        "YUE_MODELHUB_ROOT": "/modelhub",
+        "VOS_USERINFO_URL": "http://${VOS_HOST_GW_IP}:${VOS_API_GW_PORT_INTERNAL}/v1000/oauth2/userinfo",
+        "DO_NOT_TRACK": "1",
+        "STUDIO_TELEMETRY": "0",
+        "NVIDIA_VISIBLE_DEVICES": "${NVIDIA_VISIBLE_DEVICES:-all}",
+        "NVIDIA_DRIVER_CAPABILITIES": "compute,utility"
+      },
+      "volumes": [
+        "${VOS_APP_STORAGE_PATH}/data:/data",
+        "${MODEL_HUB_SHARED_MODELS_PATH:-/data/vos_workspace/model_hub}:/modelhub:ro"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "/opt/v-yue2/v-yue2-gateway",
+          "healthcheck"
+        ],
+        "interval": "30s",
+        "timeout": "5s",
+        "start_period": "10s",
+        "retries": 3
+      },
+      "labels": [
+        "traefik.enable=true",
+        "traefik.docker.network=vos_default",
+        "traefik.http.routers.v-yue2.rule=PathPrefix(`/app/com.ictrek.v-yue2`)",
+        "traefik.http.routers.v-yue2.service=v-yue2",
+        "traefik.http.services.v-yue2.loadbalancer.server.port=8791",
+        "traefik.http.routers.v-yue2-top-open.rule=PathPrefix(`/app/com.ictrek.v-yue2`) && HeaderRegexp(`Sec-Fetch-Dest`, `document`)",
+        "traefik.http.routers.v-yue2-top-open.priority=1000",
+        "traefik.http.routers.v-yue2-top-open.service=v-yue2",
+        "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
+      ],
+      "runtime": "nvidia"
+    },
+    "v-yue2-arm-without-cuda": {
+      "image": "${VYUE2_ARM_IMAGE}",
+      "profiles": [
+        "arm-without-cuda"
+      ],
+      "restart": "unless-stopped",
+      "init": true,
+      "extra_hosts": [
+        "host.docker.internal:host-gateway"
+      ],
+      "networks": {
+        "vos_default": {
+          "aliases": [
+            "v-yue2",
+            "v-yue2-backend",
+            "v-yue2-frontend"
+          ]
+        }
+      },
+      "environment": {
+        "APP_VERSION": "__APP_VERSION__",
+        "YUE_PROFILE": "arm-without-cuda",
+        "YUE_IMAGE": "${VYUE2_ARM_IMAGE}",
+        "YUE_DATA_ROOT": "/data",
+        "YUE_ENGINE_ROOT": "/opt/v-yue2/engine",
+        "YUE_ENGINE_BIN": "/opt/v-yue2/engine/yue-server",
+        "YUE_VOS": "1",
+        "YUE_SCHEDULER_MODELS_URL": "http://v-scheduler:6005/api/v1",
+        "YUE_MODELHUB_ROOT": "/modelhub",
+        "VOS_USERINFO_URL": "http://${VOS_HOST_GW_IP}:${VOS_API_GW_PORT_INTERNAL}/v1000/oauth2/userinfo",
+        "DO_NOT_TRACK": "1",
+        "STUDIO_TELEMETRY": "0"
+      },
+      "volumes": [
+        "${VOS_APP_STORAGE_PATH}/data:/data",
+        "${MODEL_HUB_SHARED_MODELS_PATH:-/data/vos_workspace/model_hub}:/modelhub:ro"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "/opt/v-yue2/v-yue2-gateway",
+          "healthcheck"
+        ],
+        "interval": "30s",
+        "timeout": "5s",
+        "start_period": "10s",
+        "retries": 3
+      },
+      "labels": [
+        "traefik.enable=true",
+        "traefik.docker.network=vos_default",
+        "traefik.http.routers.v-yue2.rule=PathPrefix(`/app/com.ictrek.v-yue2`)",
+        "traefik.http.routers.v-yue2.service=v-yue2",
+        "traefik.http.services.v-yue2.loadbalancer.server.port=8791",
+        "traefik.http.routers.v-yue2-top-open.rule=PathPrefix(`/app/com.ictrek.v-yue2`) && HeaderRegexp(`Sec-Fetch-Dest`, `document`)",
+        "traefik.http.routers.v-yue2-top-open.priority=1000",
+        "traefik.http.routers.v-yue2-top-open.service=v-yue2",
+        "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
+      ]
+    },
+    "v-yue2-l4t": {
+      "image": "${VYUE2_L4T_IMAGE}",
+      "profiles": [
+        "l4t"
+      ],
+      "restart": "unless-stopped",
+      "init": true,
+      "extra_hosts": [
+        "host.docker.internal:host-gateway"
+      ],
+      "networks": {
+        "vos_default": {
+          "aliases": [
+            "v-yue2",
+            "v-yue2-backend",
+            "v-yue2-frontend"
+          ]
+        }
+      },
+      "environment": {
+        "APP_VERSION": "__APP_VERSION__",
+        "YUE_PROFILE": "l4t",
+        "YUE_IMAGE": "${VYUE2_L4T_IMAGE}",
+        "YUE_DATA_ROOT": "/data",
+        "YUE_ENGINE_ROOT": "/opt/v-yue2/engine",
+        "YUE_ENGINE_BIN": "/opt/v-yue2/engine/yue-server",
+        "YUE_VOS": "1",
+        "YUE_SCHEDULER_MODELS_URL": "http://v-scheduler:6005/api/v1",
+        "YUE_MODELHUB_ROOT": "/modelhub",
+        "VOS_USERINFO_URL": "http://${VOS_HOST_GW_IP}:${VOS_API_GW_PORT_INTERNAL}/v1000/oauth2/userinfo",
+        "DO_NOT_TRACK": "1",
+        "STUDIO_TELEMETRY": "0",
+        "NVIDIA_VISIBLE_DEVICES": "${NVIDIA_VISIBLE_DEVICES:-all}",
+        "NVIDIA_DRIVER_CAPABILITIES": "compute,utility"
+      },
+      "volumes": [
+        "${VOS_APP_STORAGE_PATH}/data:/data",
+        "${MODEL_HUB_SHARED_MODELS_PATH:-/data/vos_workspace/model_hub}:/modelhub:ro"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "/opt/v-yue2/v-yue2-gateway",
+          "healthcheck"
+        ],
+        "interval": "30s",
+        "timeout": "5s",
+        "start_period": "10s",
+        "retries": 3
+      },
+      "labels": [
+        "traefik.enable=true",
+        "traefik.docker.network=vos_default",
+        "traefik.http.routers.v-yue2.rule=PathPrefix(`/app/com.ictrek.v-yue2`)",
+        "traefik.http.routers.v-yue2.service=v-yue2",
+        "traefik.http.services.v-yue2.loadbalancer.server.port=8791",
+        "traefik.http.routers.v-yue2-top-open.rule=PathPrefix(`/app/com.ictrek.v-yue2`) && HeaderRegexp(`Sec-Fetch-Dest`, `document`)",
+        "traefik.http.routers.v-yue2-top-open.priority=1000",
+        "traefik.http.routers.v-yue2-top-open.service=v-yue2",
+        "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
+      ],
+      "runtime": "nvidia"
+    },
+    "v-yue2-thor-spark": {
+      "image": "${VYUE2_THOR_IMAGE}",
+      "profiles": [
+        "thor-spark"
+      ],
+      "restart": "unless-stopped",
+      "init": true,
+      "extra_hosts": [
+        "host.docker.internal:host-gateway"
+      ],
+      "networks": {
+        "vos_default": {
+          "aliases": [
+            "v-yue2",
+            "v-yue2-backend",
+            "v-yue2-frontend"
+          ]
+        }
+      },
+      "environment": {
+        "APP_VERSION": "__APP_VERSION__",
+        "YUE_PROFILE": "thor-spark",
+        "YUE_IMAGE": "${VYUE2_THOR_IMAGE}",
+        "YUE_DATA_ROOT": "/data",
+        "YUE_ENGINE_ROOT": "/opt/v-yue2/engine",
+        "YUE_ENGINE_BIN": "/opt/v-yue2/engine/yue-server",
+        "YUE_VOS": "1",
+        "YUE_SCHEDULER_MODELS_URL": "http://v-scheduler:6005/api/v1",
+        "YUE_MODELHUB_ROOT": "/modelhub",
+        "VOS_USERINFO_URL": "http://${VOS_HOST_GW_IP}:${VOS_API_GW_PORT_INTERNAL}/v1000/oauth2/userinfo",
+        "DO_NOT_TRACK": "1",
+        "STUDIO_TELEMETRY": "0",
+        "NVIDIA_VISIBLE_DEVICES": "${NVIDIA_VISIBLE_DEVICES:-all}",
+        "NVIDIA_DRIVER_CAPABILITIES": "compute,utility"
+      },
+      "volumes": [
+        "${VOS_APP_STORAGE_PATH}/data:/data",
+        "${MODEL_HUB_SHARED_MODELS_PATH:-/data/vos_workspace/model_hub}:/modelhub:ro"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "/opt/v-yue2/v-yue2-gateway",
+          "healthcheck"
+        ],
+        "interval": "30s",
+        "timeout": "5s",
+        "start_period": "10s",
+        "retries": 3
+      },
+      "labels": [
+        "traefik.enable=true",
+        "traefik.docker.network=vos_default",
+        "traefik.http.routers.v-yue2.rule=PathPrefix(`/app/com.ictrek.v-yue2`)",
+        "traefik.http.routers.v-yue2.service=v-yue2",
+        "traefik.http.services.v-yue2.loadbalancer.server.port=8791",
+        "traefik.http.routers.v-yue2-top-open.rule=PathPrefix(`/app/com.ictrek.v-yue2`) && HeaderRegexp(`Sec-Fetch-Dest`, `document`)",
+        "traefik.http.routers.v-yue2-top-open.priority=1000",
+        "traefik.http.routers.v-yue2-top-open.service=v-yue2",
+        "traefik.http.routers.v-yue2-top-open.middlewares=v-yue2-top-open-redirect",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.v-yue2/?(?:\\?.*)?$",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.v-yue2/v-yue2",
+        "traefik.http.middlewares.v-yue2-top-open-redirect.redirectregex.permanent=false"
+      ],
+      "runtime": "nvidia"
+    }
+  },
+  "networks": {
+    "vos_default": {
+      "external": true
+    }
+  }
+}

@@ -1,3 +1,5 @@
+import { isVos, vosBase, appPath } from './services/vos';
+import { studioStorage } from './services/storage';
 import React, { Activity, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { CreatePanel, type CreateRequest } from './components/CreatePanel';
@@ -28,7 +30,7 @@ const PANEL_KEY_STEP = 16;
 function useResizablePanel(key: string, defaultWidth: number, min: number, max: number, direction: 'left' | 'right' = 'left', label = '') {
   const limitNow = React.useCallback(() => Math.max(min, Math.min(max, Math.round(window.innerWidth * PANEL_MAX_SHARE))), [min, max]);
   const [width, setWidth] = React.useState(() => {
-    const saved = Number(localStorage.getItem(`panel-${key}`));
+    const saved = Number(studioStorage.getItem(`panel-${key}`));
     return Number.isFinite(saved) && saved > 0 ? saved : defaultWidth;
   });
   const [limit, setLimit] = React.useState(limitNow);
@@ -43,7 +45,7 @@ function useResizablePanel(key: string, defaultWidth: number, min: number, max: 
   const commit = React.useCallback((next: number) => {
     const clamped = Math.min(limitNow(), Math.max(min, Math.round(next)));
     setWidth(clamped);
-    localStorage.setItem(`panel-${key}`, String(clamped));
+    studioStorage.setItem(`panel-${key}`, String(clamped));
   }, [key, min, limitNow]);
 
   const onMouseDown = React.useCallback((e: React.MouseEvent) => {
@@ -88,7 +90,7 @@ function useResizablePanel(key: string, defaultWidth: number, min: number, max: 
       onDoubleClick={() => {
         // the default is kept as it is; a narrow window only draws it narrower
         setWidth(defaultWidth);
-        localStorage.removeItem(`panel-${key}`);
+        studioStorage.removeItem(`panel-${key}`);
       }}
       onKeyDown={onKeyDown}
       className="hidden md:flex w-[5px] shrink-0 items-center justify-center cursor-col-resize group z-20 relative bg-zinc-200/50 dark:bg-zinc-800 hover:bg-pink-500/30 focus-visible:bg-pink-500/40 focus-visible:outline-hidden transition-colors"
@@ -137,7 +139,7 @@ const NO_PLAYLISTS: Playlist[] = [];
 
 function storedLikes(): string[] {
   try {
-    const stored: unknown = JSON.parse(localStorage.getItem(STORED_LIKES_KEY) || '[]');
+    const stored: unknown = JSON.parse(studioStorage.getItem(STORED_LIKES_KEY) || '[]');
     return Array.isArray(stored) ? stored.filter((id): id is string => typeof id === 'string') : [];
   } catch (error) {
     console.error('[ERROR] reading the likes kept in the window:', error);
@@ -227,7 +229,7 @@ function AppContent() {
   // the interface was drawn for it, and a light Windows was turning a music
   // studio into a spreadsheet on first launch. A user who picks light keeps it.
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    const stored = localStorage.getItem('theme');
+    const stored = studioStorage.getItem('theme');
     return stored === 'light' ? 'light' : 'dark';
   });
 
@@ -238,11 +240,11 @@ function AppContent() {
   // The playlist new songs go into, kept between sessions: the project the
   // user works on. The list beside the form shows it, as a workspace would.
   const [createPlaylistId, setCreatePlaylistId] = useState(() => {
-    try { return window.localStorage.getItem('studio.createPlaylist') ?? ''; } catch { return ''; }
+    try { return studioStorage.getItem('studio.createPlaylist') ?? ''; } catch { return ''; }
   });
   const chooseCreatePlaylist = (id: string) => {
     setCreatePlaylistId(id);
-    try { window.localStorage.setItem('studio.createPlaylist', id); } catch { /* kept until a reload */ }
+    try { studioStorage.setItem('studio.createPlaylist', id); } catch { /* kept until a reload */ }
   };
   const libraryRead = useLibrarySongs();
   const librarySongs = libraryRead.data ?? NO_SONGS;
@@ -260,8 +262,8 @@ function AppContent() {
     if (stored.length === 0) return;
     void moveStoredLikes(stored).then(left => {
       try {
-        if (left.length === 0) localStorage.removeItem(STORED_LIKES_KEY);
-        else localStorage.setItem(STORED_LIKES_KEY, JSON.stringify(left));
+        if (left.length === 0) studioStorage.removeItem(STORED_LIKES_KEY);
+        else studioStorage.setItem(STORED_LIKES_KEY, JSON.stringify(left));
       } catch (error) {
         console.error('[ERROR] updating the likes kept in the window:', error);
       }
@@ -282,25 +284,25 @@ function AppContent() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(() => {
-    const stored = localStorage.getItem('volume');
+    const stored = studioStorage.getItem('volume');
     return stored ? parseFloat(stored) : 0.8;
   });
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const [isShuffle, setIsShuffle] = useState(() => {
-    try { return localStorage.getItem('player.shuffle') === '1'; } catch { return false; }
+    try { return studioStorage.getItem('player.shuffle') === '1'; } catch { return false; }
   });
   // stop: play this track to its end and stay there, as Winamp's and
   // foobar's "stop after current"; next and previous still move by hand
   const [repeatMode, setRepeatMode] = useState<'none' | 'all' | 'one' | 'stop'>(() => {
     try {
-      const stored = localStorage.getItem('player.repeat');
+      const stored = studioStorage.getItem('player.repeat');
       return stored === 'none' || stored === 'one' || stored === 'stop' ? stored : 'all';
     } catch { return 'all'; }
   });
   useEffect(() => {
     try {
-      localStorage.setItem('player.repeat', repeatMode);
-      localStorage.setItem('player.shuffle', isShuffle ? '1' : '0');
+      studioStorage.setItem('player.repeat', repeatMode);
+      studioStorage.setItem('player.shuffle', isShuffle ? '1' : '0');
     } catch { /* kept until a reload */ }
   }, [repeatMode, isShuffle]);
   const repeatModeRef = useRef(repeatMode);
@@ -424,7 +426,7 @@ function AppContent() {
   const openHubTarget = (target: NonNullable<HubButton['target']>) => {
     if (target === 'news') {
       setCurrentView('news');
-      window.history.pushState({}, '', '/news');
+      window.history.pushState({}, '', appPath('/news'));
       return;
     }
     setSettingsSection(target === 'models' ? 'models' : target === 'update' ? 'about' : null);
@@ -536,7 +538,7 @@ function AppContent() {
 
   // Theme Effect
   useEffect(() => {
-    localStorage.setItem('theme', theme);
+    studioStorage.setItem('theme', theme);
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
@@ -551,7 +553,7 @@ function AppContent() {
   // URL Routing Effect
   useEffect(() => {
     const handleUrlChange = () => {
-      const path = window.location.pathname;
+      const path = isVos ? window.location.pathname.slice(vosBase.length) || '/' : window.location.pathname;
       const params = new URLSearchParams(window.location.search);
 
       if (path === '/create' || path === '/') {
@@ -794,7 +796,7 @@ function AppContent() {
     if (audioRef.current) {
       audioRef.current.volume = volume;
     }
-    localStorage.setItem('volume', String(volume));
+    studioStorage.setItem('volume', String(volume));
   }, [volume]);
 
   // Handle Playback Rate
@@ -1181,7 +1183,7 @@ function AppContent() {
   const handleNavigateToPlaylist = (playlistId: string) => {
     setViewingPlaylistId(playlistId);
     setCurrentView('playlist');
-    window.history.pushState({}, '', `/playlist/${playlistId}`);
+    window.history.pushState({}, '', appPath(`/playlist/${playlistId}`));
   };
 
 
@@ -1191,7 +1193,7 @@ function AppContent() {
   const handleBackFromPlaylist = () => {
     setViewingPlaylistId(null);
     setCurrentView('library');
-    window.history.pushState({}, '', '/library');
+    window.history.pushState({}, '', appPath('/library'));
   };
 
   const openCoverRegen = (song: Song) => {
@@ -1476,22 +1478,22 @@ function AppContent() {
             setCurrentView(v);
             if (v === 'create') {
               setMobileShowList(false);
-              window.history.pushState({}, '', '/');
+              window.history.pushState({}, '', appPath('/'));
             } else if (v === 'library') {
-              window.history.pushState({}, '', '/library');
+              window.history.pushState({}, '', appPath('/library'));
             } else if (v === 'search') {
-              window.history.pushState({}, '', '/search');
+              window.history.pushState({}, '', appPath('/search'));
             } else if (v === 'news') {
-              window.history.pushState({}, '', '/news');
+              window.history.pushState({}, '', appPath('/news'));
             } else if (v === 'tools') {
-              window.history.pushState({}, '', '/tools');
+              window.history.pushState({}, '', appPath('/tools'));
             }
             if (isMobile) setShowLeftSidebar(false);
           }}
           theme={theme}
           onToggleTheme={toggleTheme}
           user={user}
-          onOpenSettings={() => setShowSettingsModal(true)}
+          onOpenSettings={() => { if (isVos) setSettingsSection('models'); setShowSettingsModal(true); }}
           isOpen={showLeftSidebar}
           onToggle={() => setShowLeftSidebar(!showLeftSidebar)}
           journalOpen={journalOpen}
@@ -1673,11 +1675,12 @@ function AppContent() {
   );
 }
 
+import { VosGate } from './components/VosGate';
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
-        <AppContent />
+        <VosGate><AppContent /></VosGate>
       </I18nProvider>
     </QueryClientProvider>
   );

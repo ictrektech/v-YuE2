@@ -2,10 +2,11 @@ import './src-styles.css';
 import { installApiBase } from './services/apiBase';
 import { startBridge } from './services/mcpBridge';
 import { installExternalLinkHandler } from './services/externalLinks';
+import { isVos } from './services/vos';
 
 // Must run before any component issues a request.
 installApiBase();
-startBridge();
+if (!isVos) startBridge();
 // In the desktop window an external link must go to the system browser,
 // not replace the application.
 installExternalLinkHandler();

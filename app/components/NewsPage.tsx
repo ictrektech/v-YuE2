@@ -1,3 +1,4 @@
+import { studioStorage } from '../services/storage';
 import React, { useState, useEffect } from 'react';
 import { Newspaper, X, Star, FileText } from 'lucide-react';
 import { SiGithub } from '@icons-pack/react-simple-icons';
@@ -207,7 +208,7 @@ export const NewsPage: React.FC = () => {
 
   const [dismissedNews, setDismissedNews] = useState<Set<string>>(() => {
     try {
-      const stored = localStorage.getItem('ace-dismissed-news');
+      const stored = studioStorage.getItem('ace-dismissed-news');
       return stored ? new Set(JSON.parse(stored)) : new Set();
     } catch {
       return new Set();
@@ -250,7 +251,7 @@ export const NewsPage: React.FC = () => {
     setDismissedNews(prev => {
       const next = new Set(prev);
       next.add(id);
-      localStorage.setItem('ace-dismissed-news', JSON.stringify([...next]));
+      studioStorage.setItem('ace-dismissed-news', JSON.stringify([...next]));
       return next;
     });
   };
@@ -259,7 +260,7 @@ export const NewsPage: React.FC = () => {
     setDismissedNews(prev => {
       const next = new Set(prev);
       next.delete(id);
-      localStorage.setItem('ace-dismissed-news', JSON.stringify([...next]));
+      studioStorage.setItem('ace-dismissed-news', JSON.stringify([...next]));
       return next;
     });
   };

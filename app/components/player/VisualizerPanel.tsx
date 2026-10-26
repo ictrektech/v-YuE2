@@ -1,3 +1,4 @@
+import { studioStorage } from '../../services/storage';
 import React, { useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { isDesktop } from '../../services/externalLinks';
@@ -19,7 +20,7 @@ const SIZE_KEY = 'studio:visualizer-size';
 
 function savedSize(): { width: number; height: number } {
   try {
-    const size = JSON.parse(localStorage.getItem(SIZE_KEY) ?? 'null') as { width: number; height: number } | null;
+    const size = JSON.parse(studioStorage.getItem(SIZE_KEY) ?? 'null') as { width: number; height: number } | null;
     if (size && size.width >= 240 && size.height >= 160) return size;
   } catch {
     // the default size
@@ -34,7 +35,7 @@ export function visualizerPanelSize(): { width: number; height: number } {
 
 export function setVisualizerPanelSize(size: { width: number; height: number }): void {
   try {
-    localStorage.setItem(SIZE_KEY, JSON.stringify(size));
+    studioStorage.setItem(SIZE_KEY, JSON.stringify(size));
   } catch {
     // kept for this run only
   }

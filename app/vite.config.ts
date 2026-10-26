@@ -4,11 +4,12 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { readFileSync } from 'fs';
 
-const appVersion: string = JSON.parse(readFileSync(path.resolve(import.meta.dirname, '../desktop/src-tauri/tauri.conf.json'), 'utf8')).version;
+const appVersion: string = process.env.VITE_VOS === 'true' ? readFileSync(path.resolve(import.meta.dirname, '../ictrek.app/VERSION'), 'utf8').trim() : JSON.parse(readFileSync(path.resolve(import.meta.dirname, '../desktop/src-tauri/tauri.conf.json'), 'utf8')).version;
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
+    base: process.env.VITE_VOS === 'true' ? '/app/com.ictrek.v-yue2/' : '/',
     server: {
       port: 3791,
       host: '0.0.0.0',

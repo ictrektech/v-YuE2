@@ -358,6 +358,9 @@ impl ModelManager {
 
     async fn download_selection(&self, selection: ResolvedInstall) {
         let result = async {
+            if env::var("YUE_VOS").as_deref() == Ok("1") {
+                return self.scheduler_selection(&selection).await;
+            }
             for component in &selection.components {
                 if self.cancelled.load(Ordering::SeqCst) {
                     bail!("cancelled");
@@ -506,6 +509,77 @@ impl ModelManager {
             self.persist_locked(&state)?;
         }
         Ok(())
+    }
+
+    /// VOS delegates all core model downloads to V-Scheduler. Shared snapshots
+    /// are immutable to this app; each account gets a verified local link.
+    async fn scheduler_selection(&self, selection: &ResolvedInstall) -> Result<()> {
+        let base = env::var("YUE_SCHEDULER_MODELS_URL").unwrap_or_else(|_| "http://v-scheduler:6005/api/v1".into());
+        let shared = PathBuf::from(env::var("YUE_MODELHUB_ROOT").unwrap_or_else(|_| "/modelhub".into()));
+        let model_id = "ms://vivibit/YuE2-Studio-GGUF";
+        let current = shared.join("export/ms/vivibit/YuE2-Studio-GGUF/current");
+        let mut task: Option<String> = None;
+        let mut owned = false;
+        let mut completed = false;
+        for _ in 0..10800 {
+            if self.cancelled.load(Ordering::SeqCst) {
+                if owned { if let Some(id) = &task { let _ = self.http.post(format!("{base}/tasks/{id}/cancel")).send().await; } }
+                bail!("cancelled");
+            }
+            let mut missing = Vec::new();
+            for component in &selection.components {
+                let target = self.root.join(component.filename);
+                if published_component(&target, component) { continue; }
+                let source = current.join(component.filename);
+                if source.is_file() {
+                    let resolved = fs::canonicalize(&source)?;
+                    if !resolved.starts_with(fs::canonicalize(&shared)?) { bail!("shared model escapes V-Scheduler root"); }
+                    if !verified_file_async(resolved.clone(), component.clone()).await? { bail!("{} shared SHA-256 mismatch; repair it in V-Scheduler", component.filename); }
+                    let staged = target.with_extension("scheduler-link");
+                    let _ = fs::remove_file(&staged);
+                    #[cfg(unix)]
+                    std::os::unix::fs::symlink(resolved, &staged)?;
+                    #[cfg(not(unix))]
+                    fs::copy(resolved, &staged)?;
+                    fs::rename(staged, target)?;
+                } else { missing.push(component.filename); }
+            }
+            self.set_published_progress(selection).await?;
+            if missing.is_empty() { return Ok(()); }
+            if completed { bail!("V-Scheduler completed but selected model files are unavailable; check the shared directory mount"); }
+            if task.is_none() {
+                let models: serde_json::Value = self.http.get(format!("{base}/models?status=all")).send().await?.error_for_status()?.json().await?;
+                let previous = models.as_array().and_then(|v| v.iter().find(|m| m["model_id"] == model_id));
+                let append = previous.is_some_and(|m| m["status"] == "ready");
+                if !previous.is_some_and(|m| m["status"] == "pulling" || m["status"] == "deleting") {
+                    let response = self.http.post(format!("{base}/models/pull")).json(&serde_json::json!({"source":"ms", "model_id":model_id, "files":missing, "append":append})).send().await?;
+                    let status = response.status();
+                    let value: serde_json::Value = response.json().await?;
+                    if status.is_success() {
+                        task = value["task_id"].as_str().map(str::to_owned);
+                        if task.is_none() { bail!("V-Scheduler did not return a download task ID"); }
+                        owned = true;
+                    } else if status.as_u16() != 409 { bail!("V-Scheduler rejected download ({status}): {value}"); }
+                }
+                if task.is_none() {
+                    let tasks: serde_json::Value = self.http.get(format!("{base}/tasks")).send().await?.error_for_status()?.json().await?;
+                    task = tasks.as_array().and_then(|v| v.iter().find(|t| t["model_id"] == model_id && !["READY","FAILED"].contains(&t["phase"].as_str().unwrap_or_default()))).and_then(|t| t["task_id"].as_str()).map(str::to_owned);
+                    owned = false;
+                }
+            }
+            if let Some(id) = &task {
+                let value: serde_json::Value = self.http.get(format!("{base}/tasks/detail/{id}")).send().await?.error_for_status()?.json().await?;
+                let phase = value["phase"].as_str().unwrap_or_default();
+                if phase == "FAILED" { bail!("V-Scheduler download failed: {}", value["error_msg"]); }
+                if phase == "READY" { completed = owned; task = None; }
+                if let Some(progress) = value["progress"].as_f64() {
+                    let mut saved = self.state.write().await;
+                    if let Some(job) = &mut saved.active { job.downloaded_bytes = job.downloaded_bytes.max((job.total_bytes as f64 * progress.clamp(0.0, 1.0)) as u64).min(job.total_bytes); }
+                }
+            }
+            tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+        }
+        bail!("V-Scheduler download timed out; retry from the model page")
     }
 
     fn persist_locked(&self, state: &PersistentState) -> Result<()> {

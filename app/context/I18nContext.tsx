@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { studioStorage } from '../services/storage';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { isVos } from '../services/vos';
 import { translations, Language, TranslationKey } from '../i18n/translations';
 
 interface I18nContextType {
@@ -18,7 +20,7 @@ if (import.meta.hot) import.meta.hot.data.i18nContext = I18nContext;
 
 export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>(() => {
-    const stored = localStorage.getItem('language') as Language;
+    const stored = studioStorage.getItem('language') as Language;
     if (stored === 'zh' || stored === 'en' || stored === 'ja' || stored === 'ko' || stored === 'ru') return stored;
     if (typeof navigator !== 'undefined' && navigator.language?.startsWith('ru')) return 'ru';
     return 'en';
@@ -26,8 +28,30 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang);
-    localStorage.setItem('language', lang);
+    studioStorage.setItem('language', lang);
   };
+
+  useEffect(() => {
+    if (!isVos) return;
+    let stop: (() => void) | undefined;
+    let stopUser: (() => void) | undefined;
+    let disposed = false;
+    let revision = 0;
+    const accept = (state: { locale?: unknown }) => {
+      const locale = String(state.locale ?? 'en').toLowerCase().split('-')[0];
+      setLanguage((['zh', 'en', 'ja', 'ko', 'ru'].includes(locale) ? locale : 'en') as Language);
+    };
+    const timer = setInterval(() => {
+      const bridge = window.vos_platform;
+      if (!bridge) return;
+      clearInterval(timer);
+      stop = bridge.broadcast?.on('locale-change', state => { revision++; accept(state); });
+      stopUser = bridge.broadcast?.on('user-change', () => window.location.reload());
+      const before = revision;
+      void bridge.getState?.().then(state => { if (!disposed && revision === before) accept(state); }).catch(() => {});
+    }, 50);
+    return () => { disposed = true; clearInterval(timer); stop?.(); stopUser?.(); };
+  }, []);
 
   const t = (key: TranslationKey): string => {
     return translations[language][key] || key;

@@ -1,3 +1,4 @@
+import { studioStorage } from './storage';
 import { bandFilters, EQ_BANDS, EQ_RANGE_DB, responseDb } from './equalizerCurve';
 
 export { EQ_BANDS, EQ_RANGE_DB };
@@ -42,7 +43,7 @@ const DEFAULT: EqualizerState = { enabled: false, preamp: 0, gains: EQ_BANDS.map
 
 function load(): EqualizerState {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORE) ?? 'null') as Partial<EqualizerState> | null;
+    const saved = JSON.parse(studioStorage.getItem(STORE) ?? 'null') as Partial<EqualizerState> | null;
     if (!saved) return DEFAULT;
     const gains = Array.isArray(saved.gains) && saved.gains.length === EQ_BANDS.length ? saved.gains.map(Number) : DEFAULT.gains;
     return {
@@ -190,7 +191,7 @@ export function equalizer(): EqualizerState {
 export function setEqualizer(change: Partial<EqualizerState>): void {
   state = { ...state, ...change };
   try {
-    localStorage.setItem(STORE, JSON.stringify(state));
+    studioStorage.setItem(STORE, JSON.stringify(state));
   } catch {
     // the equalizer still works for this session
   }

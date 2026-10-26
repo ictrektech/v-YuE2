@@ -1,3 +1,4 @@
+import { studioStorage } from '../services/storage';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSystemResources } from '../services/studioQueries';
 import { createPortal } from 'react-dom';
@@ -68,7 +69,7 @@ function Bar({ label, percent, value }: { label: string; percent: number; value:
 
 function storedPosition(): { x: number; y: number } {
   try {
-    const raw = localStorage.getItem(POSITION_KEY);
+    const raw = studioStorage.getItem(POSITION_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as { x: number; y: number };
       if (Number.isFinite(parsed.x) && Number.isFinite(parsed.y)) return parsed;
@@ -106,7 +107,7 @@ export const ResourceMonitor: React.FC<{ isOpen?: boolean }> = ({ isOpen = true 
     if (!dragOffset.current) return;
     dragOffset.current = null;
     try {
-      localStorage.setItem(POSITION_KEY, JSON.stringify(position));
+      studioStorage.setItem(POSITION_KEY, JSON.stringify(position));
     } catch {
       // Position is a convenience, not state worth failing over.
     }

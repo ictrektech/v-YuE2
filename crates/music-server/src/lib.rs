@@ -5036,6 +5036,7 @@ pub(crate) fn studio_version() -> &'static str {
 /// Studio Hub for this studio: statistics only after the start screen showed its checkbox, news through the
 /// studio's own proxy setting. A state file that cannot be read leaves the studio without it, said once.
 fn start_hub() -> Option<studio_hub_client::Hub> {
+    if env::var("YUE_VOS").as_deref() == Ok("1") { return None; }
     let machine = hardware::hardware();
     let name = machine.gpu_name.clone().unwrap_or_default().to_ascii_lowercase();
     let vendor = if machine.nvidia {

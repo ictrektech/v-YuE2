@@ -1,3 +1,4 @@
+import { studioStorage } from './storage';
 import { useState } from 'react';
 import type { Song } from '../types';
 import { parseDuration } from './nativeLibrary';
@@ -47,7 +48,7 @@ export function useListOrder(list: string, fallback: SongOrder, allowed: SongOrd
   const key = `studio.order.${list}`;
   const [order, setOrder] = useState<SongOrder>(() => {
     try {
-      const kept = window.localStorage.getItem(key) as SongOrder | null;
+      const kept = studioStorage.getItem(key) as SongOrder | null;
       return kept && allowed.includes(kept) ? kept : fallback;
     } catch {
       return fallback;
@@ -55,7 +56,7 @@ export function useListOrder(list: string, fallback: SongOrder, allowed: SongOrd
   });
   const choose = (next: SongOrder) => {
     setOrder(next);
-    try { window.localStorage.setItem(key, next); } catch { /* kept until a reload */ }
+    try { studioStorage.setItem(key, next); } catch { /* kept until a reload */ }
   };
   return [order, choose];
 }

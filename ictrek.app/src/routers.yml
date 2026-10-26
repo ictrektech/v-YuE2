@@ -1,0 +1,15 @@
+routers:
+  - id: com-ictrek-v-yue2
+    kind: group
+    title: {zh-CN: v-YuE2, en: v-YuE2}
+    icon: lucide:music
+    order: 215
+    children:
+      - id: v-yue2
+        kind: page
+        title: {zh-CN: 创作工作台, en: Studio}
+        icon: lucide:music
+        iframe-src: /app/com.ictrek.v-yue2/?v=__APP_VERSION__
+        keep-alive: true
+        entry-point: true
+        embed: true

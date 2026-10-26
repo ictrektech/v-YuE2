@@ -1,3 +1,4 @@
+import { studioStorage } from '../services/storage';
 import React, { createContext, useCallback, useContext, useMemo, useState, ReactNode } from 'react';
 import { LOCAL_USER_ID } from '../services/nativeLibrary';
 
@@ -27,7 +28,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function storedDisplayName(): string {
   try {
-    return localStorage.getItem(DISPLAY_NAME_KEY)?.trim() || DEFAULT_DISPLAY_NAME;
+    return studioStorage.getItem(DISPLAY_NAME_KEY)?.trim() || DEFAULT_DISPLAY_NAME;
   } catch {
     return DEFAULT_DISPLAY_NAME;
   }
@@ -40,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }): React.React
     const clean = next.trim() || DEFAULT_DISPLAY_NAME;
     setUsername(clean);
     try {
-      localStorage.setItem(DISPLAY_NAME_KEY, clean);
+      studioStorage.setItem(DISPLAY_NAME_KEY, clean);
     } catch {
       // A blocked storage quota must not break the studio shell.
     }

@@ -1,3 +1,4 @@
+import { studioStorage } from '../services/storage';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Song } from '../types';
 import { Play, MoreHorizontal, Heart, ListPlus, Pause, Search, Filter, Check, Loader2, Share2, Video, Info, Clock, Timer, ImagePlus, Pencil, Clapperboard, ListMusic, Trash2, Piano, Download, ListStart, ListEnd, Rows3, Rows4, Sparkles, FileAudio, GitBranch, Mic2, Layers } from 'lucide-react';
@@ -77,7 +78,7 @@ type Density = 'comfortable' | 'compact';
 const DENSITY_KEY = 'studio.library.density';
 function readDensity(): Density {
     try {
-        return window.localStorage.getItem(DENSITY_KEY) === 'compact' ? 'compact' : 'comfortable';
+        return studioStorage.getItem(DENSITY_KEY) === 'compact' ? 'compact' : 'comfortable';
     } catch {
         return 'comfortable';
     }
@@ -172,7 +173,7 @@ export const SongList: React.FC<SongListProps> = ({
     const [density, setDensity] = useState<Density>(readDensity);
     const chooseDensity = (next: Density) => {
         setDensity(next);
-        try { window.localStorage.setItem(DENSITY_KEY, next); } catch (error) { console.error('The list density could not be kept:', error); }
+        try { studioStorage.setItem(DENSITY_KEY, next); } catch (error) { console.error('The list density could not be kept:', error); }
     };
     // the "recently played" order changes as songs play
     const [playedTick, setPlayedTick] = useState(0);

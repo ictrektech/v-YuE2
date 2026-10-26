@@ -1,3 +1,5 @@
+import { isVos } from '../services/vos';
+import { VosAbout } from './VosAbout';
 import { StudioFamily } from './StudioFamily';
 import React, { useEffect, useRef, useState } from 'react';
 import { BarChart3, Boxes, Cloud, Cpu, Image as ImageIcon, Info, Monitor, Plug, User as UserIcon, X } from 'lucide-react';
@@ -46,7 +48,7 @@ interface SettingsModalProps {
 export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, initialSection, onClose, theme, onToggleTheme }) => {
   const { user, setDisplayName } = useAuth();
   const { t, language, setLanguage } = useI18n();
-  const [section, setSection] = useState<SectionId>('account');
+  const [section, setSection] = useState<SectionId>(isVos ? 'models' : 'account');
   const reportFacts = useSetupStatus<ReportFacts>().data;
   /// A part of the page to open at, after a colon: `models:assistant`.
   const [focus, setFocus] = useState<string | null>(null);
@@ -56,7 +58,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, initialSec
     // karaoke are set up where they are installed now - and a button still
     // pointed at one, which silently opened whatever was first instead.
     const [page, part] = (initialSection ?? '').split(':');
-    if (page && sections.some((entry) => entry.id === page)) {
+    if (page && (isVos ? ['models', 'cloud', 'covers', 'interface', 'about'] : ['account', 'models', 'engine', 'cloud', 'agent', 'covers', 'interface', 'privacy', 'about']).includes(page)) {
       setSection(page as SectionId);
       setFocus(part || null);
     }
@@ -75,7 +77,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, initialSec
 
   if (!isOpen) return null;
 
-  const sections: Array<{ id: SectionId; label: string; hint: string; icon: React.ReactNode }> = [
+  const allSections: Array<{ id: SectionId; label: string; hint: string; icon: React.ReactNode }> = [
     { id: 'account', label: t('account'), hint: t('accountSectionHint'), icon: <UserIcon size={16} /> },
     { id: 'models', label: t('modelsSection'), hint: t('modelsSectionHint'), icon: <Boxes size={16} /> },
     { id: 'engine', label: t('localEngine'), hint: t('engineSectionHint'), icon: <Cpu size={16} /> },
@@ -87,6 +89,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, initialSec
     { id: 'about', label: t('about'), hint: t('aboutSectionHint'), icon: <Info size={16} /> },
   ];
 
+  const sections = isVos ? allSections.filter(entry => ['models', 'cloud', 'covers', 'interface', 'about'].includes(entry.id)) : allSections;
   const active = sections.find((entry) => entry.id === section) ?? sections[0];
 
   return (
@@ -214,11 +217,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, initialSec
 
                 <SidebarExtrasSetting />
 
-                <NetworkAccessSetting />
+                {!isVos && <NetworkAccessSetting />}
               </div>
             )}
 
-            {section === 'about' && (
+            {section === 'about' && isVos && <VosAbout />}
+            {section === 'about' && !isVos && (
               <div className="max-w-lg space-y-6 text-sm text-zinc-600 dark:text-zinc-400">
                 <div className="space-y-1">
                   <p className="text-zinc-900 dark:text-white">YuE2 Studio · {t('version')} {__APP_VERSION__}</p>

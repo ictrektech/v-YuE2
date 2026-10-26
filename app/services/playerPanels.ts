@@ -1,3 +1,4 @@
+import { studioStorage } from './storage';
 import type { Song } from '../types';
 import { apiUrl } from './apiBase';
 import { DEFAULT_COVER_PATTERN, isCoverPattern, patternArt, uniqueCover } from './coverArt';
@@ -37,7 +38,7 @@ const extrasListeners = new Set<(extras: SidebarExtras) => void>();
 
 export function sidebarExtras(): SidebarExtras {
   try {
-    return { ...ALL_EXTRAS, ...JSON.parse(window.localStorage.getItem(EXTRAS_KEY) ?? '{}') };
+    return { ...ALL_EXTRAS, ...JSON.parse(studioStorage.getItem(EXTRAS_KEY) ?? '{}') };
   } catch {
     return ALL_EXTRAS;
   }
@@ -46,7 +47,7 @@ export function sidebarExtras(): SidebarExtras {
 export function setSidebarExtras(change: Partial<SidebarExtras>): void {
   const next = { ...sidebarExtras(), ...change };
   try {
-    window.localStorage.setItem(EXTRAS_KEY, JSON.stringify(next));
+    studioStorage.setItem(EXTRAS_KEY, JSON.stringify(next));
   } catch {
     // a browser that keeps nothing still shows the change until a reload
   }

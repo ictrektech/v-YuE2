@@ -1,3 +1,4 @@
+import { studioStorage } from './storage';
 import { apiUrl } from './apiBase';
 
 /**
@@ -53,7 +54,7 @@ const DEFAULT: WinampSettings = { skin: 'Winamp Classic 2.91', random: false, do
 
 function load(): WinampSettings {
   try {
-    return { ...DEFAULT, ...(JSON.parse(localStorage.getItem(STORE) ?? 'null') ?? {}) };
+    return { ...DEFAULT, ...(JSON.parse(studioStorage.getItem(STORE) ?? 'null') ?? {}) };
   } catch {
     return DEFAULT;
   }
@@ -73,7 +74,7 @@ export function setWinampSettings(change: Partial<WinampSettings>): void {
   settings = { ...settings, ...change };
   settings.scale = Math.round(Math.max(SCALE_RANGE.min, Math.min(SCALE_RANGE.max, Number(settings.scale) || 1)) * 100) / 100;
   try {
-    localStorage.setItem(STORE, JSON.stringify(settings));
+    studioStorage.setItem(STORE, JSON.stringify(settings));
   } catch {
     // kept for this run only
   }
