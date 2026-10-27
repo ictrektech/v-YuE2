@@ -2,12 +2,71 @@ package main
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"path/filepath"
+	"strconv"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 )
+
+func TestReadRecoversAfterCompletedWorkerExitsWithoutReplayingMutation(t *testing.T) {
+	for _, method := range []string{"GET", "POST"} {
+		t.Run(method, func(t *testing.T) {
+			identity := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				_ = json.NewEncoder(w).Encode(map[string]any{"sub": "alice", "enable": 1})
+			}))
+			defer identity.Close()
+			s := &server{root: t.TempDir(), web: t.TempDir(), userinfo: identity.URL, client: &http.Client{Timeout: time.Second}, users: map[string]*worker{}, sessions: map[string]session{}}
+			key := userKey("alice")
+			if err := privateJSON(filepath.Join(s.root, "users", key, "license.json"), map[string]string{"revision": licenseRevision}); err != nil {
+				t.Fatal(err)
+			}
+			old := &worker{done: make(chan struct{})}
+			var replacementCalls atomic.Int32
+			replacement := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				replacementCalls.Add(1)
+				_, _ = w.Write([]byte("saved audio"))
+			}))
+			defer replacement.Close()
+			u, _ := url.Parse(replacement.URL)
+			replacementPort, _ := strconv.Atoi(u.Port())
+			backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				connection, _, _ := w.(http.Hijacker).Hijack()
+				close(old.done)
+				s.mu.Lock()
+				s.users[key] = &worker{port: replacementPort, done: make(chan struct{})}
+				s.mu.Unlock()
+				_ = connection.Close()
+			}))
+			defer backend.Close()
+			u, _ = url.Parse(backend.URL)
+			old.port, _ = strconv.Atoi(u.Port())
+			s.users[key] = old
+			path := "/v1/library/media/fixture"
+			if method == "POST" {
+				path = "/v1/library/import"
+			}
+			r := httptest.NewRequest(method, prefix+path, nil)
+			if method == "POST" {
+				r.Body = io.NopCloser(strings.NewReader("{}"))
+			}
+			r.Header.Set("Authorization", "Bearer alice")
+			w := httptest.NewRecorder()
+			s.ServeHTTP(w, r)
+			if method == "GET" && (w.Code != 200 || w.Body.String() != "saved audio" || replacementCalls.Load() != 1) {
+				t.Fatalf("completed audio was lost during worker exit: %d %q", w.Code, w.Body.String())
+			}
+			if method == "POST" && (w.Code != 502 || replacementCalls.Load() != 0) {
+				t.Fatal("a mutation was replayed after transport failure")
+			}
+		})
+	}
+}
 
 func TestIdentityConsentAndIsolation(t *testing.T) {
 	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

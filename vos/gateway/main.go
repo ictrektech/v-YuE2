@@ -125,7 +125,12 @@ func (s *server) studio(key string) (*worker, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if v := s.users[key]; v != nil {
-		return v, nil
+		select {
+		case <-v.done:
+			delete(s.users, key)
+		default:
+			return v, nil
+		}
 	}
 	if len(s.users) >= 16 {
 		return nil, errors.New("Studio account capacity reached; restart the app to release idle sessions")
@@ -581,6 +586,18 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	proxy.FlushInterval = -1
 	proxy.ErrorHandler = func(out http.ResponseWriter, _ *http.Request, _ error) {
+		// A completed job retires its compute worker. Its persisted audio can
+		// race that exit; retry only reads, once, after that worker has exited.
+		if computePath == "" && (r.Method == "GET" || r.Method == "HEAD") && (r.ContentLength == 0 && len(r.TransferEncoding) == 0) && r.Context().Value(readRecoveryKey{}) == nil {
+			select {
+			case <-v.done:
+				s.ServeHTTP(out, r.Clone(context.WithValue(r.Context(), readRecoveryKey{}, true)))
+				return
+			case <-r.Context().Done():
+				return
+			case <-time.After(5 * time.Second):
+			}
+		}
 		if computePath != "" {
 			_ = syscall.Kill(-v.cmd.Process.Pid, syscall.SIGTERM)
 			go func() { <-v.done; release() }()
@@ -589,6 +606,9 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	proxy.ServeHTTP(w, r)
 }
+
+type readRecoveryKey struct{}
+
 func main() {
 	if len(os.Args) > 1 && os.Args[1] == "healthcheck" {
 		c := &http.Client{Timeout: 3 * time.Second}

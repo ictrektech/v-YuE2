@@ -3,14 +3,15 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 build="${YUE_BUILD_ROOT:-$HOME/dev/build/v-YuE2}"
 registry="${REGISTRY:-swr.cn-southwest-2.myhuaweicloud.com/ictrek}"
-sheet="";mode=full;reuse_app=false
+sheet="";mode=full;reuse_app=false;gateway_only=false
 while [[ $# -gt 0 ]]; do
  case "$1" in
   --sheet) sheet="$2";shift 2;;
   --build-only) mode=build;shift;;
   --reuse-app-artifacts) reuse_app=true;shift;;
+  --gateway-only) gateway_only=true;shift;;
   --publish-only) mode=publish;shift;;
-  *) echo 'Usage: build_image.sh --sheet <sheet> [--build-only|--publish-only]' >&2;exit 1;;
+  *) echo 'Usage: build_image.sh --sheet <sheet> [--build-only|--publish-only] [--gateway-only]' >&2;exit 1;;
  esac
 done
 case "$sheet" in
@@ -26,6 +27,18 @@ actual="$(uname -m)";[[ "$arch" == amd64 && "$actual" == x86_64 || "$arch" == ar
 artifacts="$build/artifacts-${prefix}"
 image="$registry/v-yue2:${prefix}_$(date +%Y%m%d)"
 if [[ "$mode" != publish ]]; then
+ if [[ "$gateway_only" == true ]]; then
+  # A boundary-only fix reuses this exact profile's published native artifacts.
+  for file in bin/music-server web/index.html engine/yue-server; do
+   test -s "$artifacts/$file" || { echo "Missing existing profile artifact: $file" >&2;exit 1; }
+  done
+  if command -v go >/dev/null 2>&1; then
+   (cd "$root/vos/gateway"; CGO_ENABLED=0 go build -trimpath -o "$artifacts/bin/v-yue2-gateway" .)
+  else
+   test -x "${YUE_GATEWAY_BIN:?Stage an architecture-matched gateway built on a Go build host}"
+   cp "$YUE_GATEWAY_BIN" "$artifacts/bin/v-yue2-gateway"
+  fi
+ else
  mkdir -p "$build/source/.cargo" "$artifacts/web" "$artifacts/bin" "$artifacts/engine" "$artifacts/notices"
  rsync -a --exclude=.git --exclude=node_modules --exclude=target --exclude=/app/dist --exclude=/ictrek.app/dist "$root/" "$build/source/"
  cd "$build/source"
@@ -85,6 +98,7 @@ PY
  cp -a LICENSE THIRD_PARTY_NOTICES.md licenses vos/licenses "$artifacts/notices/"
  cp "$build/sources/yue2.cpp/LICENSE" "$artifacts/notices/yue2.cpp-LICENSE"
  cp "$build/sources/yue2.cpp/ggml/LICENSE" "$artifacts/notices/ggml-LICENSE"
+ fi
  # Explicitly reject weights in the runtime context; files may only arrive at runtime.
  if find "$artifacts" -type f \( -name '*.gguf' -o -name '*.safetensors' -o -name '*.onnx' \) | grep -q .; then echo 'Weights found in image artifacts' >&2;exit 1;fi
  docker buildx build --builder default --load --provenance=false --sbom=false \

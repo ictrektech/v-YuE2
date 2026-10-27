@@ -34,3 +34,7 @@ bash ictrek.app/scripts/update_version.sh patch
 Profiles: AMD64 CUDA/CPU, ARM64 CUDA/CPU, Jetson/L4T and Thor/Spark. Availability is established by the release validation record, not by a build alone. `MODEL_HUB_SHARED_MODELS_PATH` must match V-Scheduler. User data is under `${VOS_APP_STORAGE_PATH}/data/users/<sha256-sub>/`; shared models are never removed by this app.
 
 Runtime is Go + Rust + C++; no Python or Node.js runtime. Python is used only for build/release/model publication tooling on build hosts. Source model publication: `vos/scripts/publish_models.py --build-root ~/dev/build/v-YuE2/models --credentials <protected-file> --publish`.
+
+VOS 的歌曲完成后会回收原生计算进程及权重。音频和其他无请求体的 GET/HEAD 读取若撞上该进程退出，会在确认旧进程退出后自动恢复一次；创作、导入等 POST 请求不会重放。账户目录、作品及原生停止证明不变。
+
+仅修改 VOS Go 边界时，可在原构建机使用 `docker/build_image.sh --sheet <原平台表> --gateway-only`，复用该 profile 已有的 `artifacts-<平台>` 中音乐服务、界面及原生引擎，只替换边界二进制后按原流程发布镜像和更新飞书。缺少原平台产物时拒绝继续，不借用其他 profile；无 Go 的同架构机器须显式传入已构建的 `YUE_GATEWAY_BIN`。原完整构建方式保留。
