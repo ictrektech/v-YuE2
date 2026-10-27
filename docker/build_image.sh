@@ -3,13 +3,14 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 build="${YUE_BUILD_ROOT:-$HOME/dev/build/v-YuE2}"
 registry="${REGISTRY:-swr.cn-southwest-2.myhuaweicloud.com/ictrek}"
-sheet="";mode=full;reuse_app=false;gateway_only=false
+sheet="";mode=full;reuse_app=false;gateway_only=false;gateway_base=""
 while [[ $# -gt 0 ]]; do
  case "$1" in
   --sheet) sheet="$2";shift 2;;
   --build-only) mode=build;shift;;
   --reuse-app-artifacts) reuse_app=true;shift;;
   --gateway-only) gateway_only=true;shift;;
+  --gateway-base-image) gateway_base="$2";shift 2;;
   --publish-only) mode=publish;shift;;
   *) echo 'Usage: build_image.sh --sheet <sheet> [--build-only|--publish-only] [--gateway-only]' >&2;exit 1;;
  esac
@@ -28,10 +29,11 @@ artifacts="$build/artifacts-${prefix}"
 image="$registry/v-yue2:${prefix}_$(date +%Y%m%d)"
 if [[ "$mode" != publish ]]; then
  if [[ "$gateway_only" == true ]]; then
-  # A boundary-only fix reuses this exact profile's published native artifacts.
-  for file in bin/music-server web/index.html engine/yue-server; do
-   test -s "$artifacts/$file" || { echo "Missing existing profile artifact: $file" >&2;exit 1; }
-  done
+  # Keep the published native runtime byte-for-byte for a boundary-only fix.
+  [[ "$gateway_base" == "$registry/v-yue2:${prefix}_"* ]] || { echo 'An explicit published base image for this exact profile is required' >&2;exit 1; }
+  docker image inspect "$gateway_base" >/dev/null 2>&1 || docker pull "$gateway_base"
+  [[ "$(docker image inspect --format '{{.Architecture}}' "$gateway_base")" == "$arch" ]] || { echo 'Gateway base architecture mismatch' >&2;exit 1; }
+  mkdir -p "$artifacts/bin"
   if command -v go >/dev/null 2>&1; then
    (cd "$root/vos/gateway"; CGO_ENABLED=0 go build -trimpath -o "$artifacts/bin/v-yue2-gateway" .)
   else
@@ -101,9 +103,15 @@ PY
  fi
  # Explicitly reject weights in the runtime context; files may only arrive at runtime.
  if find "$artifacts" -type f \( -name '*.gguf' -o -name '*.safetensors' -o -name '*.onnx' \) | grep -q .; then echo 'Weights found in image artifacts' >&2;exit 1;fi
+ if [[ "$gateway_only" == true ]]; then
+ docker buildx build --builder default --load --provenance=false --sbom=false \
+  --build-arg "RUNTIME_IMAGE=$gateway_base" --build-arg "APP_VERSION=$(cat ictrek.app/VERSION)" \
+  -f "$root/docker/Dockerfile.gateway" -t "$image" "$artifacts/bin"
+ else
  docker buildx build --builder default --load --provenance=false --sbom=false \
   --build-arg "RUNTIME_BASE=$base" --build-arg "APP_VERSION=$(cat ictrek.app/VERSION)" \
   -f "$root/docker/Dockerfile" -t "$image" "$artifacts"
+ fi
 fi
 if [[ "$mode" != build ]]; then
  docker push "$image"
