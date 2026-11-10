@@ -38,3 +38,9 @@ Runtime is Go + Rust + C++; no Python or Node.js runtime. Python is used only fo
 VOS 的歌曲完成后会回收原生计算进程及权重。音频和其他无请求体的 GET/HEAD 读取若撞上该进程退出，会在确认旧进程退出后自动恢复一次；创作、导入等 POST 请求不会重放。账户目录、作品及原生停止证明不变。
 
 仅修改 VOS Go 边界时，可使用 `docker/build_image.sh --sheet <原平台表> --gateway-only --gateway-base-image <已发布的同-profile镜像>`。基线镜像须从现有正式安装包/飞书记录核对，保留该镜像内的音乐服务、界面、原生引擎和系统依赖，只替换边界二进制，再按原流程发布镜像和更新飞书。缺少同 profile 基线或架构不匹配时拒绝继续；无 Go 的同架构机器须显式传入已构建的 `YUE_GATEWAY_BIN`。原完整构建方式保留。
+
+## VOS API documentation / API 文档
+
+The VOS sidebar API guide documents user Bearer/cookie authentication, license consent, provider configuration through V-Scheduler, calibrated jobs, cancellation and task-priority limits. [English reference](ictrek.app/docs/api-reference.en.md) and [中文参考](ictrek.app/docs/api-reference.zh.md) include all203 named native HTTP operations and214 serde declarations, subject to explicit VOS restrictions. Desktop MCP is refused in VOS; do not advertise it as a VOS endpoint. `python3 scripts/generate-api-reference.py` regenerates the source catalogue only; Python is not part of the application runtime. Documentation ships with the next application release; this task publishes no v-YuE2 image.
+
+VOS 侧栏 API 文档区分可用的用户HTTP接口、桌面限制、模型许可、调度绑定和真实任务优先级支持。目录由实际Rust路由/serde字段生成，不把目录存在当作VOS放行。文档源码随下次发版进入应用，本轮不发布镜像。

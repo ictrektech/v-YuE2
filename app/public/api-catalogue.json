@@ -1,0 +1,3281 @@
+{
+  "description": "Native Rust API source reference; VOS gateway restrictions apply. Not OpenAPI.",
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "handler": "health",
+      "signature": "async fn health(&self) -> bool",
+      "source": "crates/music-server/src/lib.rs#L8892",
+      "response_types": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities",
+      "handler": "capabilities",
+      "signature": "async fn capabilities(State(state): State<AppState>) -> Json<CapabilitiesResponse>",
+      "source": "crates/music-server/src/lib.rs#L7659",
+      "response_types": [
+        "CapabilitiesResponse"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/configuration",
+      "handler": "configuration",
+      "signature": "async fn configuration(State(state): State<AppState>) -> Json<StudioConfiguration>",
+      "source": "crates/music-server/src/lib.rs#L4269",
+      "response_types": [
+        "StudioConfiguration"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/configuration",
+      "handler": "update_configuration",
+      "signature": "async fn update_configuration(\n    State(state): State<AppState>,\n    Json(update): Json<StudioConfiguration>,\n) -> Result<Json<StudioConfiguration>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4273",
+      "response_types": [
+        "ApiError",
+        "StudioConfiguration"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/engine/options",
+      "handler": "engine_options",
+      "signature": "async fn engine_options(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L4367",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/engine/options",
+      "handler": "update_engine_options",
+      "signature": "async fn update_engine_options(\n    State(state): State<AppState>,\n    Json(mut request): Json<EngineOptions>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4404",
+      "response_types": [
+        "ApiError",
+        "EngineOptions",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/engine/pick-executable",
+      "handler": "pick_engine_executable",
+      "signature": "async fn pick_engine_executable() -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4461",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/engine/restart",
+      "handler": "restart_local_engine",
+      "signature": "async fn restart_local_engine(State(state): State<AppState>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4452",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/engine/logs",
+      "handler": "engine_logs",
+      "signature": "async fn engine_logs(State(state): State<AppState>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5304",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/engine/progress",
+      "handler": "engine_progress",
+      "signature": "async fn engine_progress(State(state): State<AppState>) -> Sse<impl futures_util::Stream<Item = Result<Event, std::convert::Infallible>>>",
+      "source": "crates/music-server/src/lib.rs#L5318",
+      "response_types": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/system/resources",
+      "handler": "system_resources",
+      "signature": "async fn system_resources() -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L5324",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/proxy/image",
+      "handler": "proxy_image",
+      "signature": "async fn proxy_image(\n    axum::extract::Query(request): axum::extract::Query<ProxyImageRequest>,\n) -> Result<axum::response::Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5340",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/openrouter/settings",
+      "handler": "openrouter_settings",
+      "signature": "async fn openrouter_settings() -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L7379",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/openrouter/settings",
+      "handler": "update_openrouter_settings",
+      "signature": "async fn update_openrouter_settings(\n    State(state): State<AppState>,\n    Json(request): Json<OpenRouterSettingsRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7389",
+      "response_types": [
+        "ApiError",
+        "OpenRouterSettingsRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/openrouter/logs",
+      "handler": "openrouter_logs",
+      "signature": "async fn openrouter_logs() -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L7375",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/files/save",
+      "handler": "saving::choose",
+      "signature": "pub async fn choose(Json(request): Json<Destination>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/saving.rs#L57",
+      "response_types": [
+        "ApiError",
+        "Destination",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/files/save/{id}",
+      "handler": "saving::write",
+      "signature": "pub async fn write(Path(id): Path<String>, headers: HeaderMap, body: Body) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/saving.rs#L112",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/files/reveal",
+      "handler": "saving::reveal",
+      "signature": "pub async fn reveal(Json(file): Json<Written>) -> Result<StatusCode, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/saving.rs#L215",
+      "response_types": [
+        "ApiError",
+        "Written"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/skins",
+      "handler": "skins::list",
+      "signature": "pub async fn list() -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/skins.rs#L49",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/skins",
+      "handler": "skins::add",
+      "signature": "pub async fn add(headers: HeaderMap, body: Bytes) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/skins.rs#L67",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/skins/file/{name}",
+      "handler": "skins::file",
+      "signature": "pub async fn file(Path(name): Path<String>) -> Result<Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/skins.rs#L87",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/network/proxy",
+      "handler": "read_proxy",
+      "signature": "async fn read_proxy() -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L4217",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/network/proxy",
+      "handler": "update_proxy",
+      "signature": "async fn update_proxy(\n    State(state): State<AppState>,\n    Json(settings): Json<net::ProxySettings>,\n) -> Result<Json<net::ProxySettings>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4226",
+      "response_types": [
+        "ApiError",
+        "net"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/network/proxy/test",
+      "handler": "test_proxy",
+      "signature": "async fn test_proxy(Json(settings): Json<net::ProxySettings>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4238",
+      "response_types": [
+        "ApiError",
+        "Value",
+        "net"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/assistant/status",
+      "handler": "assistant_status",
+      "signature": "async fn assistant_status(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L5398",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/assistant/status",
+      "handler": "update_assistant_settings",
+      "signature": "async fn update_assistant_settings(\n    State(state): State<AppState>,\n    Json(incoming): Json<AssistantSettingsRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5568",
+      "response_types": [
+        "ApiError",
+        "AssistantSettingsRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/assistant/local-models",
+      "handler": "assistant_local_models",
+      "signature": "async fn assistant_local_models(\n    axum::extract::Query(query): axum::extract::Query<LocalModelsQuery>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5489",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/assistant/cli-agents",
+      "handler": "assistant_cli_agents",
+      "signature": "async fn assistant_cli_agents() -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5518",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/assistant/local-key",
+      "handler": "set_local_server_key",
+      "signature": "async fn set_local_server_key(Json(request): Json<LocalServerKeyRequest>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5541",
+      "response_types": [
+        "ApiError",
+        "LocalServerKeyRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/assistant/write",
+      "handler": "assistant_write",
+      "signature": "async fn assistant_write(\n    State(state): State<AppState>,\n    Json(request): Json<assistant::AssistRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L6572",
+      "response_types": [
+        "ApiError",
+        "Value",
+        "assistant"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/assistant/write/stream",
+      "handler": "assistant_write_stream",
+      "signature": "async fn assistant_write_stream(\n    State(state): State<AppState>,\n    Json(request): Json<assistant::AssistRequest>,\n) -> Result<axum::response::Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L6217",
+      "response_types": [
+        "ApiError",
+        "assistant"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/assistant/sections",
+      "handler": "assistant_sections",
+      "signature": "async fn assistant_sections(\n    State(state): State<AppState>,\n    Json(request): Json<LyricsSectionsRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L6588",
+      "response_types": [
+        "ApiError",
+        "LyricsSectionsRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/assistant/runtime",
+      "handler": "assistant_runtime_status",
+      "signature": "async fn assistant_runtime_status(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L5641",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/assistant/runtime/install",
+      "handler": "assistant_runtime_install",
+      "signature": "async fn assistant_runtime_install(\n    State(state): State<AppState>,\n    Json(request): Json<AssistantAssetRequest>,\n) -> Result<Json<assistant_runtime::RuntimeStatus>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5674",
+      "response_types": [
+        "ApiError",
+        "AssistantAssetRequest",
+        "assistant_runtime"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/assistant/runtime/cancel",
+      "handler": "cancel_assistant_download",
+      "signature": "async fn cancel_assistant_download(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L1758",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/assistant/runtime/remove",
+      "handler": "assistant_runtime_remove",
+      "signature": "async fn assistant_runtime_remove(\n    State(state): State<AppState>,\n    Json(request): Json<AssistantAssetRequest>,\n) -> Result<Json<assistant_runtime::RuntimeStatus>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1732",
+      "response_types": [
+        "ApiError",
+        "AssistantAssetRequest",
+        "assistant_runtime"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/assistant/runtime/start",
+      "handler": "assistant_runtime_start",
+      "signature": "async fn assistant_runtime_start(\n    State(state): State<AppState>,\n    Json(request): Json<AssistantModelRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5726",
+      "response_types": [
+        "ApiError",
+        "AssistantModelRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/assistant/runtime/stop",
+      "handler": "assistant_runtime_stop",
+      "signature": "async fn assistant_runtime_stop(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L5741",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/karaoke/status",
+      "handler": "karaoke_status",
+      "signature": "async fn karaoke_status(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L5766",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/karaoke/status",
+      "handler": "update_karaoke_settings",
+      "signature": "async fn update_karaoke_settings(\n    State(state): State<AppState>,\n    Json(request): Json<KaraokeSettingsRequest>,\n) -> Result<Json<lyrics_sync::SyncStatus>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5822",
+      "response_types": [
+        "ApiError",
+        "KaraokeSettingsRequest",
+        "lyrics_sync"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/karaoke/install",
+      "handler": "karaoke_install",
+      "signature": "async fn karaoke_install(\n    State(state): State<AppState>,\n    Json(request): Json<AssistantAssetRequest>,\n) -> Result<Json<lyrics_sync::SyncStatus>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5928",
+      "response_types": [
+        "ApiError",
+        "AssistantAssetRequest",
+        "lyrics_sync"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/karaoke/cancel",
+      "handler": "cancel_karaoke_download",
+      "signature": "async fn cancel_karaoke_download(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L1724",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/karaoke/remove",
+      "handler": "karaoke_remove",
+      "signature": "async fn karaoke_remove(\n    State(state): State<AppState>,\n    Json(request): Json<AssistantAssetRequest>,\n) -> Result<Json<lyrics_sync::SyncStatus>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5850",
+      "response_types": [
+        "ApiError",
+        "AssistantAssetRequest",
+        "lyrics_sync"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/library/songs/{id}/karaoke",
+      "handler": "create_song_karaoke",
+      "signature": "async fn create_song_karaoke(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n    Json(request): Json<KaraokeRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L6080",
+      "response_types": [
+        "ApiError",
+        "KaraokeRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/library/songs/{id}/karaoke",
+      "handler": "delete_song_karaoke",
+      "signature": "async fn delete_song_karaoke(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L6129",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/openrouter/catalog",
+      "handler": "openrouter_catalog",
+      "signature": "async fn openrouter_catalog(State(state): State<AppState>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4765",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/openrouter/catalog/refresh",
+      "handler": "refresh_openrouter_catalog",
+      "signature": "async fn refresh_openrouter_catalog(State(state): State<AppState>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4879",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/openrouter/transcriptions",
+      "handler": "create_openrouter_transcription",
+      "signature": "async fn create_openrouter_transcription(\n    State(state): State<AppState>,\n    Json(input): Json<OpenRouterTranscriptionRequest>,\n) -> Result<Json<OpenRouterResponse>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4969",
+      "response_types": [
+        "ApiError",
+        "OpenRouterResponse",
+        "OpenRouterTranscriptionRequest"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/openrouter/covers",
+      "handler": "create_openrouter_cover",
+      "signature": "async fn create_openrouter_cover(\n    State(state): State<AppState>,\n    Json(input): Json<OpenRouterCoverRequest>,\n) -> Result<Json<OpenRouterResponse>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4993",
+      "response_types": [
+        "ApiError",
+        "OpenRouterCoverRequest",
+        "OpenRouterResponse"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/editor/{*path}",
+      "handler": "editor_asset",
+      "signature": "async fn editor_asset(Path(path): Path<String>) -> Result<axum::response::Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1460",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/separation/runtime",
+      "handler": "separation_assets",
+      "signature": "async fn separation_assets(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L1631",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/separation/runtime/install",
+      "handler": "install_separation_asset",
+      "signature": "async fn install_separation_asset(\n    State(state): State<AppState>,\n    Json(request): Json<InstallSeparationAssetRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1763",
+      "response_types": [
+        "ApiError",
+        "InstallSeparationAssetRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/separation/runtime/cancel",
+      "handler": "cancel_separation_download",
+      "signature": "async fn cancel_separation_download(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L1718",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/separation/status",
+      "handler": "separation_status",
+      "signature": "async fn separation_status(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L1874",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/separation/settings",
+      "handler": "read_separation_settings",
+      "signature": "async fn read_separation_settings(State(state): State<AppState>) -> Json<separation::SeparationConfig>",
+      "source": "crates/music-server/src/lib.rs#L1853",
+      "response_types": [
+        "separation"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/separation/settings",
+      "handler": "write_separation_settings",
+      "signature": "async fn write_separation_settings(\n    State(state): State<AppState>,\n    Json(config): Json<separation::SeparationConfig>,\n) -> Result<Json<separation::SeparationConfig>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1857",
+      "response_types": [
+        "ApiError",
+        "separation"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/separation/install",
+      "handler": "install_separation_model",
+      "signature": "async fn install_separation_model(State(state): State<AppState>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1931",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/separation/remove",
+      "handler": "remove_separation_model",
+      "signature": "async fn remove_separation_model(State(state): State<AppState>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5873",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/adapters",
+      "handler": "list_adapters",
+      "signature": "async fn list_adapters(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L1949",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/adapters/import",
+      "handler": "import_adapter",
+      "signature": "async fn import_adapter(\n    State(state): State<AppState>,\n    mut multipart: Multipart,\n) -> Result<(StatusCode, Json<adapters::AdapterMeta>), (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2025",
+      "response_types": [
+        "ApiError",
+        "adapters"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/adapters/import-folder",
+      "handler": "import_adapter_folder",
+      "signature": "async fn import_adapter_folder(State(state): State<AppState>, body: axum::body::Bytes) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2059",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/adapters/cancel",
+      "handler": "cancel_adapter_download",
+      "signature": "async fn cancel_adapter_download(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L2018",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/adapters/install",
+      "handler": "install_catalog_adapters",
+      "signature": "async fn install_catalog_adapters(\n    State(state): State<AppState>,\n    Json(input): Json<InstallAdaptersRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1973",
+      "response_types": [
+        "ApiError",
+        "InstallAdaptersRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/adapters/hub",
+      "handler": "search_hub_adapters",
+      "signature": "async fn search_hub_adapters(State(state): State<AppState>, Query(query): Query<HubQuery>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1989",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/adapters/hub/files",
+      "handler": "list_hub_files",
+      "signature": "async fn list_hub_files(State(state): State<AppState>, Query(query): Query<HubQuery>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1996",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/adapters/hub/install",
+      "handler": "install_hub_adapters",
+      "signature": "async fn install_hub_adapters(State(state): State<AppState>, Json(input): Json<InstallHubRequest>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2009",
+      "response_types": [
+        "ApiError",
+        "InstallHubRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/v1/adapters/{id}",
+      "handler": "update_adapter",
+      "signature": "async fn update_adapter(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n    Json(patch): Json<adapters::Patch>,\n) -> Result<Json<adapters::AdapterMeta>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2111",
+      "response_types": [
+        "ApiError",
+        "adapters"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/adapters/{id}",
+      "handler": "delete_adapter",
+      "signature": "async fn delete_adapter(State(state): State<AppState>, Path(id): Path<String>) -> Result<StatusCode, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2119",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/library/songs/{id}/process",
+      "handler": "start_processing",
+      "signature": "async fn start_processing(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n    Json(request): Json<processing::ProcessRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2126",
+      "response_types": [
+        "ApiError",
+        "Value",
+        "processing"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/library/songs/{id}/version",
+      "handler": "select_song_version",
+      "signature": "async fn select_song_version(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n    Json(input): Json<SelectVersionRequest>,\n) -> Result<Json<library::Song>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2402",
+      "response_types": [
+        "ApiError",
+        "SelectVersionRequest",
+        "library"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/library/songs/{id}/versions/{version}",
+      "handler": "remove_song_version",
+      "signature": "async fn remove_song_version(\n    State(state): State<AppState>,\n    Path((id, version)): Path<(String, String)>,\n) -> Result<Json<library::Song>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2416",
+      "response_types": [
+        "ApiError",
+        "library"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/processing",
+      "handler": "read_processing",
+      "signature": "async fn read_processing(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L2271",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/processing/vst",
+      "handler": "read_vst",
+      "signature": "async fn read_vst() -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L2239",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/processing/vst/scan",
+      "handler": "scan_vst",
+      "signature": "async fn scan_vst() -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2244",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/processing/vst/editor",
+      "handler": "open_vst_editor",
+      "signature": "async fn open_vst_editor(Json(input): Json<VstEditorRequest>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2263",
+      "response_types": [
+        "ApiError",
+        "Value",
+        "VstEditorRequest"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/processing/preview",
+      "handler": "processing_preview",
+      "signature": "async fn processing_preview(State(state): State<AppState>, request: Request) -> Result<axum::response::Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2275",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/processing/keep",
+      "handler": "keep_processing",
+      "signature": "async fn keep_processing(\n    State(state): State<AppState>,\n    Json(input): Json<KeepProcessingRequest>,\n) -> Result<Json<library::Song>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2291",
+      "response_types": [
+        "ApiError",
+        "KeepProcessingRequest",
+        "library"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/processing/discard",
+      "handler": "discard_processing",
+      "signature": "async fn discard_processing(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L2360",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/processing/reference",
+      "handler": "upload_processing_reference",
+      "signature": "async fn upload_processing_reference(\n    State(state): State<AppState>,\n    mut multipart: Multipart,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2371",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/training",
+      "handler": "read_training",
+      "signature": "async fn read_training(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L2533",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/pack/install",
+      "handler": "install_training_pack",
+      "signature": "async fn install_training_pack(State(state): State<AppState>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2687",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/pack/cancel",
+      "handler": "cancel_training_pack",
+      "signature": "async fn cancel_training_pack(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L2726",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/datasets",
+      "handler": "create_training_dataset",
+      "signature": "async fn create_training_dataset(State(state): State<AppState>, Json(input): Json<DatasetInput>) -> Result<Json<training::Dataset>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2741",
+      "response_types": [
+        "ApiError",
+        "DatasetInput",
+        "training"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/datasets/import",
+      "handler": "import_training_dataset",
+      "signature": "async fn import_training_dataset(State(state): State<AppState>, mut multipart: Multipart) -> Result<Json<training::Dataset>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2777",
+      "response_types": [
+        "ApiError",
+        "training"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/datasets/{id}/reveal",
+      "handler": "reveal_training_dataset",
+      "signature": "async fn reveal_training_dataset(State(state): State<AppState>, Path(id): Path<String>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2801",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/v1/training/datasets/{id}",
+      "handler": "update_training_dataset",
+      "signature": "async fn update_training_dataset(State(state): State<AppState>, Path(id): Path<String>, Json(input): Json<DatasetInput>) -> Result<Json<training::Dataset>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2813",
+      "response_types": [
+        "ApiError",
+        "DatasetInput",
+        "training"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/training/datasets/{id}",
+      "handler": "delete_training_dataset",
+      "signature": "async fn delete_training_dataset(State(state): State<AppState>, Path(id): Path<String>) -> Result<StatusCode, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2817",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/datasets/{id}/songs",
+      "handler": "add_training_songs",
+      "signature": "async fn add_training_songs(State(state): State<AppState>, Path(id): Path<String>, Json(input): Json<DatasetSongs>) -> Result<Json<training::Dataset>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2832",
+      "response_types": [
+        "ApiError",
+        "DatasetSongs",
+        "training"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/datasets/{id}/files",
+      "handler": "upload_training_files",
+      "signature": "async fn upload_training_files(State(state): State<AppState>, Path(id): Path<String>, mut multipart: Multipart) -> Result<Json<training::Dataset>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2859",
+      "response_types": [
+        "ApiError",
+        "training"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/v1/training/datasets/{id}/items/{item}",
+      "handler": "update_training_item",
+      "signature": "async fn update_training_item(\n    State(state): State<AppState>,\n    Path((id, item)): Path<(String, String)>,\n    Json(patch): Json<training::ItemPatch>,\n) -> Result<Json<training::Dataset>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2913",
+      "response_types": [
+        "ApiError",
+        "training"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/training/datasets/{id}/items/{item}",
+      "handler": "delete_training_item",
+      "signature": "async fn delete_training_item(State(state): State<AppState>, Path((id, item)): Path<(String, String)>) -> Result<Json<training::Dataset>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2921",
+      "response_types": [
+        "ApiError",
+        "training"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/training/datasets/{id}/items/{item}/audio",
+      "handler": "training_item_audio",
+      "signature": "async fn training_item_audio(State(state): State<AppState>, Path((id, item)): Path<(String, String)>, request: Request) -> Result<axum::response::Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1406",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/datasets/{id}/prepare",
+      "handler": "prepare::start",
+      "signature": "pub async fn start(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n    Json(request): Json<PrepareRequest>,\n) -> Result<Json<PrepareStatus>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/prepare.rs#L178",
+      "response_types": [
+        "ApiError",
+        "PrepareRequest",
+        "PrepareStatus"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/lyrics/find",
+      "handler": "find_lyrics",
+      "signature": "async fn find_lyrics(Json(request): Json<FindLyricsRequest>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7358",
+      "response_types": [
+        "ApiError",
+        "FindLyricsRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/lyrics/syllables",
+      "handler": "lyric_syllables",
+      "signature": "async fn lyric_syllables(Json(request): Json<SyllablesRequest>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L2100",
+      "response_types": [
+        "SyllablesRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/videos",
+      "handler": "store_video",
+      "signature": "async fn store_video(Query(query): Query<VideoName>, body: axum::body::Bytes) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7333",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/writing/guide",
+      "handler": "writing_guide",
+      "signature": "async fn writing_guide(Query(query): Query<GuideQuery>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7305",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/writing/examples",
+      "handler": "writing_examples",
+      "signature": "async fn writing_examples(Query(query): Query<ExamplesQuery>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L7321",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/songs/{id}/files",
+      "handler": "library_song_files",
+      "signature": "async fn library_song_files(State(state): State<AppState>, Path(id): Path<String>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7276",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/midi",
+      "handler": "midi_status",
+      "signature": "async fn midi_status(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L6826",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/midi/runtime",
+      "handler": "midi_runtime",
+      "signature": "async fn midi_runtime(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L2664",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/training/pack/runtime",
+      "handler": "training_pack_runtime",
+      "signature": "async fn training_pack_runtime(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L2646",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/training/listen/runtime",
+      "handler": "listen_pack_runtime",
+      "signature": "async fn listen_pack_runtime(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L2656",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/midi/notes",
+      "handler": "midi_live_notes",
+      "signature": "async fn midi_live_notes(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L6848",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/midi/install",
+      "handler": "install_midi",
+      "signature": "async fn install_midi(State(state): State<AppState>, Json(input): Json<MidiSizeRequest>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L6860",
+      "response_types": [
+        "ApiError",
+        "MidiSizeRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/midi/remove",
+      "handler": "remove_midi_model",
+      "signature": "async fn remove_midi_model(State(state): State<AppState>, Json(input): Json<MidiSizeRequest>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L6877",
+      "response_types": [
+        "ApiError",
+        "MidiSizeRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/midi/cancel",
+      "handler": "cancel_midi",
+      "signature": "async fn cancel_midi(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L6884",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/midi/transcribe",
+      "handler": "start_midi",
+      "signature": "async fn start_midi(State(state): State<AppState>, Json(input): Json<MidiRequest>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L6906",
+      "response_types": [
+        "ApiError",
+        "MidiRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/songs/{id}/midi",
+      "handler": "read_song_midi",
+      "signature": "async fn read_song_midi(State(state): State<AppState>, Path(id): Path<String>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7193",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/library/songs/{id}/midi",
+      "handler": "write_song_midi",
+      "signature": "async fn write_song_midi(State(state): State<AppState>, Path(id): Path<String>, Json(body): Json<MidiUpload>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7229",
+      "response_types": [
+        "ApiError",
+        "MidiUpload",
+        "Value"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/library/songs/{id}/midi",
+      "handler": "delete_song_midi",
+      "signature": "async fn delete_song_midi(State(state): State<AppState>, Path(id): Path<String>) -> Result<StatusCode, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7255",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/songs/{id}/midi/file",
+      "handler": "song_midi_file",
+      "signature": "async fn song_midi_file(State(state): State<AppState>, Path(id): Path<String>) -> Result<axum::response::Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7210",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/training/datasets/{id}/items/{item}/files",
+      "handler": "dataset_song_files",
+      "signature": "async fn dataset_song_files(State(state): State<AppState>, Path((id, item)): Path<(String, String)>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7292",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/prepare/cancel",
+      "handler": "prepare::cancel",
+      "signature": "pub async fn cancel(State(state): State<AppState>) -> Json<serde_json::Value>",
+      "source": "crates/music-server/src/prepare.rs#L416",
+      "response_types": [
+        "serde_json"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/datasets/{id}/take-as-is",
+      "handler": "prepare::take_as_is",
+      "signature": "pub async fn take_as_is(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n    Json(request): Json<TakeAsIsRequest>,\n) -> Result<Json<training::Dataset>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/prepare.rs#L360",
+      "response_types": [
+        "ApiError",
+        "TakeAsIsRequest",
+        "training"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/library/songs/{id}/describe-style",
+      "handler": "prepare::describe_song_style",
+      "signature": "pub async fn describe_song_style(State(state): State<AppState>, Path(song_id): Path<String>) -> Result<Json<serde_json::Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/prepare.rs#L301",
+      "response_types": [
+        "ApiError",
+        "serde_json"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/system/gpus",
+      "handler": "system_gpus",
+      "signature": "async fn system_gpus(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L5171",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/network",
+      "handler": "remote::status",
+      "signature": "pub async fn status(ConnectInfo(peer): ConnectInfo<SocketAddr>, headers: axum::http::HeaderMap) -> Json<Value>",
+      "source": "crates/music-server/src/remote.rs#L131",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/network",
+      "handler": "remote::change",
+      "signature": "pub async fn change(\n    axum::extract::State(state): axum::extract::State<crate::AppState>,\n    ConnectInfo(peer): ConnectInfo<SocketAddr>,\n    headers: axum::http::HeaderMap,\n    Json(change): Json<AccessChange>,\n) -> Result<Json<Value>, (StatusCode, Json<crate::ApiError>)>",
+      "source": "crates/music-server/src/remote.rs#L153",
+      "response_types": [
+        "AccessChange",
+        "Value",
+        "crate"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/adapters/{id}/comfyui",
+      "handler": "export_adapter_comfyui",
+      "signature": "async fn export_adapter_comfyui(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n    axum::extract::Query(query): axum::extract::Query<ComfyExportQuery>,\n) -> Result<axum::response::Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8122",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/adapters/{id}/comfyui",
+      "handler": "save_adapter_comfyui",
+      "signature": "async fn save_adapter_comfyui(State(state): State<AppState>, Path(id): Path<String>, Json(request): Json<ComfySaveRequest>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8182",
+      "response_types": [
+        "ApiError",
+        "ComfySaveRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/score/midi",
+      "handler": "score::api::midi",
+      "signature": "pub async fn midi(Json(request): Json<MidiRequest>) -> Answer",
+      "source": "crates/music-server/src/score/api.rs#L118",
+      "response_types": [
+        "MidiRequest"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/score/instrumental",
+      "handler": "score::api::instrumental",
+      "signature": "pub async fn instrumental(Json(request): Json<MidiRequest>) -> Answer",
+      "source": "crates/music-server/src/score/api.rs#L129",
+      "response_types": [
+        "MidiRequest"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/score/vocal-octave",
+      "handler": "score::api::vocal_octave",
+      "signature": "pub async fn vocal_octave(Json(request): Json<VocalOctaveRequest>) -> Answer",
+      "source": "crates/music-server/src/score/api.rs#L169",
+      "response_types": [
+        "VocalOctaveRequest"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/score/chord-bed",
+      "handler": "score::api::chord_bed",
+      "signature": "pub async fn chord_bed(Json(request): Json<ChordBedRequest>) -> Answer",
+      "source": "crates/music-server/src/score/api.rs#L151",
+      "response_types": [
+        "ChordBedRequest"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/score/sections",
+      "handler": "match_score_sections",
+      "signature": "async fn match_score_sections(\n    State(state): State<AppState>,\n    mut multipart: axum::extract::Multipart,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L6017",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/score/from-midi",
+      "handler": "score::api::from_midi",
+      "signature": "pub async fn from_midi(Json(request): Json<FromMidiRequest>) -> Answer",
+      "source": "crates/music-server/src/score/api.rs#L80",
+      "response_types": [
+        "FromMidiRequest"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/song/tokenize",
+      "handler": "song_tokenizer::tokenize",
+      "signature": "pub async fn tokenize(State(state): State<AppState>, Json(request): Json<Request>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/song_tokenizer.rs#L56",
+      "response_types": [
+        "ApiError",
+        "Request",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/score/mark",
+      "handler": "score::api::mark",
+      "signature": "pub async fn mark(Json(request): Json<MarkRequest>) -> Answer",
+      "source": "crates/music-server/src/score/api.rs#L46",
+      "response_types": [
+        "MarkRequest"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/prepare/train-after",
+      "handler": "prepare::set_train_after",
+      "signature": "pub async fn set_train_after(State(state): State<AppState>, Json(request): Json<TrainAfterRequest>) -> Json<serde_json::Value>",
+      "source": "crates/music-server/src/prepare.rs#L290",
+      "response_types": [
+        "TrainAfterRequest",
+        "serde_json"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/listen/install",
+      "handler": "install_listen_pack",
+      "signature": "async fn install_listen_pack(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L2709",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/runs",
+      "handler": "start_training",
+      "signature": "async fn start_training(State(state): State<AppState>, Json(input): Json<StartTraining>) -> Result<Json<training::Run>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L2938",
+      "response_types": [
+        "ApiError",
+        "StartTraining",
+        "training"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/runs/{id}/cancel",
+      "handler": "cancel_training",
+      "signature": "async fn cancel_training(State(state): State<AppState>, Path(id): Path<String>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3084",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/runs/{id}/continue",
+      "handler": "continue_training",
+      "signature": "async fn continue_training(State(state): State<AppState>, Path(id): Path<String>, Json(input): Json<ContinueTraining>) -> Result<Json<training::Run>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3073",
+      "response_types": [
+        "ApiError",
+        "ContinueTraining",
+        "training"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/training/runs/{id}",
+      "handler": "delete_training_run",
+      "signature": "async fn delete_training_run(State(state): State<AppState>, Path(id): Path<String>) -> Result<StatusCode, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3089",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/training/runs/{id}/checkpoints/{step}/install",
+      "handler": "install_training_checkpoint",
+      "signature": "async fn install_training_checkpoint(\n    State(state): State<AppState>,\n    Path((id, step)): Path<(String, u32)>,\n    Json(input): Json<InstallCheckpoint>,\n) -> Result<Json<adapters::AdapterMeta>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3101",
+      "response_types": [
+        "ApiError",
+        "InstallCheckpoint",
+        "adapters"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/songs/{id}/stems",
+      "handler": "read_stems",
+      "signature": "async fn read_stems(State(state): State<AppState>, Path(id): Path<String>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3123",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/library/songs/{id}/stems",
+      "handler": "start_separation",
+      "signature": "async fn start_separation(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3157",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/songs/{id}/stems/{stem}",
+      "handler": "read_stem_audio",
+      "signature": "async fn read_stem_audio(\n    State(state): State<AppState>,\n    Path((id, stem)): Path<(String, String)>,\n    request: Request,\n) -> Result<axum::response::Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3138",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/library/songs/{id}/cover/auto",
+      "handler": "draw_cover_now",
+      "signature": "async fn draw_cover_now(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3281",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/activity",
+      "handler": "read_activity",
+      "signature": "async fn read_activity(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L3333",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/cover-templates",
+      "handler": "read_cover_templates",
+      "signature": "async fn read_cover_templates(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L3567",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/cover-templates",
+      "handler": "write_cover_templates",
+      "signature": "async fn write_cover_templates(\n    State(state): State<AppState>,\n    Json(request): Json<CoverTemplatesRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3576",
+      "response_types": [
+        "ApiError",
+        "CoverTemplatesRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/file-tags",
+      "handler": "read_file_tags",
+      "signature": "async fn read_file_tags(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L3606",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/library/file-tags",
+      "handler": "write_file_tags",
+      "signature": "async fn write_file_tags(State(state): State<AppState>, Json(request): Json<FileTagsRequest>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3611",
+      "response_types": [
+        "ApiError",
+        "FileTagsRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/cover-templates/render",
+      "handler": "render_cover_template",
+      "signature": "async fn render_cover_template(\n    State(state): State<AppState>,\n    Json(request): Json<RenderCoverPromptRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3633",
+      "response_types": [
+        "ApiError",
+        "RenderCoverPromptRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/openrouter/completions",
+      "handler": "create_openrouter_completion",
+      "signature": "async fn create_openrouter_completion(\n    State(state): State<AppState>,\n    Json(input): Json<OpenRouterCompletionRequest>,\n) -> Result<Json<OpenRouterResponse>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L5016",
+      "response_types": [
+        "ApiError",
+        "OpenRouterCompletionRequest",
+        "OpenRouterResponse"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/songs",
+      "handler": "library_songs",
+      "signature": "async fn library_songs(State(state): State<AppState>) -> Result<Json<Vec<library::Song>>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1329",
+      "response_types": [
+        "ApiError",
+        "Vec"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/library/songs",
+      "handler": "create_library_song",
+      "signature": "async fn create_library_song(State(state):State<AppState>,Json(input):Json<library::SongInput>)->Result<(StatusCode,Json<library::Song>),(StatusCode,Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4105",
+      "response_types": [
+        "ApiError",
+        "library"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/library/import",
+      "handler": "import_library_audio",
+      "signature": "async fn import_library_audio(State(state): State<AppState>, mut multipart: Multipart) -> Result<(StatusCode, Json<library::Song>), (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4106",
+      "response_types": [
+        "ApiError",
+        "library"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/songs/{id}",
+      "handler": "library_song",
+      "signature": "async fn library_song(State(state): State<AppState>,Path(id):Path<String>)->Result<Json<library::Song>,(StatusCode,Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1398",
+      "response_types": [
+        "ApiError",
+        "library"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/library/songs/{id}",
+      "handler": "update_library_song",
+      "signature": "async fn update_library_song(State(state):State<AppState>,Path(id):Path<String>,Json(input):Json<library::SongInput>)->Result<Json<library::Song>,(StatusCode,Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4132",
+      "response_types": [
+        "ApiError",
+        "library"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/library/songs/{id}",
+      "handler": "delete_library_song",
+      "signature": "async fn delete_library_song(State(state): State<AppState>, Path(id): Path<String>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4155",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/library/songs/{id}/liked",
+      "handler": "set_library_song_liked",
+      "signature": "async fn set_library_song_liked(State(state): State<AppState>, Path(id): Path<String>, Json(input): Json<LikeInput>) -> Result<Json<library::Song>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1353",
+      "response_types": [
+        "ApiError",
+        "LikeInput",
+        "library"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/library/songs/{id}/note",
+      "handler": "set_library_song_note",
+      "signature": "async fn set_library_song_note(State(state): State<AppState>, Path(id): Path<String>, Json(input): Json<NoteInput>) -> Result<Json<library::Song>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1342",
+      "response_types": [
+        "ApiError",
+        "NoteInput",
+        "library"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/liked",
+      "handler": "library_liked",
+      "signature": "async fn library_liked(State(state): State<AppState>) -> Result<Json<Vec<library::Song>>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1363",
+      "response_types": [
+        "ApiError",
+        "Vec"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/journal",
+      "handler": "read_journal",
+      "signature": "async fn read_journal(State(state): State<AppState>) -> Result<Json<Vec<library::JournalEntry>>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1369",
+      "response_types": [
+        "ApiError",
+        "Vec"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/journal",
+      "handler": "write_journal",
+      "signature": "async fn write_journal(State(state): State<AppState>, Json(entry): Json<library::JournalEntry>) -> Result<Json<library::JournalEntry>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1375",
+      "response_types": [
+        "ApiError",
+        "library"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/journal",
+      "handler": "clear_journal",
+      "signature": "async fn clear_journal(State(state): State<AppState>) -> Result<StatusCode, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1387",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/journal/{id}",
+      "handler": "remove_journal_entry",
+      "signature": "async fn remove_journal_entry(State(state): State<AppState>, Path(id): Path<i64>) -> Result<StatusCode, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1391",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/media/{song_id}",
+      "handler": "library_media",
+      "signature": "async fn library_media(State(state): State<AppState>, Path(song_id): Path<String>, request: Request) -> Result<axum::response::Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L1399",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/songs/{id}/cover",
+      "handler": "library_cover",
+      "signature": "async fn library_cover(State(state): State<AppState>, Path(id): Path<String>) -> Result<axum::response::Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3661",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/library/songs/{id}/cover",
+      "handler": "store_library_cover",
+      "signature": "async fn store_library_cover(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n    Json(request): Json<StoreCoverRequest>,\n) -> Result<Json<library::Song>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4087",
+      "response_types": [
+        "ApiError",
+        "StoreCoverRequest",
+        "library"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/covers/look",
+      "handler": "read_cover_look",
+      "signature": "async fn read_cover_look(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L3778",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/covers/look",
+      "handler": "write_cover_look",
+      "signature": "async fn write_cover_look(\n    State(state): State<AppState>,\n    Json(request): Json<CoverLookRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3784",
+      "response_types": [
+        "ApiError",
+        "CoverLookRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/songs/{id}/cover/placeholder",
+      "handler": "placeholder_cover",
+      "signature": "async fn placeholder_cover(State(state): State<AppState>, Path(id): Path<String>) -> Result<axum::response::Response, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L3950",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/media/scenes",
+      "handler": "media_scenes",
+      "signature": "async fn media_scenes(Query(query): Query<MediaStyle>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L4006",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/media/photos",
+      "handler": "media_photos",
+      "signature": "async fn media_photos(Query(query): Query<MediaSearch>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4011",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/media/videos",
+      "handler": "media_videos",
+      "signature": "async fn media_videos(Query(query): Query<MediaSearch>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4024",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/library/songs/{id}/cover/photo",
+      "handler": "choose_cover_photo",
+      "signature": "async fn choose_cover_photo(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n    Json(request): Json<ChosenCoverPhoto>,\n) -> Result<Json<library::Song>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4044",
+      "response_types": [
+        "ApiError",
+        "ChosenCoverPhoto",
+        "library"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/library/songs/{id}/cover/pattern",
+      "handler": "choose_cover_pattern",
+      "signature": "async fn choose_cover_pattern(\n    State(state): State<AppState>,\n    Path(id): Path<String>,\n    Json(request): Json<ChosenCoverPattern>,\n) -> Result<Json<library::Song>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4067",
+      "response_types": [
+        "ApiError",
+        "ChosenCoverPattern",
+        "library"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/playlists",
+      "handler": "library_playlists",
+      "signature": "async fn library_playlists(State(state):State<AppState>)->Result<Json<Vec<library::Playlist>>,(StatusCode,Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4209",
+      "response_types": [
+        "ApiError",
+        "Vec"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/library/playlists",
+      "handler": "create_library_playlist",
+      "signature": "async fn create_library_playlist(State(state):State<AppState>,Json(input):Json<library::PlaylistInput>)->Result<(StatusCode,Json<library::Playlist>),(StatusCode,Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4210",
+      "response_types": [
+        "ApiError",
+        "library"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/library/playlists/{id}",
+      "handler": "library_playlist",
+      "signature": "async fn library_playlist(State(state):State<AppState>,Path(id):Path<String>)->Result<Json<library::Playlist>,(StatusCode,Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4211",
+      "response_types": [
+        "ApiError",
+        "library"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/v1/library/playlists/{id}",
+      "handler": "update_library_playlist",
+      "signature": "async fn update_library_playlist(State(state):State<AppState>,Path(id):Path<String>,Json(input):Json<library::PlaylistInput>)->Result<Json<library::Playlist>,(StatusCode,Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4212",
+      "response_types": [
+        "ApiError",
+        "library"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/library/playlists/{id}",
+      "handler": "delete_library_playlist",
+      "signature": "async fn delete_library_playlist(State(state):State<AppState>,Path(id):Path<String>)->Result<StatusCode,(StatusCode,Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L4213",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/setup/status",
+      "handler": "setup_status",
+      "signature": "async fn setup_status(State(state): State<AppState>) -> Json<Value>",
+      "source": "crates/music-server/src/lib.rs#L7416",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/setup/catalog",
+      "handler": "setup_catalog",
+      "signature": "async fn setup_catalog(State(state): State<AppState>) -> Json<model_manager::Catalog>",
+      "source": "crates/music-server/src/lib.rs#L7568",
+      "response_types": [
+        "model_manager"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/setup/download",
+      "handler": "setup_download",
+      "signature": "async fn setup_download(\n    State(state): State<AppState>,\n    Json(request): Json<SetupDownloadRequest>,\n) -> Result<(StatusCode, Json<model_manager::DownloadJob>), (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7572",
+      "response_types": [
+        "ApiError",
+        "SetupDownloadRequest",
+        "model_manager"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/setup/remove",
+      "handler": "setup_remove",
+      "signature": "async fn setup_remove(\n    State(state): State<AppState>,\n    Json(request): Json<SetupDownloadRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7426",
+      "response_types": [
+        "ApiError",
+        "SetupDownloadRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/setup/adopt",
+      "handler": "setup_adopt",
+      "signature": "async fn setup_adopt(State(state): State<AppState>, body: axum::body::Bytes) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7486",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/open-data-directory",
+      "handler": "open_data_directory",
+      "signature": "async fn open_data_directory() -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7553",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/setup/select",
+      "handler": "setup_select",
+      "signature": "async fn setup_select(\n    State(state): State<AppState>,\n    Json(request): Json<SetupSelectRequest>,\n) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7618",
+      "response_types": [
+        "ApiError",
+        "SetupSelectRequest",
+        "Value"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/setup/cancel",
+      "handler": "setup_cancel",
+      "signature": "async fn setup_cancel(State(state): State<AppState>) -> Result<Json<Value>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7649",
+      "response_types": [
+        "ApiError",
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/local-models/music",
+      "handler": "local_music_model_catalog",
+      "signature": "async fn local_music_model_catalog(\n    State(state): State<AppState>,\n) -> Result<Json<LocalMusicModelCatalog>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8627",
+      "response_types": [
+        "ApiError",
+        "LocalMusicModelCatalog"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/music/jobs",
+      "handler": "create_music_job",
+      "signature": "async fn create_music_job(\n    State(state): State<AppState>,\n    Json(request): Json<CreateMusicJobRequest>,\n) -> (StatusCode, Json<MusicJob>)",
+      "source": "crates/music-server/src/lib.rs#L7789",
+      "response_types": [
+        "CreateMusicJobRequest",
+        "MusicJob"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/music/jobs",
+      "handler": "list_active_music_jobs",
+      "signature": "async fn list_active_music_jobs(State(state): State<AppState>) -> Json<Vec<MusicJob>>",
+      "source": "crates/music-server/src/lib.rs#L8084",
+      "response_types": [
+        "Vec"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/music/replay",
+      "handler": "replay_music_job",
+      "signature": "async fn replay_music_job(\n    State(state): State<AppState>,\n    Json(request): Json<ReplayMusicJobRequest>,\n) -> Result<(StatusCode, Json<MusicJob>), (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L7896",
+      "response_types": [
+        "ApiError",
+        "MusicJob",
+        "ReplayMusicJobRequest"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/transcriptions",
+      "handler": "create_transcription",
+      "signature": "async fn create_transcription(\n    State(state): State<AppState>,\n    mut multipart: Multipart,\n) -> Result<(StatusCode, Json<ScoreJob>), (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8756",
+      "response_types": [
+        "ApiError",
+        "ScoreJob"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/transcriptions/{job_id}",
+      "handler": "score_job_status",
+      "signature": "async fn score_job_status(\n    State(state): State<AppState>,\n    Path(job_id): Path<String>,\n) -> Result<Json<ScoreJob>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8852",
+      "response_types": [
+        "ApiError",
+        "ScoreJob"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/transcriptions/{job_id}",
+      "handler": "cancel_score_job",
+      "signature": "async fn cancel_score_job(\n    State(state): State<AppState>,\n    Path(job_id): Path<String>,\n) -> Result<Json<ScoreJob>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8872",
+      "response_types": [
+        "ApiError",
+        "ScoreJob"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/scores",
+      "handler": "compose_score",
+      "signature": "async fn compose_score(\n    State(state): State<AppState>,\n    Json(request): Json<ComposeScoreRequest>,\n) -> Result<(StatusCode, Json<ScoreJob>), (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8738",
+      "response_types": [
+        "ApiError",
+        "ComposeScoreRequest",
+        "ScoreJob"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/scores/{job_id}",
+      "handler": "score_job_status",
+      "signature": "async fn score_job_status(\n    State(state): State<AppState>,\n    Path(job_id): Path<String>,\n) -> Result<Json<ScoreJob>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8852",
+      "response_types": [
+        "ApiError",
+        "ScoreJob"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/scores/{job_id}",
+      "handler": "cancel_score_job",
+      "signature": "async fn cancel_score_job(\n    State(state): State<AppState>,\n    Path(job_id): Path<String>,\n) -> Result<Json<ScoreJob>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8872",
+      "response_types": [
+        "ApiError",
+        "ScoreJob"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/music/jobs/ended",
+      "handler": "list_ended_music_jobs",
+      "signature": "async fn list_ended_music_jobs(State(state): State<AppState>) -> Json<Vec<MusicJob>>",
+      "source": "crates/music-server/src/lib.rs#L8052",
+      "response_types": [
+        "Vec"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/music/jobs/{job_id}",
+      "handler": "music_job_status",
+      "signature": "async fn music_job_status(\n    State(state): State<AppState>,\n    Path(job_id): Path<String>,\n) -> Result<Json<MusicJob>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8098",
+      "response_types": [
+        "ApiError",
+        "MusicJob"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/v1/music/jobs/{job_id}",
+      "handler": "cancel_music_job",
+      "signature": "async fn cancel_music_job(\n    State(state): State<AppState>,\n    Path(job_id): Path<String>,\n) -> Result<Json<MusicJob>, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8565",
+      "response_types": [
+        "ApiError",
+        "MusicJob"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/music/jobs/{job_id}",
+      "handler": "dismiss_music_job",
+      "signature": "async fn dismiss_music_job(State(state): State<AppState>, Path(job_id): Path<String>) -> Result<StatusCode, (StatusCode, Json<ApiError>)>",
+      "source": "crates/music-server/src/lib.rs#L8066",
+      "response_types": [
+        "ApiError"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/mcp",
+      "handler": "mcp::handle",
+      "signature": "pub async fn handle(headers: HeaderMap, body: axum::body::Bytes) -> Response",
+      "source": "crates/music-server/src/mcp.rs#L2679",
+      "response_types": []
+    },
+    {
+      "method": "GET",
+      "path": "/mcp/status",
+      "handler": "mcp::status",
+      "signature": "pub async fn status() -> Json<Value>",
+      "source": "crates/music-server/src/mcp.rs#L853",
+      "response_types": [
+        "Value"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/mcp/window",
+      "handler": "mcp::window_events",
+      "signature": "pub async fn window_events(headers: HeaderMap) -> Response",
+      "source": "crates/music-server/src/mcp.rs#L644",
+      "response_types": []
+    },
+    {
+      "method": "POST",
+      "path": "/mcp/window/result",
+      "handler": "mcp::window_result",
+      "signature": "pub async fn window_result(headers: HeaderMap, Json(answer): Json<WindowAnswer>) -> StatusCode",
+      "source": "crates/music-server/src/mcp.rs#L674",
+      "response_types": [
+        "WindowAnswer"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/mcp/window/focus",
+      "handler": "mcp::window_focus",
+      "signature": "pub async fn window_focus(headers: HeaderMap, Json(focus): Json<WindowFocus>) -> StatusCode",
+      "source": "crates/music-server/src/mcp.rs#L698",
+      "response_types": [
+        "WindowFocus"
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "Text",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\n#[serde(untagged)]\nenum Text {\n    Plain(String),\n    Localized(BTreeMap<String, String>),\n}"
+    },
+    {
+      "name": "CatalogFile",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Deserialize)]\nstruct CatalogFile {\n    url: String,\n    file: String,\n    bytes: u64,\n}"
+    },
+    {
+      "name": "CatalogEntry",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Deserialize)]\nstruct CatalogEntry {\n    id: String,\n    engine: String,\n    kind: String,\n    #[serde(default)]\n    author: Option<String>,\n    #[serde(default)]\n    page: Option<String>,\n    #[serde(default)]\n    trigger: Option<String>,\n    name: Text,\n    description: Text,\n    scales: BTreeMap<String, f64>,\n    #[serde(default)]\n    range: Option<[f64; 2]>,\n    /// The DiT width the weights were trained on: `2b` or `xl`.\n    #[serde(default)]\n    model: Option<String>,\n    #[serde(default)]\n    likes: u64,\n    #[serde(default)]\n    downloads: u64,\n    files: Vec<CatalogFile>,\n}"
+    },
+    {
+      "name": "CatalogFileFormat",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct CatalogFileFormat {\n    adapters: Vec<CatalogEntry>,\n}"
+    },
+    {
+      "name": "Origin",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\", tag = \"type\")]\nenum Origin {\n    Catalog { catalog_id: String },\n    Imported,\n    /// A checkpoint of a training run.\n    Trained { #[serde(default)] run: String, #[serde(default)] step: u32 },\n    /// A file of a Hugging Face repository, pinned to the commit it came from.\n    Hub { repo: String, revision: String, file: String },\n}"
+    },
+    {
+      "name": "AdapterMeta",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\nstruct AdapterMeta {\n    pub id: String,\n    pub engine: String,\n    pub name: Text,\n    #[serde(default)]\n    pub description: Text,\n    #[serde(default)]\n    pub kind: String,\n    #[serde(default)]\n    pub trigger: Option<String>,\n    #[serde(default)]\n    pub author: Option<String>,\n    #[serde(default)]\n    pub page: Option<String>,\n    /// The strength each slot starts at when the adapter is picked.\n    #[serde(default)]\n    pub scales: BTreeMap<String, f64>,\n    /// The slider range, when the adapter is only meaningful inside one.\n    #[serde(default)]\n    pub range: Option<[f64; 2]>,\n    /// The DiT width the weights fit, `2b` or `xl`, when it is known.\n    #[serde(default)]\n    pub model: Option<String>,\n    /// The slots the engine found weights for, remembered from its last answer\n    /// so the page can show them while the engine is not running.\n    #[serde(default)]\n    pub slots: Vec<String>,\n    pub origin: Origin,\n    #[serde(default)]\n    pub created_at: String,\n}"
+    },
+    {
+      "name": "Installed",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct Installed {\n    #[serde(flatten)]\n    pub meta: AdapterMeta,\n    pub bytes: u64,\n    /// The engine's complaint about the files, when it has one.\n    pub error: Option<String>,\n}"
+    },
+    {
+      "name": "Offered",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct Offered {\n    pub id: String,\n    pub name: Text,\n    pub description: Text,\n    pub kind: String,\n    pub author: Option<String>,\n    pub page: Option<String>,\n    pub trigger: Option<String>,\n    pub slots: Vec<String>,\n    pub bytes: u64,\n    pub installed: bool,\n    pub model: Option<String>,\n    pub likes: u64,\n    pub downloads: u64,\n}"
+    },
+    {
+      "name": "Patch",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Deserialize)]\nstruct Patch {\n    pub name: Option<String>,\n    pub trigger: Option<String>,\n    pub scales: Option<BTreeMap<String, f64>>,\n}"
+    },
+    {
+      "name": "HubConfig",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Deserialize)]\nstruct HubConfig {\n    #[serde(default)]\n    tags: Vec<String>,\n    /// Further tag sets, searched besides `tags`.\n    #[serde(default)]\n    also: Vec<Vec<String>>,\n    /// Words searched in repository names, for the many adapters published\n    /// with no tag at all; what they find is kept only when it looks like an\n    /// adapter and the typed words are in its name.\n    #[serde(default)]\n    search: Vec<String>,\n}"
+    },
+    {
+      "name": "HubSection",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Deserialize)]\n    struct HubSection {\n        #[serde(default)]\n        hub: BTreeMap<String, HubConfig>,\n    }"
+    },
+    {
+      "name": "HubRepo",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct HubRepo {\n    pub repo: String,\n    pub author: String,\n    pub likes: u64,\n    pub downloads: u64,\n    pub updated: Option<String>,\n    pub tags: Vec<String>,\n}"
+    },
+    {
+      "name": "HubFile",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct HubFile {\n    pub path: String,\n    pub bytes: u64,\n    pub adapter_id: String,\n    pub installed: bool,\n    /// The decoder companion every render already merges, in some precision.\n    pub built_in: bool,\n    #[serde(flatten)]\n    pub weights: AdapterWeights,\n}"
+    },
+    {
+      "name": "HubListing",
+      "source": "crates/music-server/src/adapters.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct HubListing {\n    pub repo: String,\n    pub revision: String,\n    pub page: String,\n    pub files: Vec<HubFile>,\n    /// Every file of the commit with its size, for the configs that travel along.\n    #[serde(skip)]\n    all: BTreeMap<String, u64>,\n}"
+    },
+    {
+      "name": "AssistTarget",
+      "source": "crates/music-server/src/assistant.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]\n#[serde(rename_all = \"snake_case\")]\nenum AssistTarget {\n    /// Write the lyrics and the style together.\n    All,\n    /// Rewrite only the lyrics, coherent with the current style.\n    Lyrics,\n    /// Rewrite only the style, coherent with the current lyrics.\n    Style,\n    /// Edit the ABC score as the instruction asks.\n    Score,\n    /// Lay out a recording's recognised words as a lyric sheet.\n    Transcript,\n    /// Lay out a published lyric sheet in sections, its words untouched.\n    Sheet,\n}"
+    },
+    {
+      "name": "AssistRequest",
+      "source": "crates/music-server/src/assistant.rs",
+      "declaration": "#[derive(Debug, Clone, Deserialize)]\nstruct AssistRequest {\n    pub target: AssistTarget,\n    #[serde(default)]\n    pub description: String,\n    #[serde(default)]\n    pub instruction: String,\n    #[serde(default)]\n    pub lyrics: String,\n    #[serde(default)]\n    pub style: String,\n    #[serde(default)]\n    pub abc: String,\n    #[serde(default = \"default_duration\")]\n    pub duration_seconds: f64,\n}"
+    },
+    {
+      "name": "AssistDraft",
+      "source": "crates/music-server/src/assistant.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Serialize)]\nstruct AssistDraft {\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    pub lyrics: Option<String>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    pub style: Option<String>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    pub abc: Option<String>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    pub title: Option<String>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    pub cover_prompt: Option<String>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    pub duration_seconds: Option<u32>,\n}"
+    },
+    {
+      "name": "AssetKind",
+      "source": "crates/music-server/src/assistant_runtime.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\nenum AssetKind {\n    /// A GGUF text model.\n    Model,\n    /// The llama.cpp binaries, delivered as a zip.\n    Runtime,\n}"
+    },
+    {
+      "name": "AssetStatus",
+      "source": "crates/music-server/src/assistant_runtime.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct AssetStatus {\n    pub id: &'static str,\n    pub label: &'static str,\n    pub kind: AssetKind,\n    pub bytes: u64,\n    pub vram_gb: Option<u32>,\n    pub note: &'static str,\n    pub installed: bool,\n    /// Bytes already on disk, so a resumed download reports honestly.\n    pub downloaded_bytes: u64,\n}"
+    },
+    {
+      "name": "RuntimeStatus",
+      "source": "crates/music-server/src/assistant_runtime.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Serialize)]\nstruct RuntimeStatus {\n    pub root: String,\n    /// True when llama-server and at least one model are present.\n    pub ready: bool,\n    pub server_path: Option<String>,\n    pub installed_models: Vec<String>,\n    pub running_model: Option<String>,\n    pub base_url: Option<String>,\n    pub assets: Vec<AssetStatus>,\n    pub active_download: Option<DownloadProgress>,\n}"
+    },
+    {
+      "name": "DownloadProgress",
+      "source": "crates/music-server/src/assistant_runtime.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct DownloadProgress {\n    pub asset_id: String,\n    pub downloaded_bytes: u64,\n    pub total_bytes: u64,\n    pub done: bool,\n    pub error: Option<String>,\n}"
+    },
+    {
+      "name": "Facts",
+      "source": "crates/music-server/src/audio_facts.rs",
+      "declaration": "#[derive(Clone, Debug, Serialize, PartialEq)]\nstruct Facts {\n    /// Beats per minute, rounded.\n    pub bpm: u32,\n}"
+    },
+    {
+      "name": "CoverLook",
+      "source": "crates/music-server/src/cover_art.rs",
+      "declaration": "#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]\nstruct CoverLook {\n    /// The stock photo for the track; off, its pattern.\n    #[serde(default = \"on\")]\n    pub photo: bool,\n    #[serde(default = \"default_pattern\")]\n    pub pattern: String,\n    /// Each track draws the pattern from its own words and style instead of its id.\n    #[serde(default)]\n    pub unique: bool,\n    /// The placeholder is written into the track as its cover, and into an\n    /// MP3's tags, so a player shows it after the file is saved.\n    #[serde(default = \"on\")]\n    pub keep: bool,\n}"
+    },
+    {
+      "name": "Photo",
+      "source": "crates/music-server/src/cover_art.rs",
+      "declaration": "#[derive(Debug, Clone, PartialEq, Serialize)]\nstruct Photo {\n    /// The file's name on Commons, without \"File:\".\n    pub title: String,\n    /// The file's page: where it came from and under what terms.\n    pub page: String,\n    /// The picture at the width a cover is kept at.\n    pub image: String,\n    /// The picture at the width a choice is shown at.\n    pub preview: String,\n    /// The picture as wide as a full-HD frame, or the original when narrower.\n    pub large: String,\n}"
+    },
+    {
+      "name": "Clip",
+      "source": "crates/music-server/src/cover_art.rs",
+      "declaration": "#[derive(Debug, Clone, PartialEq, Serialize)]\nstruct Clip {\n    pub title: String,\n    pub page: String,\n    /// A still of the clip, for choosing it.\n    pub poster: String,\n    /// The clip as WebM, at a height a background needs.\n    pub video: String,\n    pub width: u64,\n    pub height: u64,\n}"
+    },
+    {
+      "name": "CoverTemplate",
+      "source": "crates/music-server/src/cover_prompt.rs",
+      "declaration": "#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]\nstruct CoverTemplate {\n    pub id: String,\n    pub name: String,\n    pub template: String,\n}"
+    },
+    {
+      "name": "CredentialSource",
+      "source": "crates/music-server/src/credentials.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]\n#[serde(rename_all = \"snake_case\")]\nenum CredentialSource {\n    Environment,\n    LocalStore,\n}"
+    },
+    {
+      "name": "AssetKind",
+      "source": "crates/music-server/src/downloads.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\nenum AssetKind {\n    /// Model weights.\n    Model,\n    /// Executables and their libraries, delivered as a zip.\n    Runtime,\n}"
+    },
+    {
+      "name": "AssetStatus",
+      "source": "crates/music-server/src/downloads.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct AssetStatus {\n    pub id: &'static str,\n    pub label: &'static str,\n    pub kind: AssetKind,\n    pub bytes: u64,\n    pub vram_gb: Option<u32>,\n    pub note: &'static str,\n    pub installed: bool,\n    /// Bytes already on disk, so a resumed download reports honestly.\n    pub downloaded_bytes: u64,\n    /// The program (yue2, dub...) it was taken from in this run instead of being downloaded.\n    pub taken_from: Option<String>,\n}"
+    },
+    {
+      "name": "DownloadProgress",
+      "source": "crates/music-server/src/downloads.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct DownloadProgress {\n    pub asset_id: String,\n    /// Which panel asked for this. The karaoke recogniser and the separator\n    /// share one downloader - they share the ONNX runtime and the CUDA\n    /// libraries on disk, so they must - and without this the separator's panel\n    /// showed the recogniser's download as its own: its button disappeared and\n    /// a percentage of somebody else's gigabytes appeared in its place.\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    pub scope: Option<String>,\n    pub downloaded_bytes: u64,\n    pub total_bytes: u64,\n    pub done: bool,\n    pub error: Option<String>,\n}"
+    },
+    {
+      "name": "Taken",
+      "source": "crates/music-server/src/downloads.rs",
+      "declaration": "#[derive(Clone, Debug, Serialize)]\nstruct Taken {\n    pub app: String,\n    pub file: String,\n}"
+    },
+    {
+      "name": "Hardware",
+      "source": "crates/music-server/src/hardware.rs",
+      "declaration": "#[derive(Clone, Serialize)]\n#[serde(rename_all = \"camelCase\")]\nstruct Hardware {\n    pub gpu_name: Option<String>,\n    pub total_vram_gb: f64,\n    pub total_ram_gb: f64,\n    /// An NVIDIA card: the engine runs on CUDA there, which needs cuBLAS.\n    /// Every other card runs on Vulkan and needs nothing downloaded.\n    pub nvidia: bool,\n    /// The CUDA build of the engine this card and its driver run, none when\n    /// neither does: such a card computes on Vulkan.\n    pub cuda: Option<CudaBuild>,\n    /// Whether the card and its driver run CUDA at all - what the ONNX Runtime's\n    /// CUDA build needs - whichever build of the engine this platform ships.\n    pub runs_cuda: bool,\n    /// The CUDA build the card and its driver run, on every platform: what a trainer or a recogniser built for this\n    /// machine needs, whatever the engine computes on.\n    pub card_cuda: Option<CudaBuild>,\n    /// The NVIDIA card's compute capability, `[7, 5]` for Turing.\n    pub compute_capability: Option<(u32, u32)>,\n    /// The model set id that fits this card, none when no set does.\n    pub recommended: Option<&'static str>,\n}"
+    },
+    {
+      "name": "CudaBuild",
+      "source": "crates/music-server/src/hardware.rs",
+      "declaration": "#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]\n#[serde(rename_all = \"lowercase\")]\nenum CudaBuild {\n    Cuda12,\n    Cuda13,\n}"
+    },
+    {
+      "name": "Harmony",
+      "source": "crates/music-server/src/harmony.rs",
+      "declaration": "#[derive(Debug, Clone, Default, PartialEq, Deserialize, Serialize)]\nstruct Harmony {\n    /// `root` counts C, Cmaj7 and C/E as one chord, `spelling` tells them apart.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub identity: Option<String>,\n    /// Logits a chord loses for its share of the recent changes, 0 to 64.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub strength: Option<f64>,\n    /// Recent chord changes remembered, 1 to 512.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub window: Option<u32>,\n    /// Chord symbols in a row one root holds for free, 0 to 64; 0 is no limit.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub hold_limit: Option<u32>,\n    /// Root identity: logits a change to a root outside the key gains, 0 to 20.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub outside_bonus: Option<f64>,\n    /// The share of recent changes outside the key that stops the bonus, 0 to 1.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub outside_limit: Option<f64>,\n    /// Logits taken from a chord that would repeat how the previous section opened, 0 to 64.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub section_strength: Option<f64>,\n    /// Opening chords compared between sections, 1 to 16.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub section_open: Option<u32>,\n    /// Hold the plan to the lyrics' sections, in order.\n    #[serde(default, skip_serializing_if = \"std::ops::Not::not\")]\n    pub follow_lyrics: bool,\n}"
+    },
+    {
+      "name": "SamplingPreset",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Deserialize, Serialize, PartialEq)]\nstruct SamplingPreset {\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    temperature: Option<f64>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    top_p: Option<f64>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    top_k: Option<u32>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    repetition_penalty: Option<f64>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    penalty_window: Option<u32>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    min_tokens: Option<u32>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    max_tokens: Option<u32>,\n}"
+    },
+    {
+      "name": "CreateMusicJobRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Deserialize, Serialize)]\nstruct CreateMusicJobRequest {\n    /// The window's own mark for this request, handed back on the job so the\n    /// window knows the job as its own before the response reaches it.\n    client_ref: Option<String>,\n    /// Comma-separated style tags, verbatim under `[Tags]`.\n    #[serde(default)]\n    style: String,\n    /// Lyrics with their structural tags, verbatim under `[Lyrics]`.\n    #[serde(default)]\n    lyrics: String,\n    /// ABC score to realise; empty lets the model write one.\n    abc: Option<String>,\n    /// Move a supplied score before singing; zero keeps its pitches.\n    transpose: Option<i32>,\n    /// Reveal each section's words as a supplied score reaches it; on unless false.\n    #[serde(default)]\n    lyric_timing: Option<bool>,\n    #[serde(default)]\n    vocals_only: bool,\n    /// Seconds the studio fades the made song in and out over; none or 0 leaves it as sung.\n    #[serde(default)]\n    fade_in: Option<f32>,\n    #[serde(default)]\n    fade_out: Option<f32>,\n    /// The playlist the made songs are added to.\n    #[serde(default)]\n    playlist_id: Option<String>,\n    /// Chain-of-thought mode: `full`, `melody` or `off`.\n    cot: Option<String>,\n    /// Target length in seconds; the model may end the song earlier.\n    duration_seconds: Option<f64>,\n    lm_seed: Option<i64>,\n    seed: Option<i64>,\n    steps: Option<u32>,\n    lm_batch_size: Option<u32>,\n    synth_batch_size: Option<u32>,\n    cfg_scale: Option<f64>,\n    /// Strength of the engine's realaudio decoder companion; 0 decodes with the checkpoint alone.\n    companion_scale: Option<f64>,\n    /// Comma-separated semantic codes; present means the AR stage is skipped.\n    semantic_tokens: Option<String>,\n    abc_sampling: Option<SamplingPreset>,\n    semantic_sampling: Option<SamplingPreset>,\n    /// Chord variety and section order of the score the model plans.\n    #[serde(default)]\n    harmony: Option<harmony::Harmony>,\n    /// `abc` is the opening of a score, and the model writes the rest of the song on from it.\n    #[serde(default)]\n    abc_continue: bool,\n    /// The acoustic ODE solver: `midpoint` (the reference) or `ab2` (about half the evaluations).\n    #[serde(default)]\n    solver: Option<String>,\n    output_format: Option<String>,\n    mp3_bitrate: Option<u32>,\n    /// Library title only, never sent to the engine.\n    title: Option<String>,\n    /// What the cover should show, when the assistant described it.\n    cover_prompt: Option<String>,\n    /// Installed adapters to merge for this song, in order.\n    #[serde(default)]\n    adapters: Vec<AdapterUse>,\n    /// The library song whose melody this song sings (a cover); the new song\n    /// names it as the track it was made from.\n    #[serde(default)]\n    cover_of: Option<String>,\n}"
+    },
+    {
+      "name": "AdapterUse",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Deserialize, Serialize)]\nstruct AdapterUse {\n    id: String,\n    #[serde(default)]\n    scales: std::collections::BTreeMap<String, f64>,\n}"
+    },
+    {
+      "name": "MusicJobStatus",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\n#[serde(rename_all = \"snake_case\")]\nenum MusicJobStatus {\n    Queued,\n    Running,\n    Completed,\n    Failed,\n    Cancelled,\n}"
+    },
+    {
+      "name": "MusicJobDispatch",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\n#[serde(rename_all = \"snake_case\")]\nenum MusicJobDispatch {\n    NotConfigured,\n    Local,\n    Cancelled,\n}"
+    },
+    {
+      "name": "MusicJobPhase",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\n#[serde(rename_all = \"snake_case\")]\nenum MusicJobPhase {\n    Queued,\n    Running,\n    ExtractingVocals,\n    Completed,\n    Failed,\n    Cancelled,\n}"
+    },
+    {
+      "name": "MusicJob",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct MusicJob {\n    /// Where a track made from another comes from (a re-render).\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    derived: Option<Value>,\n    id: String,\n    /// The mark the submitting window gave the request; absent for an agent's.\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    client_ref: Option<String>,\n    /// When the request came in, in Unix milliseconds: a window opened later\n    /// places the job among the ones it made itself.\n    submitted_at: u64,\n    engine_id: String,\n    /// What the assistant said this track's cover should show, if anything.\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    cover_prompt: Option<String>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    title: Option<String>,\n    status: MusicJobStatus,\n    dispatch: MusicJobDispatch,\n    phase: MusicJobPhase,\n    style: String,\n    lyrics: String,\n    duration_seconds: f64,\n    generation_settings: Value,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    song: Option<CompletedSong>,\n    #[serde(default, skip_serializing_if = \"Vec::is_empty\")]\n    songs: Vec<CompletedSong>,\n    message: String,\n    /// The playlist the made songs go into, a project the user works in.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    playlist_id: Option<String>,\n    /// How the lyrics were laid along a score that came without sections.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    laid: Option<Value>,\n}"
+    },
+    {
+      "name": "CompletedSong",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct CompletedSong {\n    id: String,\n    song: library::Song,\n    audio_url: String,\n}"
+    },
+    {
+      "name": "LocalMusicModelCatalog",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Serialize)]\nstruct LocalMusicModelCatalog {\n    engine_id: String,\n    catalog: Value,\n}"
+    },
+    {
+      "name": "CapabilitiesResponse",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Serialize)]\nstruct CapabilitiesResponse {\n    engines: Vec<EngineDescriptor>,\n}"
+    },
+    {
+      "name": "ApiError",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Serialize)]\nstruct ApiError {\n    error: String,\n}"
+    },
+    {
+      "name": "EngineSubmitResponse",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct EngineSubmitResponse {\n    id: String,\n}"
+    },
+    {
+      "name": "EngineJobResponse",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct EngineJobResponse {\n    status: String,\n}"
+    },
+    {
+      "name": "SetupSelectRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct SetupSelectRequest {\n    #[serde(default)]\n    profile_id: Option<String>,\n    #[serde(default)]\n    component_ids: Option<Vec<String>>,\n}"
+    },
+    {
+      "name": "SetupDownloadRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct SetupDownloadRequest {\n    // The panel calls this field `component_ids`. Reading only `ids` meant a\n    // download request arrived empty, and an empty request quietly fell back to\n    // the default set - which is how pressing \"download\" on the 11.9 GB set\n    // started fetching the 26.6 GB one.\n    #[serde(default, alias = \"component_ids\")]\n    ids: Vec<String>,\n    profile_id: Option<String>,\n}"
+    },
+    {
+      "name": "ReplayMusicJobRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Deserialize, Serialize)]\nstruct ReplayMusicJobRequest {\n    song_id: Option<String>,\n    replay_request: Option<Value>,\n    steps: Option<u32>,\n    /// The acoustic ODE solver: `midpoint` or `ab2`.\n    #[serde(default)]\n    solver: Option<String>,\n    seed: Option<i64>,\n    synth_batch_size: Option<u32>,\n    output_format: Option<String>,\n    mp3_bitrate: Option<u32>,\n    /// A title for the re-render; the source track's own name otherwise.\n    title: Option<String>,\n    /// Seconds to compose on after the track's last frame; its start stays as it is.\n    extend_seconds: Option<f64>,\n    /// The window's own mark, as on a new song.\n    client_ref: Option<String>,\n}"
+    },
+    {
+      "name": "PersistedStudioSettings",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Serialize, Deserialize)]\nstruct PersistedStudioSettings {\n    #[serde(default)]\n    engine_options: EngineOptions,\n    #[serde(default)]\n    assistant: AssistantConfig,\n    lyrics_sync: lyrics_sync::LyricsSyncConfig,\n    configuration: StudioConfiguration,\n    selected_profile_id: Option<String>,\n    #[serde(default)]\n    selected_component_ids: Option<Vec<String>>,\n    #[serde(default)]\n    cover_templates: Option<Vec<cover_prompt::CoverTemplate>>,\n    #[serde(default)]\n    cover_template_default: Option<String>,\n    #[serde(default)]\n    separation: Option<separation::SeparationConfig>,\n    /// Whether a finished track gets its cover drawn without being asked.\n    #[serde(default)]\n    cover_auto: Option<bool>,\n    #[serde(default)]\n    cover_look: Option<cover_art::CoverLook>,\n    #[serde(default)]\n    file_tags_settings: Option<bool>,\n    #[serde(default)]\n    proxy: Option<net::ProxySettings>,\n    /// Access from other computers, off unless turned on.\n    #[serde(default)]\n    network: Option<remote::NetworkAccess>,\n}"
+    },
+    {
+      "name": "OpenRouterTranscriptionRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct OpenRouterTranscriptionRequest {\n    model_id: String,\n    audio_base64: String,\n    audio_format: String,\n    language: Option<String>,\n}"
+    },
+    {
+      "name": "EngineOptions",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]\n#[serde(default)]\nstruct EngineOptions {\n    backend: music_engine::yue_server::ComputeBackend,\n    keep_loaded: bool,\n    max_batch: Option<u32>,\n    max_seq: Option<u32>,\n    vae_core: Option<u32>,\n    vae_halo: Option<u32>,\n    disable_flash_attention: bool,\n    clamp_fp16: bool,\n    /// The NVIDIA card, by its nvidia-smi index, that every CUDA process of\n    /// the studio computes on. None: the first. Taken at the studio's start.\n    gpu: Option<u32>,\n    /// Every other launch flag, as the line it was typed on. It reaches the\n    /// engine last, so it can also override one of the flags above - and it\n    /// restarts the engine like they do, because the engine reads it once at\n    /// startup.\n    extra_args: String,\n    /// The engine executable when it is not the one the studio ships: a build\n    /// of yue2.cpp compiled by hand. None is the bundled engine, and\n    /// `YUE_ENGINE_BIN` still wins over whatever is saved here, so a developer\n    /// build needs no settings at all.\n    engine_bin: Option<String>,\n}"
+    },
+    {
+      "name": "AssistantConfig",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]\n#[serde(default)]\nstruct AssistantConfig {\n    provider: AssistantProvider,\n    /// Base URL of an OpenAI-compatible server (llama.cpp, LM Studio, Ollama).\n    local_base_url: Option<String>,\n    local_model: Option<String>,\n    openrouter_model: Option<String>,\n    /// Id of a model downloaded through the assistant runtime, run as a\n    /// sidecar by Studio itself.\n    managed_model: Option<String>,\n    /// A GGUF already on this machine, run by the same sidecar. Machines that\n    /// already keep a Gemma around for another tool do not need a second copy.\n    managed_path: Option<String>,\n    /// How hard a reasoning model should think, in OpenRouter's own terms:\n    /// minimal, low, medium, high, xhigh, max - or none.\n    reasoning_effort: Option<String>,\n    /// Which agent CLI answers; empty means the first one detected.\n    cli_agent: Option<String>,\n    /// Model override for that CLI; empty means its configured model.\n    cli_model: Option<String>,\n    /// Explicit executable for that CLI; empty means PATH.\n    cli_path: Option<String>,\n}"
+    },
+    {
+      "name": "AssistantProvider",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\nenum AssistantProvider {\n    #[default]\n    None,\n    Local,\n    OpenRouter,\n    /// A model Studio downloaded and runs itself with llama.cpp.\n    Managed,\n    /// The agent connected over MCP: the studio asks it what it would ask its\n    /// own model, with the same instructions and answer schema.\n    Agent,\n    /// An agent CLI on this machine, run headless for one draft.\n    Cli,\n}"
+    },
+    {
+      "name": "ProxyImageRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct ProxyImageRequest {\n    url: String,\n}"
+    },
+    {
+      "name": "OpenRouterSettingsRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct OpenRouterSettingsRequest {\n    /// `None` or an empty string clears the locally stored credential.\n    api_key: Option<String>,\n}"
+    },
+    {
+      "name": "OpenRouterCompletionRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct OpenRouterCompletionRequest {\n    model_id: String,\n    prompt: String,\n}"
+    },
+    {
+      "name": "OpenRouterCoverRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct OpenRouterCoverRequest {\n    model_id: String,\n    prompt: String,\n}"
+    },
+    {
+      "name": "OpenRouterResponse",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Serialize)]\nstruct OpenRouterResponse {\n    body: Value,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    generation_id: Option<String>,\n}"
+    },
+    {
+      "name": "LikeInput",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct LikeInput {\n    liked: bool,\n}"
+    },
+    {
+      "name": "NoteInput",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct NoteInput {\n    note: String,\n}"
+    },
+    {
+      "name": "StoreCoverRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct StoreCoverRequest {\n    /// Raw base64 image bytes, without a data-URL prefix.\n    image_base64: String,\n    media_type: String,\n}"
+    },
+    {
+      "name": "CoverTemplatesRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct CoverTemplatesRequest {\n    templates: Vec<cover_prompt::CoverTemplate>,\n    /// Draw a cover as soon as a track finishes.\n    #[serde(default)]\n    auto: Option<bool>,\n    /// Which of them a new cover starts from. `None` leaves it as it was.\n    #[serde(default)]\n    default_id: Option<String>,\n}"
+    },
+    {
+      "name": "RenderCoverPromptRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct RenderCoverPromptRequest {\n    template: String,\n    /// The track the prompt is for. Without it the placeholders have nothing\n    /// to stand in for, which is only useful for previewing the wording.\n    song_id: Option<String>,\n    #[serde(default)]\n    title: Option<String>,\n    #[serde(default)]\n    style: Option<String>,\n    #[serde(default)]\n    lyrics: Option<String>,\n}"
+    },
+    {
+      "name": "SeparationRun",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct SeparationRun {\n    song_id: String,\n    /// Between 0 and 1.\n    progress: f64,\n    done: bool,\n    error: Option<String>,\n    stems: Vec<String>,\n    /// Whether the graphics card did the work, once the run is over.\n    used_gpu: Option<bool>,\n    /// The library tracks the stems became.\n    library_songs: Vec<String>,\n}"
+    },
+    {
+      "name": "InstallSeparationAssetRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct InstallSeparationAssetRequest {\n    asset_id: String,\n}"
+    },
+    {
+      "name": "InstallAdaptersRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct InstallAdaptersRequest {\n    /// Catalogue entries to fetch as one download.\n    ids: Vec<String>,\n}"
+    },
+    {
+      "name": "HubQuery",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct HubQuery {\n    #[serde(default)]\n    q: String,\n    #[serde(default)]\n    repo: String,\n}"
+    },
+    {
+      "name": "InstallHubRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct InstallHubRequest {\n    repo: String,\n    paths: Vec<String>,\n}"
+    },
+    {
+      "name": "SyllablesRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct SyllablesRequest {\n    lyrics: String,\n}"
+    },
+    {
+      "name": "VstEditorRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct VstEditorRequest {\n    path: String,\n    #[serde(default)]\n    state_id: Option<String>,\n}"
+    },
+    {
+      "name": "KeepProcessingRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct KeepProcessingRequest {\n    /// What the processing is called on the new track; its stages when left out.\n    #[serde(default)]\n    label: String,\n}"
+    },
+    {
+      "name": "SelectVersionRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct SelectVersionRequest {\n    /// `original`, or the id of one of the track's versions.\n    version: String,\n}"
+    },
+    {
+      "name": "DatasetInput",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct DatasetInput {\n    #[serde(default)]\n    name: Option<String>,\n    #[serde(default)]\n    trigger: Option<String>,\n}"
+    },
+    {
+      "name": "DatasetSongs",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct DatasetSongs {\n    song_ids: Vec<String>,\n}"
+    },
+    {
+      "name": "StartTraining",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct StartTraining {\n    dataset_id: String,\n    #[serde(default)]\n    name: String,\n    recipe: training::Recipe,\n}"
+    },
+    {
+      "name": "ContinueTraining",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct ContinueTraining {\n    /// The steps the run is to reach in all.\n    steps: u32,\n}"
+    },
+    {
+      "name": "InstallCheckpoint",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct InstallCheckpoint {\n    #[serde(default)]\n    name: Option<String>,\n}"
+    },
+    {
+      "name": "Activity",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct Activity {\n    song_id: String,\n    title: String,\n    /// \"cover\" or \"karaoke\".\n    kind: &'static str,\n    /// \"running\", \"done\" or \"failed\".\n    state: &'static str,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    detail: Option<String>,\n}"
+    },
+    {
+      "name": "FileTagsRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct FileTagsRequest {\n    settings: bool,\n}"
+    },
+    {
+      "name": "CoverLookRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct CoverLookRequest {\n    #[serde(default)]\n    photo: Option<bool>,\n    #[serde(default)]\n    pattern: Option<String>,\n    #[serde(default)]\n    unique: Option<bool>,\n    #[serde(default)]\n    keep: Option<bool>,\n}"
+    },
+    {
+      "name": "MediaSearch",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct MediaSearch {\n    #[serde(default)]\n    q: String,\n    #[serde(default)]\n    from: usize,\n}"
+    },
+    {
+      "name": "MediaStyle",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct MediaStyle {\n    #[serde(default)]\n    style: String,\n}"
+    },
+    {
+      "name": "ChosenCoverPhoto",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct ChosenCoverPhoto {\n    image: String,\n    #[serde(default)]\n    page: Option<String>,\n}"
+    },
+    {
+      "name": "ChosenCoverPattern",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct ChosenCoverPattern {\n    pattern: String,\n    seed: String,\n}"
+    },
+    {
+      "name": "AssistantSettingsRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct AssistantSettingsRequest {\n    provider: Option<AssistantProvider>,\n    local_base_url: Option<Option<String>>,\n    local_model: Option<Option<String>>,\n    openrouter_model: Option<Option<String>>,\n    managed_model: Option<Option<String>>,\n    managed_path: Option<Option<String>>,\n    reasoning_effort: Option<Option<String>>,\n    cli_agent: Option<Option<String>>,\n    cli_model: Option<Option<String>>,\n    cli_path: Option<Option<String>>,\n}"
+    },
+    {
+      "name": "LocalModelsQuery",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct LocalModelsQuery {\n    base: String,\n}"
+    },
+    {
+      "name": "LocalServerKeyRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct LocalServerKeyRequest {\n    api_key: Option<String>,\n}"
+    },
+    {
+      "name": "AssistantAssetRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct AssistantAssetRequest {\n    asset_id: String,\n    /// The model to install along with the runtime, when the capability has a\n    /// choice of them. A runtime with no model does nothing.\n    #[serde(default)]\n    model_id: Option<String>,\n}"
+    },
+    {
+      "name": "AssistantModelRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct AssistantModelRequest {\n    #[serde(default)]\n    model_id: String,\n    /// A GGUF already on this machine, used instead of a downloaded one.\n    #[serde(default)]\n    model_path: Option<String>,\n}"
+    },
+    {
+      "name": "KaraokeRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct KaraokeRequest {\n    /// Overrides the language guess for this one track.\n    #[serde(default)]\n    language: Option<String>,\n}"
+    },
+    {
+      "name": "KaraokeSettingsRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct KaraokeSettingsRequest {\n    enabled: Option<bool>,\n    provider: Option<lyrics_sync::AsrProvider>,\n    whisper_model: Option<Option<String>>,\n    openrouter_model: Option<Option<String>>,\n    runtime: Option<lyrics_sync::OnnxFlavour>,\n}"
+    },
+    {
+      "name": "LyricsSectionsRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct LyricsSectionsRequest {\n    lyrics: String,\n}"
+    },
+    {
+      "name": "MidiSizeRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct MidiSizeRequest {\n    /// `model_id` when the models page sends it, as for every optional part.\n    #[serde(default, alias = \"model_id\")]\n    size: Option<String>,\n}"
+    },
+    {
+      "name": "MidiRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct MidiRequest {\n    /// A library track: its MIDI is kept beside it.\n    #[serde(default)]\n    song_id: Option<String>,\n    /// Or any audio file on this computer: its MIDI goes to the studio's folder.\n    #[serde(default)]\n    path: Option<String>,\n    /// Or several library tracks, one after another.\n    #[serde(default)]\n    song_ids: Option<Vec<String>>,\n    #[serde(default)]\n    size: Option<String>,\n}"
+    },
+    {
+      "name": "MidiUpload",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct MidiUpload {\n    data: String,\n}"
+    },
+    {
+      "name": "GuideQuery",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct GuideQuery {\n    #[serde(default)]\n    topic: String,\n}"
+    },
+    {
+      "name": "ExamplesQuery",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct ExamplesQuery {\n    #[serde(default)]\n    brief: String,\n}"
+    },
+    {
+      "name": "VideoName",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct VideoName {\n    name: String,\n}"
+    },
+    {
+      "name": "FindLyricsRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct FindLyricsRequest {\n    #[serde(default)]\n    artist: String,\n    title: String,\n    #[serde(default)]\n    seconds: f64,\n}"
+    },
+    {
+      "name": "ComfyExportQuery",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct ComfyExportQuery {\n    /// Strength of the planner half, folded into the file; 1 when left out.\n    ar: Option<f32>,\n    /// Strength of the sound half.\n    nar: Option<f32>,\n}"
+    },
+    {
+      "name": "ComfySaveRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct ComfySaveRequest {\n    /// Where the file goes, a full path ending in .safetensors.\n    path: String,\n    ar: Option<f32>,\n    nar: Option<f32>,\n}"
+    },
+    {
+      "name": "ScoreJob",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Serialize)]\nstruct ScoreJob {\n    id: String,\n    status: String,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    abc: Option<String>,\n    #[serde(skip_serializing_if = \"Vec::is_empty\")]\n    plans: Vec<ScorePlan>,\n    /// The token seed a composition drew its score with.\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    lm_seed: Option<i64>,\n    #[serde(skip_serializing_if = \"Option::is_none\")]\n    error: Option<String>,\n}"
+    },
+    {
+      "name": "ScorePlan",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Serialize)]\nstruct ScorePlan { abc: String, lm_seed: Option<i64> }"
+    },
+    {
+      "name": "ComposeScoreRequest",
+      "source": "crates/music-server/src/lib.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct ComposeScoreRequest {\n    #[serde(default)]\n    style: String,\n    #[serde(default)]\n    lyrics: String,\n    #[serde(default)]\n    cot: Option<String>,\n    #[serde(default)]\n    lm_seed: Option<i64>,\n    #[serde(default)]\n    abc_sampling: Option<SamplingPreset>,\n    #[serde(default)]\n    harmony: Option<harmony::Harmony>,\n    /// The opening of a score the plan goes on from.\n    #[serde(default)]\n    abc: Option<String>,\n    #[serde(default)]\n    lm_batch_size: Option<u32>,\n}"
+    },
+    {
+      "name": "Song",
+      "source": "crates/music-server/src/library.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\nstruct Song { pub id:String, pub title:String, pub audio_path:Option<String>, pub caption:String, pub lyrics:String, pub metadata:serde_json::Value, pub generation_settings:serde_json::Value, pub engine_id:String, pub profile_id:Option<String>, pub replay_request:Option<serde_json::Value>, pub audio_codes:Option<serde_json::Value>, pub source:String, pub created_at:String, pub updated_at:String }"
+    },
+    {
+      "name": "SongInput",
+      "source": "crates/music-server/src/library.rs",
+      "declaration": "#[derive(Debug, Clone, Deserialize)]\nstruct SongInput { pub title:String, pub audio_path:Option<String>, #[serde(default)] pub caption:String, #[serde(default)] pub lyrics:String, #[serde(default)] pub metadata:serde_json::Value, #[serde(default)] pub generation_settings:serde_json::Value, pub engine_id:String, pub profile_id:Option<String>, pub replay_request:Option<serde_json::Value>, pub audio_codes:Option<serde_json::Value>, #[serde(default=\"manual_source\")] pub source:String }"
+    },
+    {
+      "name": "ImportedSong",
+      "source": "crates/music-server/src/library.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct ImportedSong { pub song: Song, pub audio_filename: String }"
+    },
+    {
+      "name": "Playlist",
+      "source": "crates/music-server/src/library.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)] struct Playlist { pub id:String, pub name:String, pub description:Option<String>, pub song_ids:Vec<String>, pub created_at:String, pub updated_at:String }"
+    },
+    {
+      "name": "JournalEntry",
+      "source": "crates/music-server/src/library.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)] struct JournalEntry { #[serde(default)] pub id:i64, #[serde(default)] pub at:String, pub source:String, #[serde(default)] pub tone:String, #[serde(default)] pub verb:String, #[serde(default)] pub kind:String, #[serde(default)] pub target:String, #[serde(default)] pub text:String }"
+    },
+    {
+      "name": "PlaylistInput",
+      "source": "crates/music-server/src/library.rs",
+      "declaration": "#[derive(Debug, Clone, Deserialize)] struct PlaylistInput { pub name:String, pub description:Option<String>, #[serde(default)] pub song_ids:Vec<String> }"
+    },
+    {
+      "name": "AsrProvider",
+      "source": "crates/music-server/src/lyrics_sync.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\nenum AsrProvider {\n    #[default]\n    None,\n    Whisper,\n    Parakeet,\n    OpenRouter,\n}"
+    },
+    {
+      "name": "LyricsSyncConfig",
+      "source": "crates/music-server/src/lyrics_sync.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]\n#[serde(default)]\nstruct LyricsSyncConfig {\n    /// The karaoke switch. Off means the buttons do not appear at all.\n    pub enabled: bool,\n    pub provider: AsrProvider,\n    /// Which downloaded Whisper model to run.\n    pub whisper_model: Option<String>,\n    /// Which OpenRouter speech-to-text model to call.\n    pub openrouter_model: Option<String>,\n    /// What the local recogniser runs on. It decides which runtime is\n    /// downloaded as much as which one is loaded, so it belongs to the setting\n    /// rather than to a guess made at load time.\n    #[serde(default)]\n    pub runtime: OnnxFlavour,\n}"
+    },
+    {
+      "name": "OnnxFlavour",
+      "source": "crates/music-server/src/lyrics_sync.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\nenum OnnxFlavour {\n    /// The graphics card if its runtime is installed, otherwise the processor.\n    Auto,\n    /// The default: this studio exists for machines with an NVIDIA card, and\n    /// the processor path is minutes where the card is seconds.\n    #[default]\n    Cuda,\n    Cpu,\n}"
+    },
+    {
+      "name": "OnnxCard",
+      "source": "crates/music-server/src/lyrics_sync.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]\n#[serde(rename_all = \"snake_case\")]\nenum OnnxCard {\n    Cuda,\n    DirectMl,\n}"
+    },
+    {
+      "name": "WindowAnswer",
+      "source": "crates/music-server/src/mcp.rs",
+      "declaration": "#[derive(serde::Deserialize)]\nstruct WindowAnswer {\n    id: String,\n    #[serde(default)]\n    result: Value,\n    #[serde(default)]\n    error: Option<String>,\n}"
+    },
+    {
+      "name": "WindowFocus",
+      "source": "crates/music-server/src/mcp.rs",
+      "declaration": "#[derive(serde::Deserialize)]\nstruct WindowFocus {\n    window: u64,\n}"
+    },
+    {
+      "name": "Source",
+      "source": "crates/music-server/src/midi.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct Source {\n    commit: String,\n    shipped_as: String,\n    release_tag: String,\n    asset: String,\n    bytes: u64,\n}"
+    },
+    {
+      "name": "Size",
+      "source": "crates/music-server/src/midi.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, Serialize)]\nstruct Size {\n    pub id: &'static str,\n    pub params: &'static str,\n    /// The mirror's revision the files were measured at.\n    #[serde(skip)]\n    revision: &'static str,\n    #[serde(skip)]\n    config_bytes: u64,\n    pub bytes: u64,\n}"
+    },
+    {
+      "name": "Note",
+      "source": "crates/music-server/src/midi.rs",
+      "declaration": "#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]\nstruct Note {\n    pub pitch: u8,\n    pub start: f64,\n    pub end: f64,\n    pub instrument: String,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub velocity: Option<u8>,\n}"
+    },
+    {
+      "name": "Run",
+      "source": "crates/music-server/src/midi.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct Run {\n    /// The library track, or none for a file named by its path.\n    pub song_id: Option<String>,\n    pub title: String,\n    pub size: &'static str,\n    /// preparing, downloading, reading, transcribing, done.\n    pub stage: &'static str,\n    pub chunks_done: u32,\n    pub chunks_total: u32,\n    pub notes: usize,\n    pub done: bool,\n    pub error: Option<String>,\n    /// The MIDI file on this computer, once written.\n    pub file: Option<String>,\n    /// The set this track belongs to, when several were asked for at once.\n    pub batch: Option<Batch>,\n}"
+    },
+    {
+      "name": "Batch",
+      "source": "crates/music-server/src/midi.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct Batch {\n    /// How many of the set are finished, made or failed.\n    pub done: usize,\n    pub total: usize,\n    /// The tracks still waiting, in order.\n    pub queued: Vec<String>,\n    /// Each track that failed, by its title, with the reason.\n    pub failed: Vec<String>,\n}"
+    },
+    {
+      "name": "Sidecar",
+      "source": "crates/music-server/src/midi.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\nstruct Sidecar {\n    pub size: String,\n    pub made_at: String,\n    pub instruments: Vec<String>,\n    pub notes: Vec<Note>,\n}"
+    },
+    {
+      "name": "Catalog",
+      "source": "crates/music-server/src/model_manager.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct Catalog {\n    pub engine_id: &'static str,\n    pub repository: &'static str,\n    pub revision: &'static str,\n    pub recommended_profile_id: &'static str,\n    pub profiles: Vec<Profile>,\n    pub components: Vec<Component>,\n}"
+    },
+    {
+      "name": "Profile",
+      "source": "crates/music-server/src/model_manager.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct Profile {\n    pub id: &'static str,\n    pub label: &'static str,\n    pub backend: &'static str,\n    pub installable: bool,\n    pub recommended: bool,\n    pub components: Vec<&'static str>,\n    pub total_bytes: u64,\n    /// Memory this machine needs for the set: less when its card holds the weights.\n    pub ram_needed_gb: f64,\n}"
+    },
+    {
+      "name": "Component",
+      "source": "crates/music-server/src/model_manager.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct Component {\n    pub id: &'static str,\n    pub kind: &'static str,\n    pub filename: &'static str,\n    pub bytes: u64,\n    pub sha256: &'static str,\n    /// Where this file comes from. The lighter quantisations are published by\n    /// someone else, and a single hard-coded repository is what kept them out.\n    pub repository: &'static str,\n    pub revision: &'static str,\n}"
+    },
+    {
+      "name": "InstallRequest",
+      "source": "crates/music-server/src/model_manager.rs",
+      "declaration": "#[derive(Debug, Clone, Deserialize)]\nstruct InstallRequest {\n    pub profile_id: Option<String>,\n    #[serde(default)]\n    pub component_ids: Vec<String>,\n}"
+    },
+    {
+      "name": "ManagerStatus",
+      "source": "crates/music-server/src/model_manager.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct ManagerStatus {\n    pub engine_id: &'static str,\n    pub model_root: String,\n    pub first_run: bool,\n    pub ready: bool,\n    pub download_pending: u64,\n    pub recommended_profile_id: String,\n    pub active: Option<DownloadJob>,\n    pub components: Vec<ComponentStatus>,\n    pub installed_components: Vec<String>,\n    /// The files the selected set resolves to, named rather than implied.\n    pub profile_files: Option<ProfileModelFiles>,\n}"
+    },
+    {
+      "name": "ComponentStatus",
+      "source": "crates/music-server/src/model_manager.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct ComponentStatus {\n    pub id: &'static str,\n    pub installed: bool,\n    pub bytes: u64,\n}"
+    },
+    {
+      "name": "DownloadJob",
+      "source": "crates/music-server/src/model_manager.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\nstruct DownloadJob {\n    pub id: String,\n    pub profile_id: Option<String>,\n    pub component_ids: Vec<String>,\n    pub status: DownloadStatus,\n    pub downloaded_bytes: u64,\n    pub total_bytes: u64,\n    pub error: Option<String>,\n}"
+    },
+    {
+      "name": "ProfileModelFiles",
+      "source": "crates/music-server/src/model_manager.rs",
+      "declaration": "#[derive(Serialize, Debug, Clone, PartialEq, Eq)]\nstruct ProfileModelFiles {\n    pub backbone: String,\n    pub vae: String,\n    /// SheetSage2 is optional: without it the studio generates but cannot\n    /// read a recording into a score.\n    pub transcriber: Option<String>,\n    /// The decoder adapter paired with the tokenizer head of the training codes.\n    pub companion: String,\n}"
+    },
+    {
+      "name": "DownloadStatus",
+      "source": "crates/music-server/src/model_manager.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\nenum DownloadStatus {\n    Downloading,\n    Completed,\n    Cancelled,\n    Failed,\n}"
+    },
+    {
+      "name": "PersistentState",
+      "source": "crates/music-server/src/model_manager.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Serialize, Deserialize)]\nstruct PersistentState {\n    active: Option<DownloadJob>,\n}"
+    },
+    {
+      "name": "RemovalReport",
+      "source": "crates/music-server/src/model_manager.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct RemovalReport {\n    pub removed: Vec<String>,\n    pub freed_bytes: u64,\n}"
+    },
+    {
+      "name": "ProxyMode",
+      "source": "crates/music-server/src/net.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\nenum ProxyMode {\n    /// Straight to the internet, whatever Windows or the environment say.\n    Off,\n    /// As Windows is set (Settings - Network - Proxy), or HTTP_PROXY,\n    /// HTTPS_PROXY and ALL_PROXY when those are given.\n    #[default]\n    System,\n    /// The address the user gave.\n    Custom,\n}"
+    },
+    {
+      "name": "ProxyKind",
+      "source": "crates/music-server/src/net.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\nenum ProxyKind {\n    #[default]\n    Http,\n    Https,\n    /// Names resolved by the proxy (socks5h): the lookups do not leave\n    /// through the user's own connection, and a name blocked there resolves.\n    Socks5,\n    Socks4,\n}"
+    },
+    {
+      "name": "ProxySettings",
+      "source": "crates/music-server/src/net.rs",
+      "declaration": "#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(default)]\nstruct ProxySettings {\n    pub mode: ProxyMode,\n    /// As the user wrote it.\n    pub address: Option<String>,\n    pub kind: ProxyKind,\n    /// Public Hugging Face downloads through HF-Mirror (hf-mirror.com).\n    pub huggingface_mirror: bool,\n}"
+    },
+    {
+      "name": "Fill",
+      "source": "crates/music-server/src/prepare.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, Default, Deserialize, Serialize, PartialEq, Eq)]\n#[serde(rename_all = \"snake_case\")]\nenum Fill {\n    /// Not at all.\n    None,\n    /// Only where the field is empty; what the user wrote stays.\n    #[default]\n    Missing,\n    /// Every chosen song, written over.\n    All,\n}"
+    },
+    {
+      "name": "TrainAfter",
+      "source": "crates/music-server/src/prepare.rs",
+      "declaration": "#[derive(Debug, Clone, Deserialize, Serialize)]\nstruct TrainAfter {\n    #[serde(default)]\n    pub name: String,\n    pub recipe: training::Recipe,\n}"
+    },
+    {
+      "name": "PrepareRequest",
+      "source": "crates/music-server/src/prepare.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct PrepareRequest {\n    /// The songs to prepare; all of the dataset's when absent.\n    #[serde(default)]\n    pub items: Option<Vec<String>>,\n    #[serde(default)]\n    pub lyrics: Fill,\n    #[serde(default)]\n    pub style: Fill,\n    /// The language sung, when the user knows it.\n    #[serde(default)]\n    pub language: Option<String>,\n    /// Start this run once every song is ready.\n    #[serde(default)]\n    pub train: Option<TrainAfter>,\n    /// Who lays the lyrics out and writes the styles: the studio's assistant,\n    /// or an agent connected over MCP, which finds the songs left `found` and\n    /// `heard` with everything it needs and writes them itself.\n    #[serde(default)]\n    pub writer: Writer,\n}"
+    },
+    {
+      "name": "Writer",
+      "source": "crates/music-server/src/prepare.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, Default, Deserialize, Serialize, PartialEq, Eq)]\n#[serde(rename_all = \"snake_case\")]\nenum Writer {\n    #[default]\n    Studio,\n    Agent,\n}"
+    },
+    {
+      "name": "Failure",
+      "source": "crates/music-server/src/prepare.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct Failure {\n    pub item: String,\n    pub step: &'static str,\n    pub error: String,\n}"
+    },
+    {
+      "name": "Job",
+      "source": "crates/music-server/src/prepare.rs",
+      "declaration": "#[derive(Debug, Clone, Deserialize, Serialize)]\nstruct Job {\n    dataset: String,\n    items: Option<Vec<String>>,\n    lyrics: bool,\n    style: bool,\n    language: Option<String>,\n    train: Option<TrainAfter>,\n    #[serde(default)]\n    writer: Writer,\n}"
+    },
+    {
+      "name": "PrepareStatus",
+      "source": "crates/music-server/src/prepare.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct PrepareStatus {\n    pub dataset: String,\n    /// The stages at work now, the latest last.\n    pub stages: Vec<StageStatus>,\n    /// Songs still to be touched by any stage.\n    pub pending: Vec<String>,\n    pub failures: Vec<Failure>,\n    /// Why a whole step was left out, as a message key the page translates.\n    pub notices: Vec<&'static str>,\n    pub finished: bool,\n    pub cancelled: bool,\n    /// The run started after, when one was asked for.\n    pub run: Option<String>,\n    /// What the captioner said about the device it ran on.\n    pub device: Option<String>,\n    /// A run starts once every song is ready.\n    pub train_after: bool,\n}"
+    },
+    {
+      "name": "StageStatus",
+      "source": "crates/music-server/src/prepare.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct StageStatus {\n    pub name: &'static str,\n    pub done: usize,\n    pub total: usize,\n    /// The song the stage works on now.\n    pub current: Option<String>,\n    /// The songs of the stage, in the order it takes them.\n    #[serde(skip)]\n    order: Vec<String>,\n}"
+    },
+    {
+      "name": "TrainAfterRequest",
+      "source": "crates/music-server/src/prepare.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct TrainAfterRequest {\n    #[serde(default)]\n    pub train: Option<TrainAfter>,\n}"
+    },
+    {
+      "name": "TakeAsIsRequest",
+      "source": "crates/music-server/src/prepare.rs",
+      "declaration": "#[derive(Debug, Default, Deserialize)]\nstruct TakeAsIsRequest {\n    #[serde(default)]\n    pub items: Option<Vec<String>>,\n}"
+    },
+    {
+      "name": "ProcessRequest",
+      "source": "crates/music-server/src/processing.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Serialize, Deserialize)]\nstruct ProcessRequest {\n    #[serde(default)]\n    pub denoise: Option<denoise::DenoiseSettings>,\n    #[serde(default)]\n    pub lifter: Option<lifter::LifterSettings>,\n    #[serde(default)]\n    pub naturalize: Option<naturalize::NaturalizeSettings>,\n    /// VST3 plugins, run in order before mastering.\n    #[serde(default)]\n    pub vst: Option<Vec<crate::vst::VstSlot>>,\n    #[serde(default)]\n    pub master: Option<MasterSource>,\n    #[serde(default)]\n    pub normalize: Option<NormalizeSettings>,\n}"
+    },
+    {
+      "name": "NormalizeSettings",
+      "source": "crates/music-server/src/processing.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\nstruct NormalizeSettings {\n    #[serde(default = \"default_peak_clip\")]\n    pub peak_clip: u32,\n}"
+    },
+    {
+      "name": "MasterSource",
+      "source": "crates/music-server/src/processing.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\n#[serde(tag = \"type\", rename_all = \"snake_case\")]\nenum MasterSource {\n    Song { song_id: String },\n    Upload { upload_id: String },\n}"
+    },
+    {
+      "name": "ProcessRun",
+      "source": "crates/music-server/src/processing.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct ProcessRun {\n    /// Tells a finishing worker whether its run is still the current one.\n    pub id: String,\n    pub song_id: String,\n    pub stages: Vec<&'static str>,\n    /// The stage working now, once started.\n    pub stage: Option<&'static str>,\n    pub done: bool,\n    pub error: Option<String>,\n    /// The preview's file name inside the processing folder, when ready.\n    #[serde(skip)]\n    pub preview: Option<String>,\n    pub preview_ready: bool,\n    pub request: ProcessRequest,\n}"
+    },
+    {
+      "name": "Stage",
+      "source": "crates/music-server/src/progress.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]\n#[serde(rename_all = \"snake_case\")]\nenum Stage {\n    /// The AR half writing the ABC score.\n    Score,\n    /// The AR half writing the semantic codes.\n    Semantic,\n    /// The NAR half solving the acoustic latents.\n    Acoustic,\n    /// The VAE turning latents into audio.\n    Decode,\n    /// SheetSage2 reading a recording into a score.\n    Transcribe,\n}"
+    },
+    {
+      "name": "Progress",
+      "source": "crates/music-server/src/progress.rs",
+      "declaration": "#[derive(Debug, Clone, PartialEq, Serialize)]\nstruct Progress {\n    pub stage: Stage,\n    /// Overall fraction of the job, 0 to 1.\n    pub fraction: f64,\n    /// The stage's own counter, e.g. `412/750`.\n    pub detail: String,\n}"
+    },
+    {
+      "name": "Detected",
+      "source": "crates/music-server/src/providers/cli_agent.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct Detected {\n    pub id: &'static str,\n    pub display_name: &'static str,\n    pub path: String,\n    pub version: String,\n    pub default_model: Option<String>,\n    /// Version-dependent abilities of this binary.\n    pub features: Vec<String>,\n}"
+    },
+    {
+      "name": "AgentInfo",
+      "source": "crates/music-server/src/providers/cli_agent.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct AgentInfo {\n    pub id: &'static str,\n    pub display_name: &'static str,\n    pub installed: bool,\n    pub path: Option<String>,\n    pub version: Option<String>,\n    pub default_model: Option<String>,\n    pub features: Vec<String>,\n    pub suggested_models: &'static [&'static str],\n    pub install: &'static str,\n    pub signin: &'static str,\n    pub docs: Option<&'static str>,\n}"
+    },
+    {
+      "name": "OpenRouterRequest",
+      "source": "crates/music-server/src/providers/openrouter.rs",
+      "declaration": "#[derive(Debug, Clone, PartialEq, Serialize)]\nstruct OpenRouterRequest {\n    pub method: HttpMethod,\n    pub path: &'static str,\n    pub body: Value,\n}"
+    },
+    {
+      "name": "HttpMethod",
+      "source": "crates/music-server/src/providers/openrouter.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]\n#[serde(rename_all = \"UPPERCASE\")]\nenum HttpMethod {\n    Post,\n}"
+    },
+    {
+      "name": "ModelsResponse",
+      "source": "crates/music-server/src/providers/openrouter.rs",
+      "declaration": "#[derive(Debug, Clone, Deserialize)]\nstruct ModelsResponse {\n    #[serde(default)]\n    pub data: Vec<RemoteModel>,\n}"
+    },
+    {
+      "name": "ModelDefaults",
+      "source": "crates/music-server/src/providers/openrouter.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Deserialize, Serialize, PartialEq)]\n#[serde(default)]\nstruct ModelDefaults {\n    pub temperature: Option<f64>,\n    pub top_p: Option<f64>,\n    pub top_k: Option<i64>,\n    pub frequency_penalty: Option<f64>,\n    pub presence_penalty: Option<f64>,\n    pub repetition_penalty: Option<f64>,\n}"
+    },
+    {
+      "name": "RemoteModel",
+      "source": "crates/music-server/src/providers/openrouter.rs",
+      "declaration": "#[derive(Debug, Clone, Deserialize)]\nstruct RemoteModel {\n    pub id: String,\n    pub name: String,\n    #[serde(default)]\n    pub description: Option<String>,\n    #[serde(default)]\n    pub context_length: Option<u64>,\n    #[serde(default)]\n    pub supported_parameters: Vec<String>,\n    #[serde(default)]\n    pub pricing: Option<ModelPricing>,\n    #[serde(default)]\n    pub architecture: ModelArchitecture,\n    #[serde(default)]\n    pub default_parameters: ModelDefaults,\n    /// What the model says about thinking, in its own terms. Not part of\n    /// `default_parameters`: it is a field of its own, and ignoring it is how a\n    /// request asks for an effort the model does not take.\n    #[serde(default)]\n    pub reasoning: Option<ReasoningSupport>,\n}"
+    },
+    {
+      "name": "ReasoningSupport",
+      "source": "crates/music-server/src/providers/openrouter.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Deserialize, Serialize, PartialEq)]\n#[serde(default)]\nstruct ReasoningSupport {\n    /// What the model uses when nothing is asked for.\n    pub default_effort: Option<String>,\n    /// Whether it thinks unless told otherwise.\n    pub default_enabled: Option<bool>,\n    /// Whether it can be told otherwise at all.\n    pub mandatory: bool,\n    /// The only values it accepts.\n    pub supported_efforts: Vec<String>,\n}"
+    },
+    {
+      "name": "ModelPricing",
+      "source": "crates/music-server/src/providers/openrouter.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Deserialize, Serialize)]\nstruct ModelPricing {\n    #[serde(default)]\n    pub prompt: Option<String>,\n    #[serde(default)]\n    pub completion: Option<String>,\n    #[serde(default)]\n    pub image: Option<String>,\n    #[serde(default)]\n    pub request: Option<String>,\n}"
+    },
+    {
+      "name": "ModelArchitecture",
+      "source": "crates/music-server/src/providers/openrouter.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Deserialize)]\nstruct ModelArchitecture {\n    #[serde(default)]\n    pub modality: Option<String>,\n    #[serde(default)]\n    pub input_modalities: Vec<String>,\n    #[serde(default)]\n    pub output_modalities: Vec<String>,\n}"
+    },
+    {
+      "name": "CatalogModel",
+      "source": "crates/music-server/src/providers/openrouter.rs",
+      "declaration": "#[derive(Deserialize, Debug, Clone, Serialize)]\nstruct CatalogModel {\n    /// What this model says its own sampling should be.\n    #[serde(default)]\n    pub defaults: ModelDefaults,\n    pub id: String,\n    pub name: String,\n    pub description: Option<String>,\n    pub context_length: Option<u64>,\n    pub modality: Option<String>,\n    pub input_modalities: Vec<String>,\n    pub output_modalities: Vec<String>,\n    pub supported_parameters: Vec<String>,\n    pub pricing: Option<ModelPricing>,\n    pub capabilities: Vec<Capability>,\n    /// What this model will accept as thinking, in its own words.\n    pub reasoning: Option<ReasoningSupport>,\n}"
+    },
+    {
+      "name": "CapabilityCatalog",
+      "source": "crates/music-server/src/providers/openrouter.rs",
+      "declaration": "#[derive(Deserialize, Debug, Clone, Serialize)]\nstruct CapabilityCatalog {\n    pub models: Vec<CatalogModel>,\n}"
+    },
+    {
+      "name": "NetworkAccess",
+      "source": "crates/music-server/src/remote.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]\nstruct NetworkAccess {\n    #[serde(default)]\n    pub enabled: bool,\n    #[serde(default)]\n    pub key: String,\n}"
+    },
+    {
+      "name": "AccessChange",
+      "source": "crates/music-server/src/remote.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct AccessChange {\n    #[serde(default)]\n    enabled: Option<bool>,\n    /// A new key replaces the old one; every browser signed in with it is out.\n    #[serde(default)]\n    new_key: bool,\n}"
+    },
+    {
+      "name": "GpuSnapshot",
+      "source": "crates/music-server/src/resources.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct GpuSnapshot {\n    pub name: String,\n    pub vram_used_mb: u64,\n    pub vram_total_mb: u64,\n    /// Percent of the sampling period during which the GPU was busy.\n    pub utilization_percent: Option<u8>,\n    pub temperature_c: Option<u8>,\n    pub power_draw_w: Option<f32>,\n    pub power_limit_w: Option<f32>,\n}"
+    },
+    {
+      "name": "ProcessSnapshot",
+      "source": "crates/music-server/src/resources.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct ProcessSnapshot {\n    pub name: String,\n    pub memory_mb: u64,\n    pub cpu_percent: f32,\n}"
+    },
+    {
+      "name": "ResourceSnapshot",
+      "source": "crates/music-server/src/resources.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize)]\nstruct ResourceSnapshot {\n    pub cpu_percent: f32,\n    pub ram_used_mb: u64,\n    pub ram_total_mb: u64,\n    pub gpus: Vec<GpuSnapshot>,\n    /// The native engine process, when it is running on this machine.\n    pub engine_process: Option<ProcessSnapshot>,\n    /// Resident memory of the studio server itself.\n    pub studio_process_mb: u64,\n}"
+    },
+    {
+      "name": "Destination",
+      "source": "crates/music-server/src/saving.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct Destination {\n    name: String,\n}"
+    },
+    {
+      "name": "Served",
+      "source": "crates/music-server/src/saving.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct Served {\n    url: String,\n}"
+    },
+    {
+      "name": "Written",
+      "source": "crates/music-server/src/saving.rs",
+      "declaration": "#[derive(Debug, Deserialize)]\nstruct Written {\n    path: String,\n}"
+    },
+    {
+      "name": "MidiRequest",
+      "source": "crates/music-server/src/score/api.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct MidiRequest {\n    abc: String,\n}"
+    },
+    {
+      "name": "MarkRequest",
+      "source": "crates/music-server/src/score/api.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct MarkRequest {\n    abc: String,\n    style: String,\n    lyrics: String,\n    cot: String,\n    #[serde(default)]\n    keep: bool,\n}"
+    },
+    {
+      "name": "FromMidiRequest",
+      "source": "crates/music-server/src/score/api.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct FromMidiRequest {\n    /// The file, as base64.\n    data: String,\n    #[serde(default)]\n    mode: Option<String>,\n    #[serde(default)]\n    vocal: Option<String>,\n    #[serde(default)]\n    instrument: Option<String>,\n    /// Keep the sections the file names; without them the lyrics are laid along the tune when it is sung.\n    #[serde(default)]\n    sections: bool,\n    #[serde(default)]\n    grid: Option<u32>,\n    #[serde(default)]\n    vocal_octaves: i32,\n    #[serde(default)]\n    instrument_octaves: i32,\n}"
+    },
+    {
+      "name": "ChordBedRequest",
+      "source": "crates/music-server/src/score/api.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct ChordBedRequest {\n    bpm: u32,\n    key: String,\n    meter: String,\n    #[serde(default)]\n    lyrics: String,\n    #[serde(default)]\n    seed: Option<u64>,\n}"
+    },
+    {
+      "name": "VocalOctaveRequest",
+      "source": "crates/music-server/src/score/api.rs",
+      "declaration": "#[derive(serde::Deserialize)]\nstruct VocalOctaveRequest {\n    abc: String,\n    #[serde(default)]\n    octaves: i32,\n}"
+    },
+    {
+      "name": "Bed",
+      "source": "crates/music-server/src/score/chord_bed.rs",
+      "declaration": "#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]\nstruct Bed {\n    pub abc: String,\n    pub bars: usize,\n    /// The progression of the verses, the choruses and a bridge, as chord symbols.\n    pub progressions: Vec<Vec<String>>,\n}"
+    },
+    {
+      "name": "Facts",
+      "source": "crates/music-server/src/score/import/mod.rs",
+      "declaration": "#[derive(Clone, Debug, Serialize)]\nstruct Facts {\n    pub bpm: i64,\n    pub meter: String,\n    pub bars: usize,\n    pub seconds: f64,\n    pub key: String,\n    pub key_source: &'static str,\n    pub grid: u32,\n    pub voice: Option<usize>,\n    pub instrument: Option<usize>,\n    pub voice_shift: i32,\n    pub instrument_shift: i32,\n    pub karaoke: bool,\n}"
+    },
+    {
+      "name": "Notice",
+      "source": "crates/music-server/src/score/import/mod.rs",
+      "declaration": "#[derive(Clone, Debug, PartialEq, Serialize)]\n#[serde(tag = \"code\", rename_all = \"snake_case\")]\nenum Notice {\n    TempoChanges { low: f64, high: f64, bpm: f64 },\n    PlayedIn,\n    Moved { line: &'static str, track: usize, semitones: i32 },\n    Struck { track: usize, count: usize },\n    ChordsRead { track: usize, name: String },\n    Unnamed { track: usize, bars: Vec<usize> },\n    ChordsGuessed,\n}"
+    },
+    {
+      "name": "Converted",
+      "source": "crates/music-server/src/score/import/mod.rs",
+      "declaration": "#[derive(Clone, Debug, Serialize)]\nstruct Converted {\n    pub abc: String,\n    pub lyrics: String,\n    pub parts: Vec<parts::Row>,\n    pub facts: Facts,\n    pub notices: Vec<Notice>,\n}"
+    },
+    {
+      "name": "Row",
+      "source": "crates/music-server/src/score/import/parts.rs",
+      "declaration": "#[derive(Clone, Debug, Serialize)]\nstruct Row {\n    pub number: usize,\n    pub name: String,\n    pub family: &'static str,\n    pub notes: usize,\n    pub low: u8,\n    pub high: u8,\n    pub drums: bool,\n    pub polyphony: usize,\n    pub role: &'static str,\n    pub why: &'static str,\n}"
+    },
+    {
+      "name": "Transfer",
+      "source": "crates/music-server/src/score/instrumental.rs",
+      "declaration": "#[derive(Debug, Serialize, PartialEq)]\nstruct Transfer {\n    pub abc: String,\n    /// Vocal notes now on Ins.\n    pub moved: usize,\n    /// Ins notes shortened or split around the voice.\n    pub trimmed: usize,\n    /// Ins notes the voice covered whole.\n    pub dropped: usize,\n}"
+    },
+    {
+      "name": "SheetBar",
+      "source": "crates/music-server/src/score/notation.rs",
+      "declaration": "#[derive(Clone, Debug, PartialEq, Eq, Serialize)]\nstruct SheetBar {\n    pub start: i64,\n    pub length: i64,\n    pub meter: String,\n    pub key: String,\n    pub section: String,\n    pub editable: bool,\n}"
+    },
+    {
+      "name": "SheetSection",
+      "source": "crates/music-server/src/score/notation.rs",
+      "declaration": "#[derive(Clone, Debug, PartialEq, Eq, Serialize)]\nstruct SheetSection {\n    pub name: String,\n    pub bar: usize,\n    pub bars: usize,\n}"
+    },
+    {
+      "name": "SheetNote",
+      "source": "crates/music-server/src/score/notation.rs",
+      "declaration": "#[derive(Clone, Debug, PartialEq, Eq, Serialize)]\nstruct SheetNote {\n    pub start: i64,\n    pub length: i64,\n    pub pitch: i64,\n}"
+    },
+    {
+      "name": "SheetChord",
+      "source": "crates/music-server/src/score/notation.rs",
+      "declaration": "#[derive(Clone, Debug, PartialEq, Eq, Serialize)]\nstruct SheetChord {\n    pub start: i64,\n    pub name: String,\n}"
+    },
+    {
+      "name": "SheetNotes",
+      "source": "crates/music-server/src/score/notation.rs",
+      "declaration": "#[derive(Clone, Debug, PartialEq, Eq, Serialize)]\n#[allow(non_snake_case)]\nstruct SheetNotes {\n    pub Vocal: Vec<SheetNote>,\n    pub Ins: Vec<SheetNote>,\n}"
+    },
+    {
+      "name": "Sheet",
+      "source": "crates/music-server/src/score/notation.rs",
+      "declaration": "#[derive(Clone, Debug, PartialEq, Serialize)]\nstruct Sheet {\n    pub unit: i64,\n    pub per_quarter: i64,\n    pub bpm: u32,\n    pub seconds: f64,\n    pub total: i64,\n    pub bars: Vec<SheetBar>,\n    pub sections: Vec<SheetSection>,\n    pub notes: SheetNotes,\n    pub chords: Vec<SheetChord>,\n    pub signatures: BTreeMap<String, i32>,\n}"
+    },
+    {
+      "name": "Written",
+      "source": "crates/music-server/src/score/notation.rs",
+      "declaration": "#[derive(Clone, Debug, PartialEq, Eq, Serialize)]\nstruct Written {\n    pub abc: String,\n    pub bars: Vec<usize>,\n}"
+    },
+    {
+      "name": "Crowded",
+      "source": "crates/music-server/src/score/phrasing.rs",
+      "declaration": "#[derive(Clone, Copy, Debug, serde::Serialize)]\nstruct Crowded {\n    pub ratio: f64,\n    pub notes: usize,\n    pub syllables: usize,\n}"
+    },
+    {
+      "name": "BlockReport",
+      "source": "crates/music-server/src/score/section_match.rs",
+      "declaration": "#[derive(Clone, Debug, PartialEq, Serialize)]\nstruct BlockReport {\n    /// 1-based, in the original lyrics.\n    pub index: usize,\n    pub tag: Option<String>,\n    pub new_tag: Option<String>,\n    /// 1-based score section, none when the block was left where it was.\n    pub section: Option<usize>,\n    pub first_line_seconds: Option<f64>,\n    /// kept, renamed, merged, unsure or dropped.\n    pub status: &'static str,\n}"
+    },
+    {
+      "name": "Filled",
+      "source": "crates/music-server/src/score/section_match.rs",
+      "declaration": "#[derive(Clone, Debug, PartialEq, Serialize)]\nstruct Filled {\n    pub section: usize,\n    pub tag: String,\n    pub copied_from: Option<usize>,\n}"
+    },
+    {
+      "name": "Proposal",
+      "source": "crates/music-server/src/score/section_match.rs",
+      "declaration": "#[derive(Clone, Debug, PartialEq, Serialize)]\nstruct Proposal {\n    pub lyrics: String,\n    pub blocks: Vec<BlockReport>,\n    pub filled: Vec<Filled>,\n    pub unchanged: bool,\n}"
+    },
+    {
+      "name": "SeparationConfig",
+      "source": "crates/music-server/src/separation.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\n#[serde(default)]\nstruct SeparationConfig {\n    /// Graphics card or processor. \"auto\" takes the card when its runtime is\n    /// installed, which is the difference between a minute and ten.\n    pub runtime: crate::lyrics_sync::OnnxFlavour,\n    /// Which stems to keep. Every one still costs the same run - the model\n    /// returns all six - but writing only what the user wants keeps the\n    /// library from filling with silence they never asked for.\n    pub stems: Vec<String>,\n    /// How much neighbouring segments share. More overlap means more passes\n    /// and a smoother seam; a quarter is the model's own reference setting.\n    pub overlap: f64,\n    /// Which separator runs: HT-Demucs for six stems, Mel-Band RoFormer for the\n    /// vocals and the rest. It also separates the vocals the vocals-only mode\n    /// and training take.\n    pub engine: Engine,\n}"
+    },
+    {
+      "name": "Engine",
+      "source": "crates/music-server/src/separation.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"lowercase\")]\nenum Engine {\n    #[default]\n    Htdemucs,\n    Roformer,\n}"
+    },
+    {
+      "name": "Request",
+      "source": "crates/music-server/src/song_tokenizer.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct Request {\n    #[serde(default)] style: String,\n    #[serde(default)] lyrics: String,\n    #[serde(default = \"full\")] cot: String,\n}"
+    },
+    {
+      "name": "Piece",
+      "source": "crates/music-server/src/song_tokenizer.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct Piece { id: i32, start: usize, end: usize, bytes: Vec<u8> }"
+    },
+    {
+      "name": "Encoded",
+      "source": "crates/music-server/src/song_tokenizer.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct Encoded { text: String, lyrics: String, lyrics_start_bytes: usize, lyrics_end_bytes: usize, pieces: Vec<Piece> }"
+    },
+    {
+      "name": "DatasetItem",
+      "source": "crates/music-server/src/training.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\nstruct DatasetItem {\n    pub id: String,\n    pub title: String,\n    /// Who sings it, for finding its lyrics; from the file's tags or name.\n    #[serde(default)]\n    pub artist: String,\n    /// Where the lyrics came from: a lyrics database's name, \"recognised\",\n    /// or empty when they were written or came with the file.\n    #[serde(default)]\n    pub lyrics_source: String,\n    /// The style sentence the model is prompted with.\n    #[serde(default)]\n    pub style: String,\n    #[serde(default)]\n    pub lyrics: String,\n    #[serde(default)]\n    pub instrumental: bool,\n    /// The WAV file inside the dataset's `audio` folder.\n    pub file: String,\n    pub seconds: f64,\n    /// Where it came from: a library song id or an imported file name.\n    #[serde(default)]\n    pub source: String,\n    /// Where the lyrics stand in preparation; a stopped job picks up here.\n    pub lyrics_state: LyricsState,\n    /// Where the style stands in preparation.\n    pub style_state: StyleState,\n    /// What the listening model heard, kept until the style is written from it.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub heard: Option<HeardNote>,\n}"
+    },
+    {
+      "name": "LyricsState",
+      "source": "crates/music-server/src/training.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"lowercase\")]\nenum LyricsState {\n    /// To be looked up or recognised.\n    Wanted,\n    /// Found or recognised; still to be laid out in sections.\n    Found,\n    /// Laid out, written by hand, or an instrumental.\n    Done,\n}"
+    },
+    {
+      "name": "StyleState",
+      "source": "crates/music-server/src/training.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"lowercase\")]\nenum StyleState {\n    /// To be listened to.\n    Wanted,\n    /// Heard; the style sentence is still to be written from it.\n    Heard,\n    /// Written, by the assistant or by hand.\n    Done,\n}"
+    },
+    {
+      "name": "HeardNote",
+      "source": "crates/music-server/src/training.rs",
+      "declaration": "#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]\nstruct HeardNote {\n    pub genre: String,\n    pub caption: String,\n    pub bpm: u32,\n}"
+    },
+    {
+      "name": "Dataset",
+      "source": "crates/music-server/src/training.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\nstruct Dataset {\n    #[serde(default = \"dataset_format\")]\n    pub format: String,\n    pub id: String,\n    pub name: String,\n    /// A rare word the adapter learns to answer to.\n    #[serde(default)]\n    pub trigger: String,\n    /// The user set the trigger, an empty one included; a word made from the\n    /// name fills it only while this is false.\n    #[serde(default)]\n    pub trigger_chosen: bool,\n    pub created_at: String,\n    #[serde(default)]\n    pub items: Vec<DatasetItem>,\n}"
+    },
+    {
+      "name": "RunStatus",
+      "source": "crates/music-server/src/training.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\nenum RunStatus {\n    Running,\n    Done,\n    Failed,\n    Cancelled,\n    /// The studio closed while it ran.\n    Interrupted,\n}"
+    },
+    {
+      "name": "Run",
+      "source": "crates/music-server/src/training.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\nstruct Run {\n    pub id: String,\n    pub engine: String,\n    pub dataset_id: String,\n    pub dataset_name: String,\n    pub name: String,\n    pub trigger: String,\n    pub recipe: Recipe,\n    pub status: RunStatus,\n    /// The stage working now, or the one that failed.\n    pub stage: Option<String>,\n    pub stages: Vec<String>,\n    #[serde(default)]\n    pub steps: Vec<TrainingStepRecord>,\n    #[serde(default)]\n    pub error: Option<String>,\n    pub created_at: String,\n    #[serde(default)]\n    pub finished_at: Option<String>,\n    /// Checkpoints already added to the adapter library, by step.\n    #[serde(default)]\n    pub installed: Vec<u32>,\n    /// Each time the run was trained further, oldest first.\n    #[serde(default)]\n    pub continuations: Vec<Continuation>,\n}"
+    },
+    {
+      "name": "Continuation",
+      "source": "crates/music-server/src/training.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\nstruct Continuation {\n    pub from: u32,\n    pub to: u32,\n    pub at: String,\n}"
+    },
+    {
+      "name": "TrainingStepRecord",
+      "source": "crates/music-server/src/training.rs",
+      "declaration": "#[derive(Debug, Clone, Copy, Serialize, Deserialize)]\nstruct TrainingStepRecord {\n    pub step: u32,\n    pub loss: f64,\n    #[serde(default)]\n    pub ar_kl: Option<f64>,\n    #[serde(default)]\n    pub step_ms: Option<f64>,\n}"
+    },
+    {
+      "name": "TrainerSource",
+      "source": "crates/music-server/src/training.rs",
+      "declaration": "#[derive(Deserialize)]\nstruct TrainerSource {\n    commit: String,\n    shipped_as: String,\n    release_tag: String,\n    asset: String,\n    /// Size of the released archive.\n    bytes: u64,\n    /// Size of the captioner's archive in the same release.\n    caption_bytes: u64,\n}"
+    },
+    {
+      "name": "ItemPatch",
+      "source": "crates/music-server/src/training.rs",
+      "declaration": "#[derive(Debug, Clone, Default, Deserialize)]\nstruct ItemPatch {\n    pub title: Option<String>,\n    pub artist: Option<String>,\n    pub lyrics_source: Option<String>,\n    pub style: Option<String>,\n    pub lyrics: Option<String>,\n    pub instrumental: Option<bool>,\n    /// Set by the preparation, never by the page.\n    #[serde(skip)]\n    pub lyrics_state: Option<LyricsState>,\n    #[serde(skip)]\n    pub style_state: Option<StyleState>,\n    #[serde(skip)]\n    pub heard: Option<Option<HeardNote>>,\n}"
+    },
+    {
+      "name": "VstPlugin",
+      "source": "crates/music-server/src/vst.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\nstruct VstPlugin {\n    pub name: String,\n    #[serde(default)]\n    pub vendor: String,\n    pub path: String,\n    #[serde(default)]\n    pub uid: String,\n}"
+    },
+    {
+      "name": "VstSlot",
+      "source": "crates/music-server/src/vst.rs",
+      "declaration": "#[derive(Debug, Clone, Serialize, Deserialize)]\nstruct VstSlot {\n    pub path: String,\n    pub name: String,\n    /// The state file the plugin's window writes, when it was set up.\n    #[serde(default)]\n    pub state_id: Option<String>,\n    #[serde(default = \"enabled\")]\n    pub enabled: bool,\n}"
+    }
+  ]
+}
