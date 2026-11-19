@@ -1,3 +1,4 @@
+router-type: structured
 routers:
   - id: v-yue2
     kind: page
@@ -15,5 +16,4 @@ routers:
     order: 216
     iframe-src: /app/com.ictrek.v-yue2/api-guide.html
     keep-alive: true
-    entry-point: true
     embed: true

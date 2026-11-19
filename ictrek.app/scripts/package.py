@@ -234,14 +234,19 @@ def package(version: str, stage: Path) -> Path:
     used = {profile for service in compose["services"].values() for profile in service["profiles"]}
     if profiles != used or manifest["id"] != "com.ictrek.v-yue2":
         raise RuntimeError("manifest/compose profile mismatch")
-    routers = yaml.safe_load((stage / "routers.yml").read_text())["routers"]
-    if len(routers) != 1:
-        raise RuntimeError("expected a single flat VOS entry")
-    page = routers[0]
+    navigation = yaml.safe_load((stage / "routers.yml").read_text())
+    routers = navigation["routers"]
+    if navigation.get("router-type") != "structured" or len(routers) != 2:
+        raise RuntimeError("expected grouped VOS navigation with home and API documentation")
+    page, guide = routers
     if (page["id"] != "v-yue2" or page["kind"] != "page"
             or page["iframe-src"] != f"/app/com.ictrek.v-yue2/?v={version}"
             or not page.get("entry-point") or not page.get("embed")):
         raise RuntimeError("invalid VOS navigation contract")
+    if (guide["id"] != "v-yue2-api" or guide["kind"] != "page"
+            or guide["iframe-src"] != "/app/com.ictrek.v-yue2/api-guide.html"
+            or guide.get("entry-point") or not guide.get("embed")):
+        raise RuntimeError("invalid VOS API documentation route")
     return output
 
 
